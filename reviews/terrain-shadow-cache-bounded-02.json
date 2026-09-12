@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "feature": "terrain-shadow-cache-bounded",
+  "scope": "Bounded independent audit of Phanes static foliage shadow-cache geometry, admission limits, invalidation and CGE fallback behavior. This report does not review or pass the registered terrain-landforms feature, its WFC/editing requirements, or physical-phone performance.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "pass",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "Unsupported modes and exhausted admission fall back to the ordinary CGE renderer, while geometry, light, transform and context changes invalidate cached buffers. The current desktop and phone-layout captures keep the world legible and retain the expected creation controls through recovery."
+    },
+    "accuracy": {
+      "grade": "A-",
+      "evidence": "The independent geometry probe passes 138394 checks with zero failures across 1120 shape cases, including synthetic reversed-edge cancellation, pinned welded adjacency, exact cap ordering, transforms, directional lights and point-light rejection. The current seed-732 size-12 candidate render is hash-bound to WASM 3994c8a515573e3329bd862b71f3a132687b6c2e815885e2ed192004e12cf8bc; desktop, phone-layout and recovered baseline/candidate images each have zero differing pixels, and recovery preserves the world exactly."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "The current 192-metre populated scene visibly shows coherent tree, crop and structure shadows in desktop Orbit, phone-layout first person and recovered captures. The paired captures are byte-identical, so the cache preserves the rendered result while supporting the candidate's measured frame-rate improvement."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "The cache reuses GPU silhouette and cap geometry while retaining CGE per-frame caster visibility, stencil configuration and cap selection. Conservative admission, independent temporary limits, staged all-entry commits and ordinary-engine fallback make the optimization useful without changing scene ownership or collision behavior."
+    }
+  },
+  "blockingFindings": [],
+  "verification": "build/critic/shadowcache-run-02.log: checks=138394 failures=0 shapeCases=1120 sideVertices=58290 capVertices=56190.\nbuild/engine-final-comparison-01.json: seed-732 size-12 (192 metre) fixture, nine resident chunks, zero renderer errors, exact world recovery and zero differing pixels for desktop, phone-layout and recovered baseline/candidate pairs.\nThe current candidate captures build/engine-final-scene-01/{desktop.png,phone.png,phone-recovered.png} were visually inspected; all show the populated world and visible cast-shadow regions. Their paired SHA-256 values are recorded in the comparison artifact.\nbuild/logs/engine-final-landforms-01.log records 42 terrain editing/recovery assertions, used here only as supporting recovery evidence; it does not pass terrain-landforms as a whole.\ndocs/TERRAIN.md and docs/ARCHITECTURE.md document the static opaque directional-light scope, 16 MiB resident and temporary limits, invalidation and fallback semantics. Physical-phone responsiveness remains outside this bounded report.",
+  "reviewedFiles": {
+    "cge/code/phanes.world.shadowcache.pas": "c81fdc99284e7750656523a23841881c561bfea7677869cfc81d6953e79e7cb0",
+    "cge/code/phanes.world.batching.pas": "131a0f9eb94cd99ca022baaed6a25d5f65629a58eb5465115bc4a47051e34cba",
+    "docs/TERRAIN.md": "38ddb149b91c08f673408901190bf904b1fce2ec5c668e84c0a6bd88bd41a51c",
+    "docs/ARCHITECTURE.md": "4dbf80f18357ba3f6a57179a80f0de1d9ba44cdf0aeb4f4c5237473ed65a7c18",
+    "tests/phanes.tests.batching.lpr": "a4ba44aded3d82e2436737408db2aecd0017d7cb92bed7689fa216b7f2da4bf3",
+    "tools/test-batching.ps1": "483a010b825828f54e8cf756f2f7cd3f0625bc44156055a6de238259c1f7ac9a",
+    "build/critic/phanes.probe.shadowcache.lpr": "ba1b7b67ca464a2c2987409c0a5c1a3cf67500e1453b369c4c3f32eaaf451e83"
+  }
+}

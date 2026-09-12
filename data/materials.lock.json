@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "source": "https://polyhaven.com/a/leafy_grass",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "apiCredit": "Powered by Poly Haven: development-time source discovery; no runtime API dependency.",
+  "transformations": "Unmodified 1K JPEG diffuse and OpenGL tangent-space normal map. Runtime world-space UV repeat: 6 metres. Biome tint and lighting are authored Phanes transforms.",
+  "files": [
+    {
+      "path": "cge/data/materials/leafy-grass-diffuse.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_diff_1k.jpg",
+      "sha256": "cfa40bc9d9417d1852db8753a8d5917f110c40101179f63543c382e39bc05e4a"
+    },
+    {
+      "path": "cge/data/materials/leafy-grass-normal.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leafy_grass/leafy_grass_nor_gl_1k.jpg",
+      "sha256": "832328216adc0a7e1f70a31d5ee48c9ab7f2152d83816122736cf42ac4b2ebd6"
+    }
+  ]
+}

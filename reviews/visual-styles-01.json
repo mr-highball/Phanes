@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "feature": "visual-styles",
+  "scope": "At least 20 distinct CGE shader styles plus a default None that preserves normal rendering, real-time switching with accurate rendered feedback, custom accessible desktop/phone controls, useful adjustments and original-view comparison, preserved world state/picking/selection, and bounded rendering performance and resource lifetime.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "changes_requested",
+  "grades": {
+    "intuitiveness": {
+      "grade": "A-",
+      "evidence": "The final journey passes desktop and 390x844, 360x740, 844x390 and 390x420 layouts, 44px targets, grouped search, empty-state feedback, Escape focus restoration, comparison, reset and live detail/intensity controls. None and zero intensity provide a clear normal-view default."
+    },
+    "accuracy": {
+      "grade": "B",
+      "evidence": "The current staged run passes 73 checks with no recorded failure, including all style acknowledgements, state/picking preservation, real GLSL failure fallback, exact world/history/style/session reload recovery and post-recovery style rendering. Resource probes retain stable texture and framebuffer counts through repeated cycles. However docs/VISUAL_STYLES.md still describes the feature as in progress and explicitly says it is not an acceptance pass, so the repository's verification claim is stale and this category cannot pass until the documentation is reconciled."
+    },
+    "wowFactor": {
+      "grade": "A-",
+      "evidence": "The 64 retained captures cover 22 named treatments plus None across populated exterior, interior, selection and phone views. Representative captures show distinct coherent treatments while preserving readable world composition and selection cues."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "The feature combines a searchable grouped shader palette, live intensity/detail controls, original-view comparison, selection cues that survive coarse treatments, and a safe shader-failure fallback. The single lazily created and reused screen effect keeps the idea practical."
+    }
+  },
+  "blockingFindings": [
+    "Update docs/VISUAL_STYLES.md to describe the completed 22-style implementation and link the final 73-check/64-capture evidence, while retaining the documented performance and physical-device limitations. Then request a new critic report because this declared input changes."
+  ],
+  "verification": "build/engine-style-fallback-full-01/evidence.json reports passed=true, 73 checks and 64 captures. The run covers all named styles, None restoration, three repeated live-switch cycles, desktop and four phone-size layouts, populated interior rendering, real GLSL failure fallback, and exact reload recovery of world/history/style/session. Resource probes show textureLive=8 and framebufferLive=1 before and after repeated cycles, with no nested browser error arrays. build/web-style-fallback-01-evidence.json binds the staged source ca0a6d26e5e83cc0d5a6d13ce5cf7eb62c8da75ad2e17594805138653dc7b461 to WASM a461ea5ebdb027772e0d0af938c5a4ae63631ac9d8a497479b9c6fa7850ebb82, matching host and manifest bindings. Representative PNGs exterior-none, exterior-toon, interior-aurora, context-restored and world-390x844 were visually inspected. No physical-phone responsiveness claim is made.",
+  "reviewedFiles": {
+    "src/phanes.styles.catalog.pas": "c5491aca03e0ea1c0b26bc36d81ada505c99031e5572e3f440ae512d8e6754d3",
+    "src/phanes.styles.ui.pas": "254ab109854717bc4c19c6c8e337d40e9b620957e81bbb2addd0aa8169550b80",
+    "src/phanes.interiors.browser.lpr": "0885b2e743b8250c5d348d2e9cca296ef8ba1348270d79930464123fada0e8a4",
+    "cge/code/phanes.styles.render.pas": "ca0a6d26e5e83cc0d5a6d13ce5cf7eb62c8da75ad2e17594805138653dc7b461",
+    "cge/code/phanes.styles.selection.pas": "97a0d435816290fd013942132827cd55054bafe7f6160f4f736bd40cbd1e3409",
+    "cge/code/phanes.app.view.pas": "acc5465f04952ba86d1e35b5055ebec29db16c34e0221377c55cae1f9992e201",
+    "cge/data/shaders/phanes.styles.fs": "ab6a883fe85c43f71d95bbc2374be187d96bc83c969adfe1f94dc7b4728aae26",
+    "web/phanes.styles.css": "8c18a33f876e8a6e96c1023cbd8aa9059bf185ad2e2d8004e2017a363301633a",
+    "web/index.html": "48695863b0d20df7d78d1d6d3209c9458a21e3415a6af153cd162bb3e2291f09",
+    "docs/VISUAL_STYLES.md": "7c5283631320fb2bd4877e6bd28097a4a3db80730b2e56fe85fa34c6ac62d938",
+    "tools/phanes.tools.browser.pas": "c075b492dd08b0f8407cc2c8ea8d87fc7e4f210947b7236c3f4d371dd58d433c",
+    "tests/phanes.tests.styles.browser.lpr": "c8f181e008dbc28fec479b14228b2ab64ac5dbe94725d4ad60567355d708e36d",
+    "tests/phanes.tests.styles.probe.lpr": "4af92a63c0141f11c82e681faf30287810839b109cfac4ee8ec28d7aa909fb89",
+    "tools/test-styles.ps1": "14289736b45196b56ac5a53eaecfedf91126e17ebef3f4f09d38f7c0de49a98d",
+    "tools/serve.ps1": "2e4608425172b10ca2a764814f7ac0ca6bb79e3e8688a76a50abf1a3e6f0f16b",
+    "web/phanes.css": "fce3a84b8d08e7c0b16f24aedaf24f1ab53e1b635ad7327eaf24230676d07400",
+    "web/phanes.identity.css": "eed6e1df77a5a78c52cad07303f0c15301621340334c2328b9d6c616a8b90489",
+    "web/phanes.host.js": "129c4c146a4f995c9ad5ef71316363f5374eb79ce8d680e54fa0f10e2ef08deb",
+    "web/phanes.editor.js": "8c3c44416c9ec1304811c5ed268c977a90202752d344af14d17dd4209cbe2971",
+    "build-web.ps1": "723b28c235240ca584d01400fb75cd0b71f6405485aad7ef1efe72bf8c77f7a0",
+    ".gitmodules": "cbdabb12e738683a7c0c7b01a64bd3722e849feeb8144ab2d8d64e6dfe28faae"
+  }
+}

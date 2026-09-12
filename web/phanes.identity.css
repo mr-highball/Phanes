@@ -1,0 +1,819 @@
+/*
+MIT License
+
+Copyright (c) 2026 mr-highball
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/* Creation starts with one clear action; contextual tools arrive with the world. */
+body:has(#welcome:not([hidden])) #tools-panel,
+#viewport-shell:has(#welcome:not([hidden])) .view-toolbar,
+#viewport-shell:has(#welcome:not([hidden])) .viewport-bottom {
+  display: none;
+}
+/* Black in the generated compositing atlas contributes no light to the UI. */
+[data-glyph]::before,
+.island-orb {
+  mix-blend-mode: screen;
+}
+/* Blend against the painted control or panel, never a transparent isolated tile. */
+
+/* Shared Phanes controls: opening curves, illuminated seams and quiet mineral surfaces.
+   The atlas is decorative; semantic labels and native controls remain in the DOM. */
+:root {
+  --bg: #111f23;
+  --panel: #182a2d;
+  --line: #425652;
+  --muted: #adc0b9;
+  --ink: #f1eedf;
+  --accent: #e5d6b2;
+  --glyph-size: 28px;
+}
+.topbar {
+  background: linear-gradient(110deg, #1c3031, #101f24 70%);
+  border-bottom-color: #52605a;
+}
+aside {
+  background: linear-gradient(155deg, #223735, #16292c 65%);
+}
+button,
+.audio-panel button,
+.music-console button:not(.primary) {
+  position: relative;
+  min-height: 44px;
+  border: 1px solid #62726a;
+  border-radius: 16px 5px 16px 5px;
+  background: linear-gradient(135deg, #334742, #203337 85%);
+  color: var(--ink);
+  box-shadow:
+    inset 0 1px 0 #f6e6bd15,
+    0 3px 8px #08131624;
+  transition:
+    background 160ms,
+    border-color 160ms,
+    box-shadow 160ms,
+    translate 160ms;
+}
+button:hover:not(:disabled),
+.audio-panel button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #455c50, #2a4342);
+  border-color: #dccb9e;
+  box-shadow:
+    inset 0 1px 0 #f6e6bd38,
+    0 3px 12px #08131650;
+}
+button:active:not(:disabled),
+.audio-panel button:active:not(:disabled) {
+  translate: 0 1px;
+  box-shadow: inset 0 2px 6px #07141770;
+}
+button.primary,
+.audio-panel button.primary,
+#music-toggle {
+  color: #fff5db;
+  background: linear-gradient(115deg, #456350, #304f49 55%, #263e40);
+  border-color: #baa97f;
+  box-shadow:
+    inset 3px 0 0 #dfd2a5,
+    inset 0 1px 0 #ead8a633,
+    0 4px 14px #0b1c2438;
+}
+button.primary:hover:not(:disabled),
+.audio-panel button.primary:hover:not(:disabled) {
+  background: linear-gradient(115deg, #57775d, #3b6055 55%, #304c4e);
+}
+button:disabled,
+.audio-panel button:disabled {
+  opacity: 0.46;
+  border-style: dashed;
+  box-shadow: none;
+}
+button:focus-visible,
+.audio-panel button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #fff0bd;
+  outline-offset: 3px;
+}
+button[aria-pressed='true'],
+.audio-panel button[aria-pressed='true'],
+.view-toolbar button.active {
+  border-color: #dccb9e;
+  color: #fff6de;
+  background: linear-gradient(135deg, #4c6552, #2b4746);
+  box-shadow:
+    inset 3px 0 0 #e9d7a7,
+    inset 0 1px 0 #e5d6b22a;
+}
+[data-glyph] {
+  --glyph-left: 44;
+  --glyph-top: 35;
+}
+[data-glyph]::before {
+  content: '';
+  display: inline-block;
+  flex: 0 0 var(--glyph-size);
+  width: var(--glyph-size);
+  height: var(--glyph-size);
+  background-image: url('art/phanes-glyphs-v1.png');
+  background-size: calc(var(--glyph-size) * 6.4) calc(var(--glyph-size) * 4.2666666667);
+  background-position: calc(var(--glyph-size) * var(--glyph-left) / -240)
+    calc(var(--glyph-size) * var(--glyph-top) / -240);
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  pointer-events: none;
+}
+button[data-glyph] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+/* Source rectangles center the selected generated artwork, including its uneven gutters. */
+[data-glyph='emergence'] {
+  --glyph-left: 44;
+  --glyph-top: 35;
+}
+[data-glyph='forest'] {
+  --glyph-left: 296;
+  --glyph-top: 35;
+}
+[data-glyph='flowers'] {
+  --glyph-left: 532;
+  --glyph-top: 35;
+}
+[data-glyph='field'] {
+  --glyph-left: 779;
+  --glyph-top: 35;
+}
+[data-glyph='water'] {
+  --glyph-left: 1027;
+  --glyph-top: 35;
+}
+[data-glyph='cabin'] {
+  --glyph-left: 1274;
+  --glyph-top: 35;
+}
+[data-glyph='castle'] {
+  --glyph-left: 38;
+  --glyph-top: 285;
+}
+[data-glyph='modern'] {
+  --glyph-left: 285;
+  --glyph-top: 285;
+}
+[data-glyph='outpost'] {
+  --glyph-left: 524;
+  --glyph-top: 285;
+}
+[data-glyph='rocket'] {
+  --glyph-left: 771;
+  --glyph-top: 285;
+}
+[data-glyph='select'] {
+  --glyph-left: 1024;
+  --glyph-top: 285;
+}
+[data-glyph='reimagine'] {
+  --glyph-left: 1269;
+  --glyph-top: 285;
+}
+[data-glyph='undo'] {
+  --glyph-left: 34;
+  --glyph-top: 518;
+}
+[data-glyph='redo'] {
+  --glyph-left: 265;
+  --glyph-top: 518;
+}
+[data-glyph='music'] {
+  --glyph-left: 522;
+  --glyph-top: 518;
+}
+[data-glyph='explore'] {
+  --glyph-left: 770;
+  --glyph-top: 518;
+}
+[data-glyph='export'] {
+  --glyph-left: 1020;
+  --glyph-top: 518;
+}
+[data-glyph='open'] {
+  --glyph-left: 1263;
+  --glyph-top: 518;
+}
+[data-glyph='overhead'] {
+  --glyph-left: 34;
+  --glyph-top: 735;
+}
+[data-glyph='orbit'] {
+  --glyph-left: 265;
+  --glyph-top: 735;
+}
+[data-glyph='fly'] {
+  --glyph-left: 518;
+  --glyph-top: 735;
+}
+[data-glyph='person'] {
+  --glyph-left: 768;
+  --glyph-top: 735;
+}
+[data-glyph='clear'] {
+  --glyph-left: 1018;
+  --glyph-top: 735;
+}
+[data-glyph='arrange'] {
+  --glyph-left: 1260;
+  --glyph-top: 735;
+}
+/* Transport uses deliberately simple cut forms: action meaning stays legible at 18px. */
+button[data-transport]::before {
+  background: linear-gradient(110deg, #fff0c8, #bacbb0);
+  width: 18px;
+  height: 20px;
+  flex-basis: 18px;
+  margin-right: 5px;
+  clip-path: polygon(14% 4%, 92% 50%, 14% 96%);
+}
+button[data-transport='pause']::before {
+  clip-path: polygon(
+    5% 4%,
+    37% 4%,
+    37% 96%,
+    5% 96%,
+    5% 4%,
+    63% 4%,
+    95% 4%,
+    95% 96%,
+    63% 96%,
+    63% 4%
+  );
+}
+.brand-mark {
+  --glyph-size: 48px;
+  line-height: 0;
+}
+.brand {
+  gap: 7px;
+  letter-spacing: 0.18em;
+}
+.brand small {
+  color: #b7c5b9;
+}
+.header-actions {
+  gap: 8px;
+}
+.header-actions kbd {
+  margin-left: 2px;
+}
+.intent-grid {
+  gap: 8px;
+}
+.intent-grid button[data-glyph] {
+  --glyph-size: 48px;
+  min-height: 83px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 12px 8px;
+}
+.intent-grid button::before {
+  margin-left: -4px;
+}
+.intent-grid small {
+  display: none;
+}
+.section-title {
+  color: #d0d7c7;
+}
+.section-title button[data-glyph] {
+  --glyph-size: 22px;
+  font-size: 10px;
+  padding: 3px 7px;
+  min-height: 44px;
+}
+.selection-panel .wide {
+  justify-content: flex-start;
+}
+.selection-panel .wide kbd {
+  margin-left: auto;
+}
+.minor-actions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.minor-actions button[data-glyph] {
+  --glyph-size: 22px;
+  font-size: 10px;
+  padding: 4px 7px;
+}
+#clear-region {
+  flex: 1 0 100%;
+}
+.view-toolbar {
+  padding: 5px;
+  border-radius: 20px 7px 20px 7px;
+  background: #14272b;
+  border-color: #83907a80;
+  box-shadow: 0 8px 28px #08151a38;
+}
+.view-toolbar button {
+  --glyph-size: 26px;
+  border: 1px solid transparent;
+  padding: 5px 10px;
+  color: #d0d8cb;
+  background: transparent;
+  box-shadow: none;
+}
+.view-toolbar kbd {
+  margin-left: 0;
+}
+.welcome {
+  border-radius: 42px 9px 42px 9px;
+  border-color: #a9ad8780;
+  padding-top: 26px;
+  background: radial-gradient(ellipse at 10% 0%, #4f67524d, transparent 65%), #192f32;
+}
+.welcome-mark {
+  --glyph-size: 78px;
+  display: block;
+  margin: -2px 0 8px -12px;
+}
+.welcome h2 {
+  font-size: 42px;
+}
+.welcome .primary {
+  justify-content: center;
+  padding: 9px 12px;
+}
+input,
+.audio-panel select {
+  background: #14272c;
+  color: #f1eedf;
+  border-color: #738378;
+  border-radius: 10px 3px 10px 3px;
+}
+footer {
+  border-color: #52605a;
+  background: #112126;
+}
+.footer-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-right [data-glyph] {
+  --glyph-size: 26px;
+  line-height: 0;
+}
+.control-mark {
+  display: inline-block;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+.control-mark::before,
+.control-mark::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(120deg, #fff5d8, #b8c9b0);
+  border-radius: 3px 1px 3px 1px;
+}
+.control-mark.minus::before,
+.control-mark.plus::before {
+  width: 18px;
+  height: 3px;
+  left: 1px;
+  top: 8px;
+}
+.control-mark.plus::after {
+  width: 3px;
+  height: 18px;
+  left: 8px;
+  top: 1px;
+}
+.control-mark.direction::before {
+  width: 13px;
+  height: 13px;
+  left: 3px;
+  top: 6px;
+  border: 3px solid #ecdfbf;
+  background: none;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 5px 0 0 0;
+  rotate: 45deg;
+}
+.direction.south {
+  rotate: 180deg;
+}
+.direction.east {
+  rotate: 90deg;
+}
+.direction.west {
+  rotate: -90deg;
+}
+.zoom-controls {
+  gap: 3px;
+  padding: 3px;
+  background: #132a2ce8;
+}
+.zoom-controls button {
+  width: 44px;
+  padding: 9px;
+}
+#walk-controls button {
+  border-radius: 18px 5px 18px 5px;
+  background: linear-gradient(135deg, #355149e8, #172f33e8);
+  border-color: #a8b29a99;
+  padding: 11px;
+}
+#crosshair {
+  width: 15px;
+  height: 21px;
+  border: 1px solid #f4ead5a8;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  filter: drop-shadow(0 1px 1px #0b171a);
+}
+#crosshair::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #fff3cf;
+  border-radius: 50%;
+  left: 5px;
+  top: 8px;
+}
+.audio-panel {
+  color: var(--ink);
+  background: radial-gradient(ellipse at 38% 38%, #30464b, #172d34 40%, #102027 80%);
+}
+.audio-panel .eyebrow,
+.dimension-title p,
+.space-hint {
+  color: #b1c9bd;
+}
+#close-audio,
+.music-layout-tools button,
+#tempo-auto {
+  border-radius: 18px 5px 18px 5px;
+}
+.music-console {
+  border-radius: 30px 7px 30px 7px;
+  border-color: #6d82776b;
+  background: linear-gradient(150deg, #2a4243e8, #172f37eb);
+}
+.music-console .audio-actions {
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+.music-console .audio-actions button {
+  font-size: 12px;
+  border-radius: 17px 5px 17px 5px;
+}
+.music-console .muted,
+.music-console p,
+.tempo-scale,
+.island-weight {
+  color: #b5c6be;
+}
+#music-heart {
+  border-radius: 48% 48% 45% 45% / 55% 55% 38% 38%;
+  border-color: #b4b89373;
+  border-top-color: transparent;
+  background: radial-gradient(ellipse at 45% 30%, #456154, #253f43 65%, #1a343a);
+}
+.island-orb {
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
+  background: url('art/phanes-glyphs-v1.png') -6.6px -5.25px / 230.4px 153.6px no-repeat;
+  box-shadow: none;
+  opacity: 0.7;
+  filter: none;
+}
+.music-island button {
+  border-radius: 27px 8px 27px 8px;
+  min-height: 92px;
+  background: linear-gradient(150deg, #2c4042, #1a3038);
+  border-color: #6a817449;
+  color: #c2d0c6;
+  box-shadow: none;
+}
+.music-island button > span:last-child {
+  color: #b5c8bf;
+}
+.music-island.connected .island-orb,
+.music-island.sounding .island-orb {
+  box-shadow: none;
+  opacity: 1;
+}
+.music-island.connected button {
+  border-color: color-mix(in srgb, var(--island-colour) 60%, #becab1);
+  box-shadow: inset 3px 0 0 var(--island-colour);
+}
+.dimension-mobile-transport {
+  background: #152d33f5;
+  border-color: #7a8c7466;
+}
+.dimension-mobile-transport button,
+#music-mobile-new {
+  border-radius: 18px 5px 18px 5px;
+}
+.audio-panel input[type='range'] {
+  appearance: none;
+  background: transparent;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  min-height: 28px;
+}
+.audio-panel input[type='range']::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #647e70, #a5bfa0);
+  border: 1px solid #bac8a832;
+}
+.audio-panel input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  width: 15px;
+  height: 21px;
+  margin-top: -9px;
+  border-radius: 55% 55% 45% 45%;
+  border: 1px solid #f7e6bc;
+  background: linear-gradient(110deg, #efe0bd, #a8bda0);
+  box-shadow: 0 2px 5px #0a1d26a6;
+}
+.audio-panel input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 5px;
+  background: #819d81;
+}
+.audio-panel input[type='range']::-moz-range-thumb {
+  width: 13px;
+  height: 19px;
+  border-radius: 55% 55% 45% 45%;
+  border: 1px solid #f7e6bc;
+  background: #d8d9b5;
+}
+.music-locks input {
+  appearance: none;
+  display: inline-block;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border-radius: 8px 2px 8px 2px;
+  border: 1px solid #839b86;
+  background: #1a3137;
+}
+.music-locks input:checked {
+  background: radial-gradient(ellipse, #ffedb8 0 27%, transparent 34%), #446252;
+  border-color: #efe0b6;
+  box-shadow: inset 0 0 0 3px #25443f;
+}
+@media (max-height: 850px) and (min-width: 701px) {
+  .intent-grid button[data-glyph] {
+    --glyph-size: 40px;
+    min-height: 79px;
+    padding: 5px 10px 8px;
+    gap: 1px;
+  }
+  .intent-grid small {
+    display: none;
+  }
+  .welcome-mark {
+    --glyph-size: 60px;
+  }
+  .welcome h2 {
+    margin: 12px 0;
+  }
+}
+@media (max-width: 1100px) {
+  .brand small,
+  .world-name {
+    display: none;
+  }
+  .view-toolbar kbd {
+    display: none;
+  }
+  .view-toolbar button {
+    padding: 5px 8px;
+    gap: 2px;
+  }
+}
+@media (max-width: 700px) {
+  .topbar {
+    gap: 5px;
+    padding: 0 8px;
+    height: 60px;
+  }
+  .brand {
+    font-size: 12px;
+    letter-spacing: 0.13em;
+    gap: 2px;
+  }
+  .brand-mark {
+    --glyph-size: 32px;
+  }
+  .header-actions {
+    gap: 4px;
+  }
+  .header-actions button,
+  #open-audio {
+    --glyph-size: 24px;
+    font-size: 10px;
+    padding: 4px 6px;
+    gap: 0;
+    flex-direction: column;
+    min-width: 44px;
+    border-radius: 12px 4px 12px 4px;
+  }
+  aside#tools-panel {
+    height: 312px;
+    padding: 10px;
+    gap: 8px;
+  }
+  .section-title {
+    margin-bottom: 6px;
+    font-size: 8px;
+  }
+  .intent-grid {
+    gap: 5px;
+  }
+  .intent-grid button[data-glyph] {
+    --glyph-size: 34px;
+    min-height: 62px;
+    padding: 3px 2px 5px;
+    gap: 0;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 13px 4px 13px 4px;
+  }
+  .intent-grid button::before {
+    margin: 0;
+  }
+  .intent-grid span {
+    font-size: 10px;
+  }
+  .selection-panel .wide {
+    --glyph-size: 28px;
+    width: 160px;
+    min-height: 44px;
+  }
+  .selection-panel .section-title button {
+    --glyph-size: 22px;
+    min-height: 44px;
+    font-size: 10px;
+  }
+  .view-toolbar {
+    max-width: calc(100% - 12px);
+    padding: 3px;
+  }
+  .view-toolbar button {
+    --glyph-size: 26px;
+    font-size: 9px;
+    flex-direction: column;
+    gap: 0;
+    padding: 3px 8px;
+    min-height: 48px;
+  }
+  .welcome {
+    padding: 18px 24px;
+    top: 55%;
+    border-radius: 30px 7px 30px 7px;
+  }
+  .welcome-mark {
+    --glyph-size: 48px;
+    margin: -4px 0 2px -8px;
+  }
+  .welcome h2 {
+    font-size: 31px;
+    margin: 10px 0;
+  }
+  .welcome p {
+    line-height: 1.5;
+  }
+  .welcome .world-inputs {
+    margin-top: 8px;
+  }
+  .welcome .primary {
+    margin-top: 12px;
+  }
+  .welcome small {
+    margin-top: 8px;
+  }
+  .footer-right {
+    display: none;
+  }
+  #close-audio {
+    --glyph-size: 28px;
+    flex-direction: column;
+    padding: 6px;
+    width: 92px;
+    min-height: 62px;
+  }
+  .music-island button {
+    min-height: 92px;
+  }
+
+  .music-layout-tools button {
+    --glyph-size: 26px;
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+  .dimension-mobile-transport button {
+    --glyph-size: 30px;
+    padding: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  button,
+  .audio-panel button {
+    transition: none;
+  }
+  button:active:not(:disabled),
+  .audio-panel button:active:not(:disabled) {
+    translate: none;
+  }
+}
+@media (forced-colors: active) {
+  button,
+  .audio-panel button {
+    border: 1px solid ButtonText;
+    box-shadow: none;
+  }
+  button[aria-pressed='true'],
+  .view-toolbar button.active {
+    border-width: 3px;
+  }
+  .control-mark::before,
+  .control-mark::after {
+    forced-color-adjust: none;
+  }
+}
+
+/* Node cards include their strength control in the spacing budget. */
+@media (min-width: 700px) and (max-width: 800px) {
+  .music-island {
+    width: 128px;
+  }
+  .music-island button strong {
+    font-size: 11px;
+  }
+}
+@media (max-width: 380px) {
+  #music-heart {
+    width: 90px;
+  }
+}
+#music-space {
+  height: 860px;
+}
+.audio-panel aside.music-console {
+  display: block;
+  height: auto;
+  overflow: visible;
+}
+@media (max-width: 1180px) {
+  .dimension-layout {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .music-console {
+    width: 100%;
+    max-width: 620px;
+    justify-self: center;
+    margin: 12px 0;
+  }
+}
+@media (max-width: 699px) {
+  #music-space {
+    height: 800px;
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "feature": "named-room-programs",
+  "scope": "Named, independently editable bays and rooms with bathroom and laboratory programs, measured furniture and usable circulation, preserved neighboring rooms and nested contents, safe save/undo transactions and intuitive rendered desktop/phone creation journeys.",
+  "criticAgent": "/root/feature_critic",
+  "builderAgent": "/root",
+  "reviewedAt": "2026-09-08",
+  "decision": "changes_requested",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B",
+      "evidence": "Initial actual build02 phone selection buried every room-purpose action below the 844 px viewport behind secondary controls. The main next step was not visible until a touch swipe. Desktop room creation, naming and drill-down were usable."
+    },
+    "accuracy": {
+      "grade": "B",
+      "evidence": "Independent core, world, Unicode, transaction, geometry and worker checks were strong, but complete rendered supported-host, save/undo/lock and corrected orientation evidence was still pending during this initial review. Missing evidence cannot certify the full registered feature."
+    },
+    "wowFactor": {
+      "grade": "B",
+      "evidence": "The cutaway plan and measured furniture were visible, but Look closer framed a composed Bay 5 shelf from its side. Three books obscured one another, materially weakening the granular demonstrator and inspection experience."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "A-",
+      "evidence": "The reusable Pascal footprint-token floor solver, explicit bay/room volumes and recursively admitted contents combine program-scale composition with individually editable shelves and objects. The independent non-food assembly, scope and fixed-ID tests demonstrate useful generality."
+    }
+  },
+  "blockingFindings": [
+    "Compose support, furniture and bay facing when framing shelves; verify all four facings with visible, individually pickable books.",
+    "Place room-purpose controls before secondary naming/layout controls on phone and verify immediate discovery in a real touch viewport.",
+    "Complete rendered regional and supported-cabin journeys, save/undo/locks, failed or cancelled publication, phone movement and full current input fingerprints before claiming the feature passed."
+  ],
+  "verification": "Historical first rendered review of served rooms-integration-web-build-02, retained without retroactive promotion. See reviews/named-room-programs-01.md (copied original narrative) and build/critic/rooms-ui-01-evidence.json/screenshots. Desktop actual keyboard entry crossed one Bay 5 portal; phone actual floor and bench rays, touch panel scrolling and the layout dialog were exercised. The wrong hidden export selector in the builder baseline was a test error, not a proven product export defect. This early review did not produce a complete final registry fingerprint set; reviewedFiles is intentionally empty and this report cannot pass the gate. Subsequent corrected evidence is kept separately in build/critic/rooms-ui-correctness-review-02.md; only a later fresh numbered report may approve the implementation.",
+  "reviewedFiles": {}
+}

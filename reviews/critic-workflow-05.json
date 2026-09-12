@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "feature": "critic-workflow",
+  "scope": "Independent critic review, four separate F-to-A grades, B+ minimum in every category, actionable builder feedback and an enforced release gate.",
+  "criticAgent": "/root/feature_critic",
+  "builderAgent": "/root",
+  "reviewedAt": "2026-09-08",
+  "decision": "pass",
+  "grades": {
+    "intuitiveness": {
+      "grade": "A-",
+      "evidence": "Read AGENTS, the complete workflow/report instructions and publishing documentation. They explain the four categories, separate B+ floors, practical evidence requirements, independent feedback, builder revisions and retained numbered reports. The actual local command returns clear per-feature HOLD reasons for pending, rejected and stale acceptance. Developer tooling is assessed proportionately without inventing audio or visual requirements."
+    },
+    "accuracy": {
+      "grade": "B+",
+      "evidence": "Verified all nine declared inputs against prior review 04: eight are unchanged; the Pages YAML adds native floor tests and execution of their compiled browser suite. Rebuilt the actual Pascal checker and its 26 regression cases: all pass. Both independent report-path traversal probes still reject. All nine real features were held before this renewal, including the newly registered named-room-programs feature and the two stale reports being reviewed here. The current CI still exposes the critic step outcome, requires success before Pages configure/upload, and requires build plus critic-gate before deploy. Executed the extracted current gate script for success, failure, cancelled, skipped and empty outcomes: only success exits 0. Identity authentication and deliberately omitted scope remain explicitly outside the checker; no hosted Actions run or deployment is claimed."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "Evaluated as developer tooling, the workflow produces useful enforcement and feedback: successful regression tests do not override rejected or stale real features. Build logs remain retainable while Pages configure/upload require a successful critic outcome and deployment depends on both build and critic-gate. The retained initial rejection and correction demonstrate that the builder responds to concrete critic feedback. This score does not imply product visual, audio or whole-world quality."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "Independent qualitative review is combined with strict per-category grades, durable rejection history, exact reviewed-file fingerprints and separate build/evidence versus acceptance handling. LF-normalized hashes avoid platform checkout noise while still detecting substantive changes. The recorded limitations preserve human/agent responsibility for scope and honest evidence, and the checker provides practical protection against silently reusing stale approval."
+    }
+  },
+  "blockingFindings": [],
+  "verification": "Full registered workflow scope remains unchanged. Prior full-scope inspection and retained rejection/correction history remain in reviews/critic-workflow-01.md and reports 02–04. This renewal inspects the actual test-orchestration delta and verifies every other declared input is unchanged by the same LF-normalized SHA-256 checker. Current AGENTS, critic instructions, publishing guidance, checker semantics and CI wiring were reread as applicable. Independent commands: ./tools/reviews.ps1 -WithTests rebuilt checker/tests and passed 26 cases, then intentionally held the nine-feature real registry (build/critic/workflow-05-native-gate.log). Recompiled and executed phanes.critic.reviewpaths.lpr; both traversal forms reject (workflow-05-path-evidence.txt). Extracted the actual current critic-gate shell script from pages.yml and ran it through Git sh for five outcomes; only success exits 0 (workflow-05-ci-outcomes.json). The added floor native/browser jobs run before critic acceptance; a compile/test failure cannot unlock deployment. Inspected tools/test-floor.ps1, tools/test-floor.cjs, full release build/logs/floor-web-build-05.log and final native/browser floor evidence: 564 builder plus 4303 independent critic checks pass; browser suite 1828 ms. These tests do not approve the pending named-room-programs feature. The existing qualitative review and strict four-category floor are retained without scope reduction or grade changes. All nine current input hashes come from build/tools/phanes.reviews.exe hash. The builder owns registry pointer updates; this report does not change any other feature hold.",
+  "reviewedFiles": {
+    "AGENTS.md": "0e5047fa9d6390cbf6244ad3dfde69d8aaaea2ce15e505691673e6429898b661",
+    "docs/CRITIC_WORKFLOW.md": "ae207ceaf7702edcc46c4707f24451bcc0b22adc25e1c410c1d1613ceb25e100",
+    "docs/PUBLISHING.md": "81eb38ae4a66ce2aaac604f9dbb8c659018e4824f7fe652436a416a17d753284",
+    "tools/phanes.tools.reviews.pas": "5af526445ec9fdee7ac89d500db5b89b07c225f0b12956475e4b38fd5c098212",
+    "tools/phanes.reviews.lpr": "f0d77d1d61d89fa8a1fea1ff8b0228c719f16607f6235d102dbd13639ab9f2c0",
+    "tools/phanes.tools.files.pas": "7029addd93c0d24124e67656f0e3d7cb3d67c89ee36129839e9df8c525de7435",
+    "tools/reviews.ps1": "8c2042057262adffc06acf35d21f4906ed699dddd77f1d62cdd8b5c05c72896e",
+    "tests/phanes.tests.reviews.lpr": "6b2185adfe64480178ce3256e1826dc10442ec0400852ca478493552e4b34a4a",
+    ".github/workflows/pages.yml": "ad3de0e745963f1bc60ed00b8a53b1cf01d01b6f3592dc5591254062f5eed4b8"
+  }
+}

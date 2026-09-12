@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "feature": "catalog-publication-bounded",
+  "scope": "Bounded publication of the two admitted optional catalog leaves (book and vase) through studio and modular world composition, including pre-publication resource preparation, cancellation, failure and retry, session restoration, edit history, and raw/derived residency retirement. This review does not approve catalog-expansion, category breadth, arbitrary placement, full-world performance, physical-device performance, total decoded/GPU budgeting, or release adoption.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "pass",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The actual object controls expose the admitted book and vase, and the world journey verifies replacement, focused inspection, phone layout, cancellation feedback, failure feedback and retry. The retained captures show a selected vase with readable controls on a 390x844 view and a selected book in a modular home on desktop. Existing edit controls remain available while the current world is held during preparation."
+    },
+    "accuracy": {
+      "grade": "A-",
+      "evidence": "The runtime collects and validates only admitted IDs, checks request, revision and selection stamps around awaited work, gates the commit callback on Castle stage acknowledgement and resource preparation, and handles both Pascal and JavaScript rejection values. The residency store verifies manifest/root identity, decoded triangles and transformed bounds, keeps source leases through the drawn-world barrier, retires modular derived models before raw scenes, and publishes bounded resident statistics. The executed world journey passes exact publication, reload, history, cancellation, stale-fetch, failed-fetch/retry, studio retirement and modular retirement assertions; the earlier isolated runtime journey separately covers failed decode and retry."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "The feature makes externally sourced, integrity-bound book and vase models appear in the existing generated studio and modular home while preserving the surrounding authored composition. The focused vase and modular book captures are coherent demonstrations of the admitted roles, and reacquisition after failure and retirement gives the interaction a complete reversible feel."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "A-",
+      "evidence": "The implementation treats world publication as a transaction spanning worker output, browser leases, Castle filesystem ownership, decoded scene preparation, UI history and session recovery. It protects the old world during held or failed preparation, rejects stale selection changes, and later frees both studio and modular derived caches before allowing raw source release, while Undo can reacquire the same admitted model."
+    }
+  },
+  "blockingFindings": [],
+  "nonBlockingFindings": [
+    "This bounded result covers the two pinned leaf admissions and the tested studio/modular publication paths. The resident vertex, triangle and texture counters are distinct admitted model profile limits; they do not claim a total decoded-memory or GPU-byte budget and do not count every placed instance. Browser-internal buffers, broad category navigation, additional admissions, full-world playability and physical-device performance remain outside this report. The registry feature catalog-expansion therefore remains review:null."
+  ],
+  "verification": "Reviewed the current admission, runtime, scene-lease, residency, application-view, studio/modular cache, session and editor publication paths, plus the exact world browser driver and cancellation probe. The retained root command tools/test-catalog-world.ps1 completed with exit 0 in build/catalog-world-actual-08; checks.log contains 67 PASS lines and no failure artifact. It verifies actual Create/generation and object replacement, both admitted models, resident limits, exact saved-world/history/selection reload, Undo/Redo, held preparation, explicit cancel, selection cancellation, rejected native fetch cleanup, blocked failure, retry, studio retirement and modular retirement/reacquisition. The resident snapshots report 2 models/74481 source bytes/724 vertices/272 triangles/1048576 texture pixels, then 1 model/23480 source bytes/112 vertices/68 triangles/1048576 texture pixels after reacquisition, within the documented limits. build/catalog-world-actual-08/provenance.json binds the current application/runtime/test hashes and pinned Castle engine commit 050f07edde6652d6657b4fe0d299822b9f502afa, with appHashesVerifiedAfterRun=true. build/logs/catalog-main-build-02.log is a successful full web build; catalog-entry-build.log and catalog-network-failure-build.log are successful UI follow-up builds; catalog-admission-native-test.log reports 65 optional admission checks; catalog-buildings-regression.log and catalog-composition-regression.log retain 308 and 963 regression checks. I inspected focused-vase-phone.png, modular-book-desktop.png and reacquired-phone.png. No browser/GPU rerun was performed by this critic; retained evidence was reused proportionately. This report is bounded and does not pass the full catalog-expansion feature, which remains review:null.",
+  "reviewedFiles": {
+    "src/phanes.catalog.admission.pas": "1b46690d07aaf0ef0d4016bbcc14be2d13a80bf077fa551ccbce7fa33fc2edcd",
+    "src/phanes.catalog.runtime.pas": "2a527fa3313f3c52252be5377909b10b3e915d2b0d51f4c3a63b45ed99dd3786",
+    "src/phanes.catalog.fetch.pas": "fbd677b21152308ff23723c785f0a8ccb6fe60badb2d7c66e4fe3e23d371c077",
+    "src/phanes.interiors.catalog.pas": "249407b33758bb3b3f6d97767341f3446c1ecf855ce36396440427e642fff0f3",
+    "src/phanes.interiors.browser.lpr": "61fd0ce2f22f7abc335e4dbade08fbd59b78d00938c69106f83e6a2a7bfd3f16",
+    "src/phanes.interiors.ui.pas": "6c8d244917987b3c702f9bb37761bfff38a5363018376442106381367ad9c0dc",
+    "src/phanes.session.ui.pas": "23687f27ea09af4f7d2fdcb5cd1accac19d64a9b2d24b24095a9c4ee7ccb51d8",
+    "cge/code/phanes.catalog.files.pas": "0b9ce2a3ad355a23c8873b6536ec0c4b0b610e9798b352d04b492c796882a69b",
+    "cge/code/phanes.catalog.scene.pas": "136bd724f9cee0a99a99442c4e7e364b8ec7909d5b94eb90aa6447a7d12e0c51",
+    "cge/code/phanes.catalog.residency.pas": "14531e91848bfa640905f04ff62075820095b9bff5774db37dce8043186891bb",
+    "cge/code/phanes.app.view.pas": "503b72b3297d85cbe80fcc70b171f2c2f6176370996772dcb89ede3baa27fa75",
+    "cge/code/phanes.buildings.scene.pas": "a2a53e8ccc1b5009b6cfb479423e789bb48c923d0ae1ae798f2b1f6bab3cea67",
+    "cge/code/phanes.interiors.scene.pas": "0a9aa1421bd086a0b438dc89c7356fd7f9d2cc19dc8218e9b4f880064002e72f",
+    "web/phanes.editor.js": "e17355b20c2114dc472015a422939ba10ec553c93871d69a96ccba2d3e18c899",
+    "tests/phanes.tests.catalog.world.browser.lpr": "d8c05da6d96b4e14151645fa6f7ffbf24b93fb7960699e0c168a0de57dc63f93",
+    "tests/phanes.tests.catalog.world.probe.lpr": "babbf30fb67486e5755f7d4d2af93c4347ae9612ac905207048ca1e26763156c",
+    "tools/test-catalog-world.ps1": "a37d815bc458d53694eef47348de82e956f045401b50e572880b54313b838628",
+    "docs/CATALOG_ADMISSION.md": "0a306cc26f2c93a29212f8577b14446cc61b165b70f6ddaf8d1f75f15dccfa81",
+    "docs/CATALOG_PUBLICATION.md": "d100a25664581888515d150c65bbe6de60c0187e26b0712724af063e4a36ce2b",
+    "build/catalog-world-actual-08/provenance.json": "ff110059dae21e2a656c149fbeae52a7eb1aae7e32c928e2978ff7377edf3d07",
+    "build/catalog-world-actual-08/checks.log": "83834181c1d00b42e3643e75b42fd6e447e34ccd329d06340513ea9323ee5c3d",
+    "build/catalog-world-actual-08/result.txt": "1d652156051e543a4b944634af96211a9ae3fa656ae243bd9d64246e65e0fa1e",
+    "build/catalog-world-actual-08/resident-both.json": "b8c0c3433674de6fed2e578ad4d949748efdc77bc74f872547b006fd0dee78c7",
+    "build/catalog-world-actual-08/resident-reacquired.json": "efca65def553a876841160da542c0271114287640c41232747c26235055090ee",
+    "build/catalog-world-actual-08/focused-vase-phone.png": "89e3aa7913e9618dc9581cc47a6fe784f5183cb499ed3b8a69de98e0036ee42e",
+    "build/catalog-world-actual-08/modular-book-desktop.png": "9303efd6870952676e32b4c0e03c5fc0ad2125a3d81ce74ce500da6493cb27c4",
+    "build/catalog-world-actual-08/reacquired-phone.png": "d2c0e1cc5e03c753d36df5ff816f7a4d5be4c564e1f2ef833a330a7945c8473e",
+    "build/logs/catalog-main-build-02.log": "d88293414db1893ca94d4d50d97892b1f1c18f8f8dbcc8dc1d955237f8d69317",
+    "build/logs/catalog-entry-build.log": "62f215608980dc6df3227f62c47b9bae71da6ab28ea847c31781049b7e73eb7c",
+    "build/logs/catalog-network-failure-build.log": "89f1a22f80283a3332d8503f240b8650018e8bdc1e8eeac36299197e80b9f263",
+    "build/logs/catalog-admission-native-test.log": "989d8294055407873ea82ac2aae67a971ddc99ceb01e98a5a7e79669400f45cc",
+    "build/logs/catalog-buildings-regression.log": "7aff1bf2494a5cee48df7bee5618accc5dd0cb5ac556ca66b79406c1db718cc0",
+    "build/logs/catalog-composition-regression.log": "da527216431fbe74a6ca42906cecba987386113eacb15e2a073abe3d64fa56ad"
+  }
+}

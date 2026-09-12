@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "feature": "catalog-runtime-bounded",
+  "scope": "Bounded optional catalog fetch transaction, content-hash cache ownership, cancellation and verified bundle staging. This review does not approve catalog-expansion placement, WFC admission, save/recovery integration, full catalog coverage, live-world adoption or global decoded/GPU budgeting.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "changes_requested",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The fetcher exposes a small transaction API with progress, cancellation, explicit lease release and cache clearing. The focused fixture makes the 12-byte test budget and duplicate-path behavior legible."
+    },
+    "accuracy": {
+      "grade": "B",
+      "evidence": "The corrected transaction path deduplicates hashes, recomputes unique required and missing bytes after all awaits, protects incoming hashes during MakeRoom and commits within the configured budget. The 51-PASS root run covers cold duplicate rows, interleaved ClearUnused, near-budget eviction, failed and cancelled transactions, lease preservation and balanced pins. A remaining response-size path can buffer an oversized body when Content-Length is absent before checking byteLength, so the documented network-buffer bound is not yet absolute."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "The retained bounded milestone combines integrity-checked publication fetch, shared content bytes, lease ownership and a deterministic adversarial fixture. Earlier pinned-engine captures show the unchanged staging adapter rendering real GLB and glTF dependency closures; they are retained as proportional integration context and are not claimed as a rerun against this fetcher hash."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "The correction addresses the subtle interaction between awaited fetches, external ClearUnused, LRU eviction and duplicate content rows instead of treating manifest rows as independent allocations. The native fixture and browser assertions exercise these ownership transitions with a tiny budget while preserving the full publication path."
+    }
+  },
+  "blockingFindings": [
+    "Enforce the per-response size limit while bytes are being consumed when Content-Length is missing or unreliable. Response.arrayBuffer() at src/phanes.catalog.fetch.pas:319 can materialize an arbitrarily large chunked body before the final manifest-length check; use a bounded streaming reader or an equivalent hard cap, and add a fixture that omits Content-Length and exceeds the manifest allowance. Apply the same reasoning to the index response at line 347 if its network buffer bound is part of the contract."
+  ],
+  "nonBlockingFindings": [
+    "build/catalog-runtime-wrapper-02/provenance.json records src/phanes.catalog.fetch.pas as 44c8dde4bfc56adce0fb7fa700668a536aabaf425d0878b2cb795e7c9a4db5d6, while the reviewed source is 1a08c679d2d642aa1ebbc9bfbc1b01527b5ede28d08efe23ba1cffd6467dd35b. The current documentation labels that retained wrapper as previous-fetcher evidence, so it remains useful for the unchanged adapter/renderer only and must not be presented as current-fetcher runtime proof."
+  ],
+  "verification": "Reviewed the corrected source transaction at lines 544-623, including hash deduplication, post-await unique byte accounting, protected incoming hashes, synchronous commit and lease pinning; reviewed the 12-byte native fixture and focused browser assertions in tests/phanes.tests.catalog.fetch.fixture.lpr and tests/phanes.tests.catalog.fetch.browser.lpr. The retained root invocation completed with exit 0 and build/logs/catalog-fetch-bounded-root-01.log contains 51 PASS lines, including the 13 focused cache assertions; its SHA-256 is 7e517c7cc6085beb5045470b5fcd852fdcf4d0425a73bd4773eda81c34c0af3a. The run has an empty build/catalog-fetch-bounded-root-01/server-error.log. Existing native adapter evidence remains 42 checks, and build/catalog-runtime-wrapper-02/evidence.json remains a 12-check pass with food 60 triangles and rug 44 triangles; that wrapper uses the older fetcher provenance and is not evidence for the corrected source. No browser rerun was performed by this critic. Full catalog-expansion remains review:null.",
+  "reviewedFiles": {
+    "src/phanes.catalog.fetch.pas": "1a08c679d2d642aa1ebbc9bfbc1b01527b5ede28d08efe23ba1cffd6467dd35b",
+    "tests/phanes.tests.catalog.fetch.probe.lpr": "9a89352b150052bd9cff7429cb33d1da007ca0814b2702cbd3b2e185d9b6dd98",
+    "tests/phanes.tests.catalog.fetch.browser.lpr": "6020544c533c7d2e553e0d4a2116fb394752d0fd61257e451c2963e5b45b7c50",
+    "tests/phanes.tests.catalog.fetch.fixture.lpr": "abbf824a7acd368012bee626df468c2828193391e041ccc17dd1bf5dca4d3049",
+    "tools/test-catalog-fetch.ps1": "5764cbdfa9ae2011e11856f2364811dc3992cc6bf1f42915e295465fe3c3ef53",
+    "cge/code/phanes.catalog.files.pas": "631927fc667e0c2cdfb275a777f3ab70fc7a630327b5d0c875d6d4e19cfc2396",
+    "docs/CATALOG_RUNTIME.md": "cf2ad6c7206286b3a02eb06dc3a152cadf15933543faa6a72b086f606de33b2d",
+    "build/catalog-runtime-wrapper-02/evidence.json": "0f248bd05560826d6ff67201544e6f2c9b10a36c43e3aca68976c7155a9e666d",
+    "build/catalog-runtime-wrapper-02/provenance.json": "198df0465e44e9e239410fb02a86561e3a88b0778e7e39bb2f7f76e3e3ac69ef"
+  }
+}

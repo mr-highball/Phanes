@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "feature": "catalog-runtime-bounded",
+  "scope": "Bounded optional catalog fetch and verified model-bundle staging milestone: hash-bound index/manifest/closure fetch, cancellation and generation safety, shared content-byte cache with leases and bounded eviction, isolated Castle filesystem staging, native geometry parity and two-model browser rendering. This report does not review or pass catalog-expansion placement, WFC admission, save/recovery integration, full catalog coverage or global decoded/GPU budgeting.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "changes_requested",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The bounded fetch contract exposes item progress, cancellation, stale-generation rejection and explicit lease release/clear operations. The browser proof renders the food GLB and textured rug glTF on desktop and a phone-sized viewport. This is an integration milestone rather than the product catalog UI."
+    },
+    "accuracy": {
+      "grade": "B",
+      "evidence": "Native evidence passes 42 filesystem and real-source geometry checks; browser evidence passes 12 checks with no browser errors or warnings; adversarial fetch cases cover corrupt, missing, oversized and invalid publications. Source inspection found a cache accounting gap: LNewBytes is computed before MakeRoom and excludes staged entries already in FCache. MakeRoom can evict an unpinned staged entry, after which commit reinserts it without reserving its bytes. Duplicate hashes within one closure are also fetched and counted repeatedly before commit. The current tests do not exercise either path."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "The retained browser captures show a real GLB and a glTF with external texture and buffer dependencies rendered with geometry and material appearance intact on desktop and phone-layout views."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "The milestone combines fetch integrity, canonical-path validation, generation cancellation, content-hash sharing, lease ownership and isolated Castle memory filesystems while preserving original dependency-relative paths. The bounded staging adapter keeps source bytes alive until the scene owns its filesystem."
+    }
+  },
+  "blockingFindings": [
+    "Reserve cache bytes for the unique staged content hashes that will be resident after commit, including entries that were present when staging began but may be evicted by MakeRoom or ClearUnused during awaited fetches. Recheck ownership and budget atomically before insertion so FCacheBytes cannot exceed CatalogFetchCacheBytes.",
+    "Deduplicate staged fetches by content hash within one transaction, or otherwise prove and test that duplicate hash rows do not cause duplicate network fetches, temporary buffers or LNewBytes overcounting. The publication contains the same content hash under many distinct model paths, including hash 0d4947d34ff32acf4a359c7f22ca784e057e7e72f622170a9a77b6fc88fdb70e under 677 model-file rows.",
+    "Add a bounded adversarial browser fixture that delays a file, calls ClearUnused during the pending transaction, then forces MakeRoom with a staged unpinned entry; assert final cache bytes never exceed the 96 MiB limit, all lease rows resolve to live buffers and no staged entry is lost. Keep catalog-expansion review null; this report cannot approve the full feature.",
+    "Add tools/test-catalog-runtime.ps1 to the catalog-expansion registry inputs because it is the reproducible wrapper for the retained browser runtime proof."
+  ],
+  "verification": "Source inspection covered src/phanes.catalog.fetch.pas and cge/code/phanes.catalog.files.pas, with special attention to FetchModel staging, LNewBytes, MakeRoom, ClearUnused, Release and CatalogBundleFromBrowser. build/logs/catalog-files-native-test.log records 42 checks and geometry parity for 60-triangle food and 44-triangle rug fixtures. build/catalog-runtime-browser-03/evidence.json records passed=true, 12 checks, food sourceBytes=36249, rug sourceBytes=21203, browserErrors=[] and warnings=[]. build/catalog-fetch-clean-proof records fresh root/project fetch plus corrupt, missing, oversized, invalid, cancellation, stale-generation, cache-reuse, release and clear cases. build/catalog-runtime-provenance-01.json binds the pinned engine commit 050f07edde6652d6657b4fe0d299822b9f502afa and the current source hashes. A narrow publication inspection found no duplicate hash within either individual fixture model closure, but found widespread same-content hashes across distinct model paths; the largest sampled hash is 0d4947d34ff32acf4a359c7f22ca784e057e7e72f622170a9a77b6fc88fdb70e with 677 rows. No new browser run was performed.",
+  "reviewedFiles": {
+    "cge/code/phanes.catalog.files.pas": "631927fc667e0c2cdfb275a777f3ab70fc7a630327b5d0c875d6d4e19cfc2396",
+    "src/phanes.catalog.fetch.pas": "44c8dde4bfc56adce0fb7fa700668a536aabaf425d0878b2cb795e7c9a4db5d6",
+    "tests/phanes.tests.catalog.fetch.probe.lpr": "e009ee7d2ec8939c732d27211234946e8d0b896fa7cc950cb63e3121be830b39",
+    "tests/phanes.tests.catalog.fetch.browser.lpr": "58f022121834a3205ea9c95a20580d32545a271e88cde89d4d50d1fd92285d0b",
+    "tools/test-catalog-fetch.ps1": "c79085eb175c96f272f88b7565e27142b2e3e89f9116b8eccc4106823c5ebc3a",
+    "tests/catalog-runtime/CastleEngineManifest.xml": "5e5e8a3aefb258a2e1b495980de919f5c4236283a434b461c1890c4ebe38bf7d",
+    "tests/catalog-runtime/code/phanes.tests.catalog.runtime.pas": "4ce9bc4bf8a778541f7a35996ba94678ea7c13bf28a73abcb74974107e018a4a",
+    "tests/catalog-runtime/data/README.txt": "0b884537f82564860d010019365703ca06b5b0c2c98d87bb38baf42053affecf",
+    "tests/catalog-runtime/probe.html": "2bf86a04ae6228ac05668ce1567cfd41276a9c2af62a8b19730b812a941205ed",
+    "tests/phanes.tests.catalog.runtime.browser.lpr": "fb0c791b54e548e99851e471cc4dea147463d8a8bf9b1693544a9efac39d5d4c",
+    "tests/phanes.tests.catalog.files.lpr": "6428df555b897cecc2ecaaf26b76277c7b906a141cd8ab8dd5dc3e70107828fb",
+    "tools/test-catalog-files.ps1": "3186cc0c6cb04cbc662f071970194e1a949aa26eb441520b011932a0cd65422b",
+    "tools/test-catalog-runtime.ps1": "e4b491300ba573b7a5ac8b177b3f38eaaff1ff394eeef26b7761da294465c5ef",
+    "docs/CATALOG_RUNTIME.md": "8d58c973c3ccd480f6bbd70fa3d61bfa7fd193796bf491e93af5446c605cdc60",
+    "tools/serve.ps1": "2e4608425172b10ca2a764814f7ac0ca6bb79e3e8688a76a50abf1a3e6f0f16b"
+  }
+}

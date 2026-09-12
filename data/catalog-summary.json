@@ -1,0 +1,771 @@
+{
+  "version" : 1,
+  "baselineModels" : 905,
+  "baselineKits" : 6,
+  "acceptedApproximateFactor" : 9,
+  "inventorySha256" : "ef6ae2dd57903b5bf2830a4627566ca0f781d9c253f3de975a66f08ff2635b2c",
+  "counting" : "Exact file hashes only; geometry families and playable admission remain separate",
+  "kits" : [
+    {
+      "id" : "castle-kit",
+      "storage" : "core",
+      "models" : 76,
+      "modelBytes" : 2080872,
+      "source" : "https://kenney.nl/assets/castle-kit"
+    },
+    {
+      "id" : "nature-kit",
+      "storage" : "core",
+      "models" : 329,
+      "modelBytes" : 3034380,
+      "source" : "https://kenney.nl/assets/nature-kit"
+    },
+    {
+      "id" : "furniture-kit",
+      "storage" : "core",
+      "models" : 140,
+      "modelBytes" : 1960832,
+      "source" : "https://kenney.nl/assets/furniture-kit"
+    },
+    {
+      "id" : "space-kit",
+      "storage" : "core",
+      "models" : 153,
+      "modelBytes" : 2014920,
+      "source" : "https://kenney.nl/assets/space-kit"
+    },
+    {
+      "id" : "city-kit-suburban",
+      "storage" : "core",
+      "models" : 40,
+      "modelBytes" : 2609760,
+      "source" : "https://kenney.nl/assets/city-kit-suburban"
+    },
+    {
+      "id" : "fantasy-town-kit",
+      "storage" : "core",
+      "models" : 167,
+      "modelBytes" : 2497400,
+      "source" : "https://kenney.nl/assets/fantasy-town-kit"
+    },
+    {
+      "id" : "blaster-kit",
+      "storage" : "library",
+      "models" : 40,
+      "modelBytes" : 1264820,
+      "source" : "https://kenney.nl/assets/blaster-kit"
+    },
+    {
+      "id" : "blocky-characters",
+      "storage" : "library",
+      "models" : 18,
+      "modelBytes" : 2044620,
+      "source" : "https://kenney.nl/assets/blocky-characters"
+    },
+    {
+      "id" : "brick-kit",
+      "storage" : "library",
+      "models" : 296,
+      "modelBytes" : 2980160,
+      "source" : "https://kenney.nl/assets/brick-kit"
+    },
+    {
+      "id" : "building-kit",
+      "storage" : "library",
+      "models" : 79,
+      "modelBytes" : 866180,
+      "source" : "https://kenney.nl/assets/building-kit"
+    },
+    {
+      "id" : "car-kit",
+      "storage" : "library",
+      "models" : 50,
+      "modelBytes" : 5629048,
+      "source" : "https://kenney.nl/assets/car-kit"
+    },
+    {
+      "id" : "city-kit-commercial",
+      "storage" : "library",
+      "models" : 41,
+      "modelBytes" : 3739924,
+      "source" : "https://kenney.nl/assets/city-kit-commercial"
+    },
+    {
+      "id" : "city-kit-industrial",
+      "storage" : "library",
+      "models" : 37,
+      "modelBytes" : 3139644,
+      "source" : "https://kenney.nl/assets/city-kit-industrial"
+    },
+    {
+      "id" : "city-kit-roads",
+      "storage" : "library",
+      "models" : 95,
+      "modelBytes" : 1569712,
+      "source" : "https://kenney.nl/assets/city-kit-roads"
+    },
+    {
+      "id" : "coaster-kit",
+      "storage" : "library",
+      "models" : 183,
+      "modelBytes" : 6590976,
+      "source" : "https://kenney.nl/assets/coaster-kit"
+    },
+    {
+      "id" : "cube-pets",
+      "storage" : "library",
+      "models" : 24,
+      "modelBytes" : 3368008,
+      "source" : "https://kenney.nl/assets/cube-pets"
+    },
+    {
+      "id" : "factory-kit",
+      "storage" : "library",
+      "models" : 143,
+      "modelBytes" : 3085320,
+      "source" : "https://kenney.nl/assets/factory-kit"
+    },
+    {
+      "id" : "food-kit",
+      "storage" : "library",
+      "models" : 200,
+      "modelBytes" : 3358708,
+      "source" : "https://kenney.nl/assets/food-kit"
+    },
+    {
+      "id" : "graveyard-kit",
+      "storage" : "library",
+      "models" : 91,
+      "modelBytes" : 3350032,
+      "source" : "https://kenney.nl/assets/graveyard-kit"
+    },
+    {
+      "id" : "hexagon-kit",
+      "storage" : "library",
+      "models" : 72,
+      "modelBytes" : 1695520,
+      "source" : "https://kenney.nl/assets/hexagon-kit"
+    },
+    {
+      "id" : "holiday-kit",
+      "storage" : "library",
+      "models" : 99,
+      "modelBytes" : 2751544,
+      "source" : "https://kenney.nl/assets/holiday-kit"
+    },
+    {
+      "id" : "marble-kit",
+      "storage" : "library",
+      "models" : 162,
+      "modelBytes" : 3442924,
+      "source" : "https://kenney.nl/assets/marble-kit"
+    },
+    {
+      "id" : "mini-arcade",
+      "storage" : "library",
+      "models" : 20,
+      "modelBytes" : 1031316,
+      "source" : "https://kenney.nl/assets/mini-arcade"
+    },
+    {
+      "id" : "mini-arena",
+      "storage" : "library",
+      "models" : 22,
+      "modelBytes" : 510916,
+      "source" : "https://kenney.nl/assets/mini-arena"
+    },
+    {
+      "id" : "mini-characters",
+      "storage" : "library",
+      "models" : 26,
+      "modelBytes" : 3416932,
+      "source" : "https://kenney.nl/assets/mini-characters"
+    },
+    {
+      "id" : "mini-dungeon",
+      "storage" : "library",
+      "models" : 30,
+      "modelBytes" : 897568,
+      "source" : "https://kenney.nl/assets/mini-dungeon"
+    },
+    {
+      "id" : "mini-forest",
+      "storage" : "library",
+      "models" : 22,
+      "modelBytes" : 838760,
+      "source" : "https://kenney.nl/assets/mini-forest"
+    },
+    {
+      "id" : "minigolf-kit",
+      "storage" : "library",
+      "models" : 126,
+      "modelBytes" : 1943700,
+      "source" : "https://kenney.nl/assets/minigolf-kit"
+    },
+    {
+      "id" : "mini-market",
+      "storage" : "library",
+      "models" : 20,
+      "modelBytes" : 773012,
+      "source" : "https://kenney.nl/assets/mini-market"
+    },
+    {
+      "id" : "mini-skate",
+      "storage" : "library",
+      "models" : 20,
+      "modelBytes" : 566536,
+      "source" : "https://kenney.nl/assets/mini-skate"
+    },
+    {
+      "id" : "modular-buildings",
+      "storage" : "library",
+      "models" : 108,
+      "modelBytes" : 768788,
+      "source" : "https://kenney.nl/assets/modular-buildings"
+    },
+    {
+      "id" : "platformer-kit",
+      "storage" : "library",
+      "models" : 153,
+      "modelBytes" : 3210960,
+      "source" : "https://kenney.nl/assets/platformer-kit"
+    },
+    {
+      "id" : "retro-urban-kit",
+      "storage" : "library",
+      "models" : 124,
+      "modelBytes" : 581880,
+      "source" : "https://kenney.nl/assets/retro-urban-kit"
+    },
+    {
+      "id" : "space-station-kit",
+      "storage" : "library",
+      "models" : 97,
+      "modelBytes" : 984788,
+      "source" : "https://kenney.nl/assets/space-station-kit"
+    },
+    {
+      "id" : "survival-kit",
+      "storage" : "library",
+      "models" : 80,
+      "modelBytes" : 1298392,
+      "source" : "https://kenney.nl/assets/survival-kit"
+    },
+    {
+      "id" : "tower-defense-kit",
+      "storage" : "library",
+      "models" : 160,
+      "modelBytes" : 5754580,
+      "source" : "https://kenney.nl/assets/tower-defense-kit"
+    },
+    {
+      "id" : "toy-car-kit",
+      "storage" : "library",
+      "models" : 157,
+      "modelBytes" : 4104484,
+      "source" : "https://kenney.nl/assets/toy-car-kit"
+    },
+    {
+      "id" : "train-kit",
+      "storage" : "library",
+      "models" : 103,
+      "modelBytes" : 6963280,
+      "source" : "https://kenney.nl/assets/train-kit"
+    },
+    {
+      "id" : "watercraft-kit",
+      "storage" : "library",
+      "models" : 46,
+      "modelBytes" : 1947372,
+      "source" : "https://kenney.nl/assets/watercraft-kit"
+    },
+    {
+      "id" : "modular-cave-kit",
+      "storage" : "library",
+      "models" : 40,
+      "modelBytes" : 6235348,
+      "source" : "https://kenney.nl/assets/modular-cave-kit"
+    },
+    {
+      "id" : "modular-dungeon-kit",
+      "storage" : "library",
+      "models" : 39,
+      "modelBytes" : 7403776,
+      "source" : "https://kenney.nl/assets/modular-dungeon-kit"
+    },
+    {
+      "id" : "modular-space-kit",
+      "storage" : "library",
+      "models" : 40,
+      "modelBytes" : 8070500,
+      "source" : "https://kenney.nl/assets/modular-space-kit"
+    },
+    {
+      "id" : "pirate-kit",
+      "storage" : "library",
+      "models" : 72,
+      "modelBytes" : 3011576,
+      "source" : "https://kenney.nl/assets/pirate-kit"
+    },
+    {
+      "id" : "prototype-kit",
+      "storage" : "library",
+      "models" : 145,
+      "modelBytes" : 1878652,
+      "source" : "https://kenney.nl/assets/prototype-kit"
+    },
+    {
+      "id" : "racing-kit",
+      "storage" : "library",
+      "models" : 112,
+      "modelBytes" : 1899872,
+      "source" : "https://kenney.nl/assets/racing-kit"
+    },
+    {
+      "id" : "retro-fantasy-kit",
+      "storage" : "library",
+      "models" : 105,
+      "modelBytes" : 1042108,
+      "source" : "https://kenney.nl/assets/retro-fantasy-kit"
+    },
+    {
+      "id" : "kaykit-character-pack-adventures-1-0",
+      "storage" : "library",
+      "models" : 27,
+      "modelBytes" : 83191,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Adventures-1.0"
+    },
+    {
+      "id" : "kaykit-character-pack-skeletons-1-0",
+      "storage" : "library",
+      "models" : 13,
+      "modelBytes" : 39753,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Character-Pack-Skeletons-1.0"
+    },
+    {
+      "id" : "kaykit-city-builder-bits-1-0",
+      "storage" : "library",
+      "models" : 41,
+      "modelBytes" : 163914,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-City-Builder-Bits-1.0"
+    },
+    {
+      "id" : "kaykit-dungeon-remastered-1-0",
+      "storage" : "library",
+      "models" : 203,
+      "modelBytes" : 9054260,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Dungeon-Remastered-1.0"
+    },
+    {
+      "id" : "kaykit-furniture-bits-1-0",
+      "storage" : "library",
+      "models" : 53,
+      "modelBytes" : 160697,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Furniture-Bits-1.0"
+    },
+    {
+      "id" : "kaykit-halloween-bits-1-0",
+      "storage" : "library",
+      "models" : 63,
+      "modelBytes" : 205844,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Halloween-Bits-1.0"
+    },
+    {
+      "id" : "kaykit-medieval-hexagon-pack-1-0",
+      "storage" : "library",
+      "models" : 221,
+      "modelBytes" : 762881,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Medieval-Hexagon-Pack-1.0"
+    },
+    {
+      "id" : "kaykit-prototype-bits-1-0",
+      "storage" : "library",
+      "models" : 72,
+      "modelBytes" : 228544,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Prototype-Bits-1.0"
+    },
+    {
+      "id" : "kaykit-restaurant-bits-1-0",
+      "storage" : "library",
+      "models" : 144,
+      "modelBytes" : 448974,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Restaurant-Bits-1.0"
+    },
+    {
+      "id" : "kaykit-space-base-bits-1-0",
+      "storage" : "library",
+      "models" : 57,
+      "modelBytes" : 205585,
+      "source" : "https://github.com/KayKit-Game-Assets/KayKit-Space-Base-Bits-1.0"
+    },
+    {
+      "id" : "quaternius-fantasy-props-megakit",
+      "storage" : "library",
+      "models" : 94,
+      "modelBytes" : 350002,
+      "source" : "https://opengameart.org/content/fantasy-props-megakit"
+    },
+    {
+      "id" : "quaternius-medieval-village-megakit",
+      "storage" : "library",
+      "models" : 176,
+      "modelBytes" : 614515,
+      "source" : "https://opengameart.org/content/medieval-village-megakit"
+    },
+    {
+      "id" : "quaternius-sci-fi-essentials-kit-1",
+      "storage" : "library",
+      "models" : 37,
+      "modelBytes" : 586591,
+      "source" : "https://opengameart.org/content/sci-fi-essentials-kit"
+    },
+    {
+      "id" : "quaternius-stylized-nature-megakit",
+      "storage" : "library",
+      "models" : 68,
+      "modelBytes" : 168425,
+      "source" : "https://opengameart.org/content/stylized-nature-megakit"
+    },
+    {
+      "id" : "basemesh-20260908",
+      "storage" : "library",
+      "models" : 1254,
+      "modelBytes" : 52190916,
+      "source" : "https://www.thebasemesh.com/model-library"
+    },
+    {
+      "id" : "quaternius-modular-sci-fi-megakit",
+      "storage" : "library",
+      "models" : 191,
+      "modelBytes" : 795858,
+      "source" : "https://opengameart.org/content/modular-sci-fi-megakit"
+    },
+    {
+      "id" : "quaternius-5-low-poly-animals-surface-v1",
+      "storage" : "library",
+      "models" : 3,
+      "modelBytes" : 133968,
+      "source" : "https://opengameart.org/content/5-low-poly-animals"
+    },
+    {
+      "id" : "quaternius-animated-animales-low-poly-surface-v1",
+      "storage" : "library",
+      "models" : 4,
+      "modelBytes" : 577152,
+      "source" : "https://opengameart.org/content/animated-animales-low-poly"
+    },
+    {
+      "id" : "quaternius-animated-characters-pack-surface-v1",
+      "storage" : "library",
+      "models" : 22,
+      "modelBytes" : 10581136,
+      "source" : "https://opengameart.org/content/animated-characters-pack"
+    },
+    {
+      "id" : "quaternius-animated-fish-surface-v1",
+      "storage" : "library",
+      "models" : 4,
+      "modelBytes" : 318776,
+      "source" : "https://opengameart.org/content/animated-fish"
+    },
+    {
+      "id" : "quaternius-animated-human-low-poly-surface-v1",
+      "storage" : "library",
+      "models" : 1,
+      "modelBytes" : 326232,
+      "source" : "https://opengameart.org/content/animated-human-low-poly"
+    },
+    {
+      "id" : "quaternius-animated-mech-pack-surface-v1",
+      "storage" : "library",
+      "models" : 1,
+      "modelBytes" : 354912,
+      "source" : "https://opengameart.org/content/animated-mech-pack"
+    },
+    {
+      "id" : "quaternius-fantasy-low-poly-trees-and-bushes-surface-v1",
+      "storage" : "library",
+      "models" : 7,
+      "modelBytes" : 716884,
+      "source" : "https://opengameart.org/content/fantasy-low-poly-trees-and-bushes"
+    },
+    {
+      "id" : "quaternius-furniture-low-poly-surface-v1",
+      "storage" : "library",
+      "models" : 16,
+      "modelBytes" : 1272988,
+      "source" : "https://opengameart.org/content/furniture-low-poly"
+    },
+    {
+      "id" : "quaternius-low-poly-animated-guns-surface-v1",
+      "storage" : "library",
+      "models" : 4,
+      "modelBytes" : 939268,
+      "source" : "https://opengameart.org/content/low-poly-animated-guns"
+    },
+    {
+      "id" : "quaternius-low-poly-cars-0-surface-v1",
+      "storage" : "library",
+      "models" : 2,
+      "modelBytes" : 241040,
+      "source" : "https://opengameart.org/content/low-poly-cars-0"
+    },
+    {
+      "id" : "quaternius-low-poly-desert-assets-surface-v1",
+      "storage" : "library",
+      "models" : 11,
+      "modelBytes" : 675808,
+      "source" : "https://opengameart.org/content/low-poly-desert-assets"
+    },
+    {
+      "id" : "quaternius-low-poly-food-pack-surface-v1",
+      "storage" : "library",
+      "models" : 102,
+      "modelBytes" : 6080784,
+      "source" : "https://opengameart.org/content/low-poly-food-pack"
+    },
+    {
+      "id" : "quaternius-low-poly-furniture-1-surface-v1",
+      "storage" : "library",
+      "models" : 8,
+      "modelBytes" : 478084,
+      "source" : "https://opengameart.org/content/low-poly-furniture-1"
+    },
+    {
+      "id" : "quaternius-low-poly-guns-pack-surface-v1",
+      "storage" : "library",
+      "models" : 43,
+      "modelBytes" : 5648020,
+      "source" : "https://opengameart.org/content/low-poly-guns-pack"
+    },
+    {
+      "id" : "quaternius-low-poly-guns-surface-v1",
+      "storage" : "library",
+      "models" : 4,
+      "modelBytes" : 676780,
+      "source" : "https://opengameart.org/content/low-poly-guns"
+    },
+    {
+      "id" : "quaternius-low-poly-medieval-weapons-surface-v1",
+      "storage" : "library",
+      "models" : 4,
+      "modelBytes" : 280176,
+      "source" : "https://opengameart.org/content/low-poly-medieval-weapons"
+    },
+    {
+      "id" : "quaternius-low-poly-nature-pack-1-surface-v1",
+      "storage" : "library",
+      "models" : 112,
+      "modelBytes" : 16048784,
+      "source" : "https://opengameart.org/content/low-poly-nature-pack-1"
+    },
+    {
+      "id" : "quaternius-low-poly-pirate-pack-surface-v1",
+      "storage" : "library",
+      "models" : 7,
+      "modelBytes" : 533928,
+      "source" : "https://opengameart.org/content/low-poly-pirate-pack"
+    },
+    {
+      "id" : "quaternius-low-poly-rpg-pack-surface-v1",
+      "storage" : "library",
+      "models" : 105,
+      "modelBytes" : 12153072,
+      "source" : "https://opengameart.org/content/low-poly-rpg-pack"
+    },
+    {
+      "id" : "quaternius-low-poly-space-assets-surface-v1",
+      "storage" : "library",
+      "models" : 10,
+      "modelBytes" : 389168,
+      "source" : "https://opengameart.org/content/low-poly-space-assets"
+    },
+    {
+      "id" : "quaternius-lowpoly-animated-farm-animal-pack-surface-v1",
+      "storage" : "library",
+      "models" : 3,
+      "modelBytes" : 272312,
+      "source" : "https://opengameart.org/content/lowpoly-animated-farm-animal-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-animated-knight-surface-v1",
+      "storage" : "library",
+      "models" : 7,
+      "modelBytes" : 645672,
+      "source" : "https://opengameart.org/content/lowpoly-animated-knight"
+    },
+    {
+      "id" : "quaternius-lowpoly-animated-monsters-surface-v1",
+      "storage" : "library",
+      "models" : 4,
+      "modelBytes" : 828860,
+      "source" : "https://opengameart.org/content/lowpoly-animated-monsters"
+    },
+    {
+      "id" : "quaternius-lowpoly-buildings-pack-surface-v1",
+      "storage" : "library",
+      "models" : 85,
+      "modelBytes" : 35770136,
+      "source" : "https://opengameart.org/content/lowpoly-buildings-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-buildings-surface-v1",
+      "storage" : "library",
+      "models" : 6,
+      "modelBytes" : 2406068,
+      "source" : "https://opengameart.org/content/lowpoly-buildings"
+    },
+    {
+      "id" : "quaternius-lowpoly-cars-surface-v1",
+      "storage" : "library",
+      "models" : 1,
+      "modelBytes" : 277252,
+      "source" : "https://opengameart.org/content/lowpoly-cars"
+    },
+    {
+      "id" : "quaternius-lowpoly-crops-pack-surface-v1",
+      "storage" : "library",
+      "models" : 94,
+      "modelBytes" : 7635304,
+      "source" : "https://opengameart.org/content/lowpoly-crops-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-house-interior-pack-surface-v1",
+      "storage" : "library",
+      "models" : 117,
+      "modelBytes" : 6898972,
+      "source" : "https://opengameart.org/content/lowpoly-house-interior-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-medieval-buildings-surface-v1",
+      "storage" : "library",
+      "models" : 24,
+      "modelBytes" : 906968,
+      "source" : "https://opengameart.org/content/lowpoly-medieval-buildings"
+    },
+    {
+      "id" : "quaternius-lowpoly-medieval-village-pack-surface-v1",
+      "storage" : "library",
+      "models" : 40,
+      "modelBytes" : 10100112,
+      "source" : "https://opengameart.org/content/lowpoly-medieval-village-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-medieval-weapons-surface-v1",
+      "storage" : "library",
+      "models" : 20,
+      "modelBytes" : 2723296,
+      "source" : "https://opengameart.org/content/lowpoly-medieval-weapons"
+    },
+    {
+      "id" : "quaternius-lowpoly-modular-dungeon-pack-surface-v1",
+      "storage" : "library",
+      "models" : 40,
+      "modelBytes" : 8111304,
+      "source" : "https://opengameart.org/content/lowpoly-modular-dungeon-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-modular-dungeon-surface-v1",
+      "storage" : "library",
+      "models" : 36,
+      "modelBytes" : 1842664,
+      "source" : "https://opengameart.org/content/lowpoly-modular-dungeon"
+    },
+    {
+      "id" : "quaternius-lowpoly-modular-sci-fi-environments-surface-v1",
+      "storage" : "library",
+      "models" : 90,
+      "modelBytes" : 8263316,
+      "source" : "https://opengameart.org/content/lowpoly-modular-sci-fi-environments"
+    },
+    {
+      "id" : "quaternius-lowpoly-modular-street-pack-surface-v1",
+      "storage" : "library",
+      "models" : 19,
+      "modelBytes" : 1787748,
+      "source" : "https://opengameart.org/content/lowpoly-modular-street-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-nature-pack-surface-v1",
+      "storage" : "library",
+      "models" : 11,
+      "modelBytes" : 327912,
+      "source" : "https://opengameart.org/content/lowpoly-nature-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-posed-humans-surface-v1",
+      "storage" : "library",
+      "models" : 18,
+      "modelBytes" : 2762068,
+      "source" : "https://opengameart.org/content/lowpoly-posed-humans"
+    },
+    {
+      "id" : "quaternius-lowpoly-public-transport-surface-v1",
+      "storage" : "library",
+      "models" : 4,
+      "modelBytes" : 447876,
+      "source" : "https://opengameart.org/content/lowpoly-public-transport"
+    },
+    {
+      "id" : "quaternius-lowpoly-rpg-characters-surface-v1",
+      "storage" : "library",
+      "models" : 5,
+      "modelBytes" : 849196,
+      "source" : "https://opengameart.org/content/lowpoly-rpg-characters"
+    },
+    {
+      "id" : "quaternius-lowpoly-rpg-surface-v1",
+      "storage" : "library",
+      "models" : 10,
+      "modelBytes" : 647936,
+      "source" : "https://opengameart.org/content/lowpoly-rpg"
+    },
+    {
+      "id" : "quaternius-lowpoly-ship-pack-surface-v1",
+      "storage" : "library",
+      "models" : 5,
+      "modelBytes" : 1004892,
+      "source" : "https://opengameart.org/content/lowpoly-ship-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-spaceships-pack-surface-v1",
+      "storage" : "library",
+      "models" : 9,
+      "modelBytes" : 3466824,
+      "source" : "https://opengameart.org/content/lowpoly-spaceships-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-steampunk-turrets-surface-v1",
+      "storage" : "library",
+      "models" : 37,
+      "modelBytes" : 10211588,
+      "source" : "https://opengameart.org/content/lowpoly-steampunk-turrets"
+    },
+    {
+      "id" : "quaternius-lowpoly-survival-pack-surface-v1",
+      "storage" : "library",
+      "models" : 45,
+      "modelBytes" : 2789448,
+      "source" : "https://opengameart.org/content/lowpoly-survival-pack"
+    },
+    {
+      "id" : "quaternius-lowpoly-textured-trees-surface-v1",
+      "storage" : "library",
+      "models" : 29,
+      "modelBytes" : 4902804,
+      "source" : "https://opengameart.org/content/lowpoly-textured-trees"
+    },
+    {
+      "id" : "quaternius-textured-cute-monster-pack-surface-v1",
+      "storage" : "library",
+      "models" : 20,
+      "modelBytes" : 4027072,
+      "source" : "https://opengameart.org/content/textured-cute-monster-pack"
+    }
+  ],
+  "importedModels" : 8365,
+  "distinctFileHashes" : 8365,
+  "duplicateFileHashes" : 0,
+  "modelBytes" : 372604910,
+  "regionalChoices" : 37
+}

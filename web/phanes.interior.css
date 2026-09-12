@@ -1,0 +1,212 @@
+/*
+MIT License
+
+Copyright (c) 2026 mr-highball
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+body[data-interior='true'] #tools-panel > :not(#interior-tools):not(#mobile-save-world) {
+  display: none;
+}
+body[data-interior='true'] #tools-panel {
+  display: block;
+}
+#interior-tools {
+  padding-top: 4px;
+}
+#interior-tools h2 {
+  font-size: 1.6rem;
+  line-height: 1.15;
+  margin: 12px 0;
+}
+#interior-tools p {
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+#interior-path {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 16px 0 22px;
+}
+#interior-path button {
+  font-size: 0.68rem;
+  padding: 5px 8px;
+  min-height: 32px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.interior-actions,
+.interior-history {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0;
+}
+.interior-actions button,
+.interior-history button {
+  flex: 1;
+  font-size: 0.75rem;
+  min-height: 44px;
+}
+.interior-children {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+.interior-children button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  min-height: 54px;
+  padding: 10px 12px;
+  gap: 8px;
+}
+.interior-children button small {
+  color: #b6c6b5;
+  font-size: 0.65rem;
+  flex-shrink: 0;
+}
+.interior-looks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+#interior-catalog:not([hidden]) {
+  display: grid;
+  gap: 6px;
+  margin-top: 18px;
+}
+#interior-catalog label {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+#interior-catalog select,
+#interior-catalog input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 10px;
+  color: var(--ink);
+  background: #163638;
+  border: 1px solid #668a82;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.8rem;
+}
+#interior-choice-count {
+  margin: 6px 0 0;
+}
+.interior-looks button {
+  min-height: 44px;
+  text-align: left;
+  font-size: 0.78rem;
+  flex: 1 0 100%;
+}
+.interior-looks button[aria-pressed='true'] {
+  border-color: #ddebab;
+  background: #39483b;
+}
+#interior-count-tools {
+  padding: 14px 0;
+  border-top: 1px solid #3a4a42;
+}
+#interior-count-tools label {
+  display: block;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+#interior-roles {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+#interior-roles button {
+  flex: 1;
+  min-height: 44px;
+}
+#interior-roles button[aria-pressed='true'] {
+  border-color: #ddebab;
+  background: #39483b;
+}
+.interior-count {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  align-items: center;
+}
+.interior-count button {
+  min-width: 42px;
+  min-height: 44px;
+}
+.interior-count input {
+  width: 44px;
+  min-width: 44px;
+  text-align: center;
+  padding: 8px 0;
+}
+.interior-count input::-webkit-inner-spin-button {
+  appearance: none;
+}
+#apply-content-count {
+  flex: 1;
+  padding: 8px;
+  font-size: 0.75rem;
+}
+#open-interior {
+  margin-bottom: 8px;
+}
+#interior-export {
+  display: none;
+}
+@media (max-width: 700px) {
+  body[data-interior='true'] #tools-panel {
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  #interior-path button {
+    min-height: 44px;
+  }
+  #interior-export {
+    display: block;
+  }
+  #interior-tools > .eyebrow {
+    display: none;
+  }
+  #interior-tools h2 {
+    font-size: 1.15rem;
+    margin: 8px 0;
+  }
+  #interior-path {
+    margin: 8px 0;
+  }
+  #interior-tools p {
+    margin: 8px 0;
+  }
+  .interior-actions {
+    margin: 8px 0;
+  }
+}
