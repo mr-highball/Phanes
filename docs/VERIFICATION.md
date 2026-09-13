@@ -1314,3 +1314,27 @@ These are bounded development results. Full feature reviews, playable furniture
 admission and release remain open. The separate Actions run at `99b8df3a` failed
 later in the project-path interior fruit-picking check; its root-path evidence
 must not be mistaken for a successful project-path run. Publication is held.
+
+## Interior framing checkpoint — 2026-09-13
+
+A paused-render witness (`build/interior-frame-witness-01/run-01`) reproduces
+the old readiness race: camera versions already agree while the new inspection
+request is pending, and a subsequent parent selection changes its target.
+The application now retains the explicit frame target for both Castle bounds
+and browser camera orientation. Selection continues to update independently.
+
+The fresh full WebAssembly build (`build/interior-frame-app-01`) and pas2js
+interior UI compile succeed. The tracked Pascal regression passes 36 checks at
+`/Phanes/` (`build/interior-frame-regression-03`), covering paused fruit/book
+framing, exact camera/bounds agreement, desktop and touch-emulated phone picking,
+unchanged serialized worlds and zero runtime errors. Earlier regression runs
+01/02 retain a fixture setup failure: the second viewport restored the first
+viewport's interior. Run 03 gives each viewport its own browser profile.
+
+The complete existing interior journey also passes at `/Phanes/` on desktop and
+phone (`build/interior-full-pages-frame-01`), including import, nested food edits,
+fruit picking and walking. Its report records the base URL; future pick failures
+retain version, coordinate and callback diagnostics before taking a screenshot.
+Existing CGE Effect/EffectPart ownership warnings remain in this broader log.
+These local checks do not establish the cause of every previous CI failure or
+clear full feature review, physical-device performance or publication gates.

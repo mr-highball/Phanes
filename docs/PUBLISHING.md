@@ -74,9 +74,11 @@ Generator contract checks and the established browser interaction checks run at
 `/` and `/Phanes/`, with desktop and phone viewports, against the staged site.
 The workflow also discovers the installed Chromium, native FPC and pas2js paths
 explicitly, then runs the current Pascal startup suite at `/`. The full retained
-interior journey runs next at both paths, so import/editing failures are diagnosed
-before the longer visual suites. Import failures retain application state and a
-screenshot. The style, catalog-object and named-room recovery suites then run at
+interior journey runs next at both paths, following a Pascal framing regression
+at `/Phanes/` that pauses rendering between an inspection request and a parent
+selection. Import and fruit-pick failures retain application state and a
+screenshot; the interior report identifies its hosting base URL. The style,
+catalog-object and named-room recovery suites then run at
 `/Phanes/`; the style suite compiles the shared probe used by those later suites.
 Build logs and flat PNG, JSON and text browser evidence are retained even on
 failure; transient browser profiles are excluded. These build checks can pass

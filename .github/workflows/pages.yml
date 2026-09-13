@@ -179,6 +179,10 @@ jobs:
               -NativeCompiler "$native_compiler" -Compiler "$compiler" \
               -RuntimeJs "$PAS2JS_RUNTIME"
           done
+          pwsh -File tools/test-interior-frame.ps1 -Browser "$browser_path" \
+            -TestUrl http://127.0.0.1:4187/Phanes/ \
+            -EvidenceDirectory build/ci-browser/pages-interior-frame \
+            -NativeCompiler "$native_compiler"
           for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
             TEST_URL="$url" node tools/test-interiors.cjs
           done

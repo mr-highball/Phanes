@@ -176,3 +176,17 @@ input, exact restore and desktop/phone interaction. Screenshots and results are
 stored under ignored `build/`. Shared composition checks remain in
 `tools/test-composition.ps1` and `tools/test-composition.cjs`. A successful test
 run does not override the independent visual/UX critic gate.
+
+Each explicit "Look closer" request retains its target independently of later
+selection changes. Castle frames that target's bounds and the browser uses its
+role and support orientation, even if a parent was selected before the next
+render. Automated inspection waits for the matching interior, room and scene
+acknowledgements as well as the rendered camera version.
+
+`tools/test-interior-frame.ps1` pauses animation frames between fruit/book
+inspection and parent selection, then compares the target bounds and complete
+camera pose with normally acknowledged inspection. It checks exact world
+preservation and real fruit picking on desktop and touch-emulated phone
+viewports. Pass a Chromium `-Browser`, the hosted `-TestUrl`, an
+`-EvidenceDirectory` and `-NativeCompiler`; the wrapper compiles the Pascal
+driver and tests the supplied site without rebuilding the application.

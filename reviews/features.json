@@ -540,6 +540,8 @@
         "web/phanes.interior.css",
         "build-web.ps1",
         "tools/test-interiors.cjs",
+        "tests/phanes.tests.interior.frame.browser.lpr",
+        "tools/test-interior-frame.ps1",
         "docs/INTERIORS.md",
         "docs/COMPOSITION_FORMAT.md",
         "docs/PRODUCT.md",

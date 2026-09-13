@@ -92,6 +92,7 @@ type
     FAssets: TContentAssets;
     FPreviousCamera: TJSObject;
     FFrameVersion: Integer;
+    FFrameTargetId: String;
     FRenderedSelection: String;
     FDirty: Boolean;
     FLayoutBuilding: String;
@@ -347,11 +348,15 @@ begin
   if AFrame then
   begin
     Inc(FFrameVersion);
+    FFrameTargetId := FState.interiorSelected;
   end;
   LSettings := TJSObject.new;
   LSettings['roomId'] := FState.interiorRoom;
   LSettings['selectedId'] := FState.interiorSelected;
   LSettings['frameVersion'] := FFrameVersion;
+  { Selection may change before Castle consumes this request. Preserve the
+    object chosen by the most recent explicit framing action. }
+  LSettings['frameTargetId'] := FFrameTargetId;
   TJSObject(window)['phanesInterior'] := TJSJSON.stringify(LSettings);
   TJSObject(window)['phanesInteriorVersion'] :=
     Integer(TJSObject(window)['phanesInteriorVersion']) + 1;
@@ -1465,7 +1470,11 @@ begin
   FState.panY := AY;
   FState.panZ := AZ;
   FState.zoom := Max(0.4, Min(64, 11 / (ASize * 1.8)));
-  LNode := Selected;
+  LNode := FIndex.Find(FFrameTargetId);
+  if LNode < 0 then
+  begin
+    LNode := Selected;
+  end;
   if LNode >= 0 then
   begin
     LRole := FDocument.FNodes[LNode].FRole;

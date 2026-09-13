@@ -35,7 +35,7 @@ const path = require('node:path');
     executablePath: process.env.BROWSER,
     args: ['--enable-unsafe-swiftshader'],
   });
-  const evidence = { worker: [], viewports: [] };
+  const evidence = { base, worker: [], viewports: [] };
   try {
     const page = await browser.newPage();
     await page.goto(new URL('data/palette.json', base).href);
@@ -512,6 +512,25 @@ const path = require('node:path');
           document.body.dataset.renderedInterior === phanesEditor.interiorRoom &&
           Number(document.body.dataset.renderedInteriorScene) === phanesSceneVersion,
       );
+      const frameInterior = async () => {
+        await view.locator('#interior-frame').click();
+        const request = await view.evaluate(() => ({
+          interiorVersion: phanesInteriorVersion,
+          room: phanesEditor.interiorRoom,
+          sceneVersion: phanesSceneVersion,
+        }));
+        await view.waitForFunction(
+          (expected) =>
+            phanesInteriorVersion === expected.interiorVersion &&
+            phanesEditor.interiorRoom === expected.room &&
+            phanesSceneVersion === expected.sceneVersion &&
+            Number(document.body.dataset.renderedInteriorVersion) === expected.interiorVersion &&
+            document.body.dataset.renderedInterior === expected.room &&
+            Number(document.body.dataset.renderedInteriorScene) === expected.sceneVersion &&
+            phanesRenderedCameraVersion === phanesCameraVersion,
+          request,
+        );
+      };
       await view.waitForTimeout(1200);
       await view.screenshot({
         path: path.join(root, 'build', 'interior-room-' + viewport.width + '.png'),
@@ -521,8 +540,7 @@ const path = require('node:path');
         .filter({ hasText: 'Four-tier bookcase' })
         .click();
       await view.locator('#interior-children button').filter({ hasText: 'Shelf 4' }).click();
-      await view.locator('#interior-frame').click();
-      await view.waitForTimeout(700);
+      await frameInterior();
       assert.equal(await view.locator('#interior-children button').count(), 3);
       await view.screenshot({
         path: path.join(root, 'build', 'interior-shelf-' + viewport.width + '.png'),
@@ -534,8 +552,7 @@ const path = require('node:path');
       await view.locator('#interior-parent').click();
       await view.locator('#interior-children button').filter({ hasText: 'Shelf 2' }).click();
       await view.locator('#interior-children button').click();
-      await view.locator('#interior-frame').click();
-      await view.waitForTimeout(700);
+      await frameInterior();
       const baseline = await view.evaluate(() => structuredClone(phanesEditor.world.composition));
       const selectedId = await view.evaluate(() => phanesEditor.interiorSelected);
       const sceneBounds = await view.locator('#castle-canvas').boundingBox();
@@ -596,8 +613,7 @@ const path = require('node:path');
       );
       assert.equal(await view.evaluate(() => phanesEditor.interiorSelected), parentBeforeCancel);
       await view.locator('#interior-children button[data-node="' + selectedId + '"]').click();
-      await view.locator('#interior-frame').click();
-      await view.waitForFunction(() => phanesRenderedCameraVersion === phanesCameraVersion);
+      await frameInterior();
       await view.locator('#interior-looks button[data-asset="phanes.book.indigo.v1"]').click();
       await view.waitForFunction(() => !phanesEditor.worker);
       const after = await view.evaluate(() => phanesEditor.world.composition);
@@ -635,9 +651,7 @@ const path = require('node:path');
       await chooseChild(sceneTable.parent);
       await chooseChild(sceneTable.id);
       await chooseChild(scenePlate.id);
-      await view.locator('#interior-frame').click();
-      await view.waitForFunction(() => phanesRenderedCameraVersion === phanesCameraVersion);
-      await view.waitForTimeout(500);
+      await frameInterior();
       const plateCamera = await view.evaluate(() => JSON.parse(phanesCamera));
       const delta = plateCamera.position.map((v, i) => v - plateCamera.target[i]);
       assert.ok(Math.atan2(delta[1], Math.hypot(delta[0], delta[2])) > 0.9,
@@ -646,22 +660,96 @@ const path = require('node:path');
       await chooseChild(sceneWell.id);
       assert.equal(await view.locator('#interior-children button').count(), 3);
       assert.deepEqual(await view.locator('#interior-roles button').allTextContents(), ['Bread', 'Fruit', 'Cheese']);
-      await view.locator('#interior-frame').click();
-      await view.waitForFunction(() => phanesRenderedCameraVersion === phanesCameraVersion);
-      await view.waitForTimeout(500);
+      await frameInterior();
       await view.screenshot({ path: path.join(root, 'build', 'interior-plate-contents-' + viewport.width + '.png') });
       await chooseChild(sceneFruit.id);
-      await view.locator('#interior-frame').click();
-      await view.waitForFunction(() => phanesRenderedCameraVersion === phanesCameraVersion);
-      await view.waitForTimeout(500);
+      await frameInterior();
       await view.screenshot({ path: path.join(root, 'build', 'interior-fruit-' + viewport.width + '.png') });
       await view.locator('#interior-parent').click();
       const foodCanvas = await view.locator('#castle-canvas').boundingBox();
       const fx = foodCanvas.x + foodCanvas.width / 2;
       const fy = foodCanvas.y + foodCanvas.height / 2;
-      if (viewport.width < 500) await view.touchscreen.tap(fx, fy);
-      else await view.mouse.click(fx, fy);
-      await view.waitForFunction((id) => phanesEditor.interiorSelected === id, sceneFruit.id, { timeout: 5000 });
+      await view.evaluate(() => {
+        const original = window.phanesInteriorPicked;
+        const calls = [];
+        window.phanesInteriorPickTrace = { original, calls };
+        window.phanesInteriorPicked = function (...args) {
+          const before = phanesEditor.interiorSelected;
+          const result = original.apply(this, args);
+          calls.push({
+            args,
+            before,
+            after: phanesEditor.interiorSelected,
+            pickVersion: phanesPickVersion,
+            pickAction: phanesPickAction,
+            interiorVersion: phanesInteriorVersion,
+            renderedInteriorVersion: Number(document.body.dataset.renderedInteriorVersion),
+            cameraVersion: phanesCameraVersion,
+            renderedCameraVersion: phanesRenderedCameraVersion,
+            sceneVersion: phanesSceneVersion,
+          });
+          if (calls.length > 64) calls.shift();
+          return result;
+        };
+      });
+      try {
+        if (viewport.width < 500) await view.touchscreen.tap(fx, fy);
+        else await view.mouse.click(fx, fy);
+        await view.waitForFunction((id) => phanesEditor.interiorSelected === id, sceneFruit.id, {
+          timeout: 5000,
+        });
+      } catch (error) {
+        const diagnostic = await view.evaluate(
+          ({ base, viewport, targetId, canvas, x, y }) => ({
+            base,
+            viewport,
+            targetId,
+            canvas,
+            point: {
+              x,
+              y,
+              normalizedX: (x - canvas.x) / canvas.width,
+              normalizedY: (y - canvas.y) / canvas.height,
+            },
+            selection: phanesEditor.interiorSelected,
+            room: phanesEditor.interiorRoom,
+            pick: {
+              version: phanesPickVersion,
+              action: phanesPickAction,
+              x: phanesPickX,
+              y: phanesPickY,
+              sceneVersion: phanesPickSceneVersion,
+              cameraVersion: phanesPickCameraVersion,
+            },
+            interior: {
+              version: phanesInteriorVersion,
+              renderedVersion: Number(document.body.dataset.renderedInteriorVersion),
+              renderedRoom: document.body.dataset.renderedInterior,
+              renderedScene: Number(document.body.dataset.renderedInteriorScene),
+            },
+            camera: {
+              version: phanesCameraVersion,
+              renderedVersion: phanesRenderedCameraVersion,
+            },
+            sceneVersion: phanesSceneVersion,
+            callbacks: window.phanesInteriorPickTrace.calls,
+          }),
+          { base, viewport, targetId: sceneFruit.id, canvas: foodCanvas, x: fx, y: fy },
+        );
+        const diagnosticStem = 'interior-fruit-pick-failed-' + viewport.width;
+        fs.writeFileSync(
+          path.join(root, 'build', diagnosticStem + '.json'),
+          JSON.stringify(diagnostic, null, 2),
+        );
+        await view.screenshot({ path: path.join(root, 'build', diagnosticStem + '.png') });
+        console.error(diagnostic);
+        throw error;
+      } finally {
+        await view.evaluate(() => {
+          window.phanesInteriorPicked = window.phanesInteriorPickTrace.original;
+          delete window.phanesInteriorPickTrace;
+        });
+      }
       assert.notEqual(sceneFruit.asset, 'phanes.food.fruit.apple.v1');
       await view
         .locator('#interior-looks button[data-asset="phanes.food.fruit.apple.v1"]')

@@ -693,6 +693,7 @@ var
   LSettings: TJSONObject;
   LRoomId: String;
   LSelectedId: String;
+  LFrameTargetId: String;
   LFrame: Integer;
   LBounds: TBox3D;
   LCenter: TVector3;
@@ -753,7 +754,8 @@ begin
       if LFrame <> FInteriorFrameVersion then
       begin
         FInteriorFrameVersion := LFrame;
-        LBounds := FInterior.BoundsFor(LSelectedId);
+        LFrameTargetId := LSettings.Get('frameTargetId', LSelectedId);
+        LBounds := FInterior.BoundsFor(LFrameTargetId);
         if not LBounds.IsEmpty then
         begin
           LCenter := LBounds.Center;
