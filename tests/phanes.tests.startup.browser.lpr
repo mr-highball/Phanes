@@ -76,7 +76,7 @@ begin
       GPage.Navigate(ParamStr(2));
       if GCase = 'slow-catalog' then
       begin
-        GPage.WaitFor('document.body.dataset.ready === "true"');
+        GPage.WaitFor('document.body && document.body.dataset.ready === "true"');
         Check(GPage.Text('document.body.dataset.startupState') = 'catalog',
           'A delayed catalog is reported accurately after the first frame');
         Check(GPage.Number('document.getElementById("startup-info").getBoundingClientRect().height') > 0,
@@ -85,12 +85,12 @@ begin
           'A rendered frame alone never enables Create');
         GPage.Screenshot(GOutput + '/catalog-phone.png');
         GPage.Execute('window.phanesStartupTestResume()');
-        GPage.WaitFor('document.body.dataset.startupState === "ready"');
+        GPage.WaitFor('document.body && document.body.dataset.startupState === "ready"');
         Check(GPage.Number('document.getElementById("create-world").disabled ? 1:0') = 0,
           'A delayed catalog completes startup without reloading');
       end else if GCase = 'slow-compile' then
       begin
-        GPage.WaitFor('document.body.dataset.startupState === "compile"');
+        GPage.WaitFor('document.body && document.body.dataset.startupState === "compile"');
         GPage.WaitFor('!document.getElementById("startup-help").hidden', 40000);
         Check(GPage.Text('document.body.dataset.startupState') = 'compile',
           'A slow compilation stays pending instead of being declared failed');
@@ -98,11 +98,11 @@ begin
           'Slow compilation does not enable Create early');
         GPage.Screenshot(GOutput + '/slow-phone.png');
         GPage.Execute('window.phanesStartupTestResume()');
-        GPage.WaitFor('document.body.dataset.startupState === "ready"');
+        GPage.WaitFor('document.body && document.body.dataset.startupState === "ready"');
         Check(True, 'A slow compilation can finish successfully without reloading');
       end else if (GCase = 'normal') or (GCase = 'part-recovery') then
       begin
-        GPage.WaitFor('document.body.dataset.startupState === "ready"');
+        GPage.WaitFor('document.body && document.body.dataset.startupState === "ready"');
         Check(GPage.Number('document.getElementById("create-world").disabled ? 1:0') = 0,
           'Create enables after the renderer and catalog are both ready');
         Check(GPage.Number('window.phanesStartupTestHistory.length') >= 5,
@@ -112,7 +112,7 @@ begin
         GPage.Screenshot(GOutput + '/ready-desktop.png');
         GPage.SetValue('region-size', '4');
         GPage.Click('#create-world');
-        GPage.WaitFor('phanesEditor.world && !phanesEditor.worker && ' +
+        GPage.WaitFor('document.body && phanesEditor.world && !phanesEditor.worker && ' +
           'Number(document.body.dataset.renderedRevision) === phanesSceneVersion');
         Check(True, 'Four-cell world creates and renders after startup');
         if GCase = 'part-recovery' then
@@ -126,7 +126,7 @@ begin
         end;
       end else
       begin
-        GPage.WaitFor('document.body.dataset.startupState === "failed"');
+        GPage.WaitFor('document.body && document.body.dataset.startupState === "failed"');
         Check(GPage.Number('document.getElementById("create-world").disabled ? 1:0') = 1,
           'Failed startup never enables Create');
         Check(GPage.Number('document.getElementById("import-world").disabled ? 1:0') = 1,
@@ -177,7 +177,7 @@ begin
         begin
           GPage.BlockURLs([]);
           GPage.Click('#startup-retry');
-          GPage.WaitFor('document.body.dataset.startupState === "ready"');
+          GPage.WaitFor('document.body && document.body.dataset.startupState === "ready"');
           Check(True, 'Retry recovers when the interrupted download is available');
         end;
       end;
