@@ -46,6 +46,7 @@ uses
   phanes.composition.wire,
   phanes.composition.contents.types,
   phanes.interiors.catalog,
+  phanes.catalog.furniture,
   phanes.interiors.profiles,
   phanes.spaces.programs;
 
@@ -1010,6 +1011,8 @@ end;
 
 procedure TInteriorUI.RenderSelection(const AIndex: Integer);
 var
+  LFurniture: TFurnitureProfile;
+  LParent: Integer;
   LNode: TCompositionNode;
   LContents: TIntegerDynArray;
   LRoles: TContentNames;
@@ -1118,6 +1121,12 @@ begin
     if LNode.FRole = 'tabletop' then
     begin
       LRoles := ['plate', 'fork'];
+      LParent := FIndex.Find(LNode.FParentId);
+      if (LParent >= 0) and FurnitureProfile(FDocument.FNodes[LParent].FAssetId,
+        LFurniture) then
+      begin
+        LRoles := LFurniture.FFloor.FContent.FSupports[0].FAllowedRoles;
+      end;
     end;
     if LNode.FRole = 'plate-well' then
     begin

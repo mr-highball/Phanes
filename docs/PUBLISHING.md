@@ -12,6 +12,13 @@ Independent feature reviews remain recorded, but their unfinished full-product
 acceptance does not block this playable release. This publication does not claim
 completion of the broader product roadmap.
 
+The playable release also includes the mostly completed KayKit furniture batch:
+eight measured models selected by new Sitting room and Bedroom purposes in the
+named-room planner. Existing room programs retain their saved layouts. These
+new rooms include usable tabletops; exact floor-item replacement and additional
+modular placement controls remain unfinished. The owner requested publication
+after compilation and practical smoke checks rather than another critic cycle.
+
 The Ubuntu 24.04 runner installs an FPC bootstrap, builds pinned FPC and pas2js
 revisions using `tools/ci-toolchain.sh`, and caches the toolchain by script hash.
 It checks out both submodules from the URLs in `.gitmodules` at their recorded

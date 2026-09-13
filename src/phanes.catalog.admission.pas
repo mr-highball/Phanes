@@ -29,7 +29,7 @@ unit phanes.catalog.admission;
 interface
 
 type
-  TOptionalAssetDomain = (oadInterior, oadRegional);
+  TOptionalAssetDomain = (oadInterior, oadRegional, oadFurnishing);
 
   TOptionalAssetAdmission = record
     FDomain: TOptionalAssetDomain;
@@ -60,7 +60,7 @@ function OptionalAssetIds: TOptionalAssetIds;
 implementation
 
 uses
-  phanes.catalog.objects, phanes.catalog.regional;
+  phanes.catalog.objects, phanes.catalog.regional, phanes.catalog.furniture;
 
 const
   BookId = 'phanes.catalog.book.kaykit-single.v1';
@@ -92,6 +92,7 @@ function OptionalAssetAdmission(const AId: String;
 var
   LObject: TObjectAssetAdmission;
   LRegional: TRegionalAssetAdmission;
+  LFurniture: TFurnitureProfile;
 begin
   ClearAdmission(AAdmission);
   Result := True;
@@ -177,6 +178,26 @@ begin
     AAdmission.FVertices := LRegional.FVertices;
     AAdmission.FTexturePixels := LRegional.FTexturePixels;
   end else
+  if FurnitureProfile(AId, LFurniture) then
+  begin
+    AAdmission.FDomain := oadFurnishing;
+    AAdmission.FId := LFurniture.FFloor.FContent.FId;
+    AAdmission.FKitId := LFurniture.FKitId;
+    AAdmission.FModelId := LFurniture.FModelId;
+    AAdmission.FSourceSha256 := LFurniture.FSourceSha256;
+    AAdmission.FManifestSha256 := LFurniture.FManifestSha256;
+    AAdmission.FCategory := LFurniture.FCategory;
+    AAdmission.FSubcategory := LFurniture.FSubcategory;
+    AAdmission.FRole := LFurniture.FFloor.FContent.FRole;
+    AAdmission.FName := LFurniture.FFloor.FContent.FName;
+    AAdmission.FUniformScale := LFurniture.FUniformScale;
+    AAdmission.FWidth := LFurniture.FFloor.FContent.FWidth;
+    AAdmission.FDepth := LFurniture.FFloor.FContent.FDepth;
+    AAdmission.FHeight := LFurniture.FFloor.FContent.FHeight;
+    AAdmission.FTriangles := LFurniture.FTriangles;
+    AAdmission.FVertices := LFurniture.FVertices;
+    AAdmission.FTexturePixels := LFurniture.FTexturePixels;
+  end else
   begin
     Result := False;
   end;
@@ -186,11 +207,13 @@ function OptionalAssetIds: TOptionalAssetIds;
 var
   LObjectIds: TObjectAssetIds;
   LIds: TRegionalAssetIds;
+  LFurnitureIds: TFurnitureIds;
   I: Integer;
 begin
   LObjectIds := ObjectAssetIds;
   LIds := RegionalAssetIds;
-  SetLength(Result, 2 + Length(LObjectIds) + Length(LIds));
+  LFurnitureIds := FurnitureIds;
+  SetLength(Result, 2 + Length(LObjectIds) + Length(LIds) + Length(LFurnitureIds));
   Result[0] := BookId;
   Result[1] := VaseId;
   for I := 0 to High(LObjectIds) do
@@ -200,6 +223,10 @@ begin
   for I := 0 to High(LIds) do
   begin
     Result[I + 2 + Length(LObjectIds)] := LIds[I];
+  end;
+  for I := 0 to High(LFurnitureIds) do
+  begin
+    Result[I + 2 + Length(LObjectIds) + Length(LIds)] := LFurnitureIds[I];
   end;
 end;
 

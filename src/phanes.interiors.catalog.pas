@@ -55,7 +55,7 @@ function InteriorAssemblyAsset(const AId: String; out AAsset: TContentAsset): Bo
 implementation
 
 uses
-  phanes.catalog.admission;
+  phanes.catalog.admission, phanes.catalog.furniture;
 
 function InteriorAsset(const AId: String; out AAsset: TInteriorAsset): Boolean;
 var
@@ -313,7 +313,8 @@ begin
       AAsset.FBlue := 0.53;
     end;
   end
-  else if OptionalAssetAdmission(AId, LOptional) and (LOptional.FDomain = oadInterior) then
+  else if OptionalAssetAdmission(AId, LOptional) and
+    (LOptional.FDomain in [oadInterior, oadFurnishing]) then
   begin
     AAsset.FName := LOptional.FName;
     AAsset.FRole := LOptional.FRole;
@@ -450,10 +451,18 @@ end;
 function InteriorAssemblyAsset(const AId: String; out AAsset: TContentAsset): Boolean;
 var
   LInterior: TInteriorAsset;
+  LFurniture: TFurnitureProfile;
   LSupport: TContentSupport;
   I: Integer;
 begin
   AAsset := Default(TContentAsset);
+  { Furniture supports follow their measured source geometry, before the
+    legacy role-based profiles used by existing saved tables and shelves. }
+  if FurnitureProfile(AId, LFurniture) then
+  begin
+    AAsset := LFurniture.FFloor.FContent;
+    Exit(True);
+  end;
   Result := InteriorAsset(AId, LInterior);
   if not Result then
   begin

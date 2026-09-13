@@ -135,7 +135,9 @@ var
     begin
       Exit;
     end;
-    if not OptionalAssetAdmission(AId, LAdmission) or (LAdmission.FDomain <> ADomain) then
+    if not OptionalAssetAdmission(AId, LAdmission) or
+      ((LAdmission.FDomain <> ADomain) and
+      not ((ADomain = oadInterior) and (LAdmission.FDomain = oadFurnishing))) then
     begin
       raise Exception.Create('This catalog item is not admitted for this placement: ' + AId);
     end;

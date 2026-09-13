@@ -38,15 +38,17 @@ function SurfaceRequest(const ADocument: TCompositionDocument; const ASurfaceId:
 implementation
 
 uses
-  SysUtils,
+  SysUtils, Math,
   phanes.composition.document,
-  phanes.interiors.catalog;
+  phanes.interiors.catalog, phanes.catalog.furniture;
 
 function SurfaceRequest(const ADocument: TCompositionDocument; const ASurfaceId: String;
   out ARequest: TContentRequest; out AReason: String): Boolean;
 var
   LIndex: TCompositionIndex;
   LSurface: Integer;
+  LParent: Integer;
+  LFurniture: TFurnitureProfile;
   LSlot: TContentSlot;
   LProfile: TContentSupport;
   LNode: TCompositionNode;
@@ -70,7 +72,40 @@ begin
     ARequest.FExpectedRevision := ADocument.FRevision;
     ARequest.FAssets := InteriorContentAssets;
     SetLength(ARequest.FSlots, 4);
-    if ADocument.FNodes[LSurface].FAssetId = 'phanes.support.shelf.v1' then
+    LParent := LIndex.Find(ADocument.FNodes[LSurface].FParentId);
+    if (LParent >= 0) and FurnitureProfile(ADocument.FNodes[LParent].FAssetId,
+      LFurniture) then
+    begin
+      { A surface ID alone is insufficient: the exact furniture profile owns
+        its measured contact plane and usable rectangle. }
+      if (Length(LFurniture.FFloor.FContent.FSupports) <> 1) or
+        (ASurfaceId <> ADocument.FNodes[LParent].FId + '.top') then
+      begin
+        Exit;
+      end;
+      LProfile := LFurniture.FFloor.FContent.FSupports[0];
+      if ADocument.FNodes[LSurface].FAssetId <> LProfile.FAssetId then
+      begin
+        Exit;
+      end;
+      ARequest.FSurfaceWidth := LProfile.FWidth;
+      ARequest.FSurfaceDepth := LProfile.FDepth;
+      ARequest.FHeadroom := LProfile.FHeadroom;
+      for I := 0 to 3 do
+      begin
+        LSlot := Default(TContentSlot);
+        LSlot.FObjectId := ASurfaceId + '.item-' + IntToStr(I);
+        LSlot.FWidth := Min(450, LProfile.FWidth div 2 - 80);
+        LSlot.FDepth := Min(400, LProfile.FDepth div 2 - 80);
+        LSlot.FHeight := LProfile.FHeadroom;
+        LSlot.FX := (2 * (I mod 2) - 1) * (LProfile.FWidth div 4);
+        LSlot.FZ := (2 * (I div 2) - 1) * (LProfile.FDepth div 4);
+        LSlot.FAllowedRoles := LProfile.FAllowedRoles;
+        LSlot.FAllowEmpty := True;
+        ARequest.FSlots[I] := LSlot;
+      end;
+    end
+    else if ADocument.FNodes[LSurface].FAssetId = 'phanes.support.shelf.v1' then
     begin
       ARequest.FSurfaceWidth := 720;
       ARequest.FSurfaceDepth := 420;
@@ -235,4 +270,3 @@ begin
 end;
 
 end.
-

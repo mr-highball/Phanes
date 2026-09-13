@@ -37,6 +37,8 @@ const
   EmptyRoomProgram = 'phanes.space.empty.v1';
   BathroomProgram = 'phanes.space.bathroom.v1';
   LaboratoryProgram = 'phanes.space.laboratory.v1';
+  SittingRoomProgram = 'phanes.space.sitting-room.v1';
+  BedroomProgram = 'phanes.space.bedroom.v1';
 
 function RoomProgramName(const AId: String): UnicodeString;
 function RoomProgramRequest(const ARoom: TCompositionNode;
@@ -48,6 +50,7 @@ implementation
 uses
   Math,
   phanes.interiors.catalog,
+  phanes.catalog.furniture,
   phanes.spaces.floor.validate;
 
 function RoomProgramName(const AId: String): UnicodeString;
@@ -64,6 +67,14 @@ begin
   else if AId = LaboratoryProgram then
   begin
     Result := 'Laboratory';
+  end
+  else if AId = SittingRoomProgram then
+  begin
+    Result := 'Sitting room';
+  end
+  else if AId = BedroomProgram then
+  begin
+    Result := 'Bedroom';
   end;
 end;
 
@@ -75,6 +86,8 @@ const
     'phanes.fixture.shower.v1', 'phanes.fixture.console.v1');
 var
   LStart: Integer;
+  LIds: TFurnitureIds;
+  LProfile: TFurnitureProfile;
   I: Integer;
 begin
   Result := InteriorContentAssets;
@@ -84,6 +97,14 @@ begin
   begin
     InteriorAssemblyAsset(CIds[I], Result[LStart + I]);
   end;
+  LIds := FurnitureIds;
+  LStart := Length(Result);
+  SetLength(Result, LStart + Length(LIds));
+  for I := 0 to High(LIds) do
+  begin
+    FurnitureProfile(LIds[I], LProfile);
+    Result[LStart + I] := LProfile.FFloor.FContent;
+  end;
 end;
 
 function RoomProgramRequest(const ARoom: TCompositionNode;
@@ -91,6 +112,12 @@ function RoomProgramRequest(const ARoom: TCompositionNode;
 var
   LDimensions: array[0..2] of Double;
   LValue: Double;
+  LIds: TFurnitureIds;
+  LProfile: TFurnitureProfile;
+  LRole: String;
+  LIndex: Integer;
+  LQuota: Integer;
+  LNewProgram: Boolean;
   I: Integer;
 
   procedure AddFixture(const AId: String; const AFront: Integer;
@@ -169,6 +196,54 @@ begin
     AddFixture('phanes.table.lab.v1', 0, []);
     AddFixture('phanes.fixture.console.v1', 2, ['power']);
     AddFixture('phanes.shelf.oak.v1', 0, []);
+  end;
+  LNewProgram := (ARoom.FAssetId = SittingRoomProgram) or
+    (ARoom.FAssetId = BedroomProgram);
+  if LNewProgram then
+  begin
+    LIds := FurnitureIds;
+    for I := 0 to High(LIds) do
+    begin
+      FurnitureProfile(LIds[I], LProfile);
+      LRole := LProfile.FFloor.FContent.FRole;
+      if (LRole = 'chair') or (LRole = 'table') or
+        ((ARoom.FAssetId = SittingRoomProgram) and (LRole = 'sofa')) or
+        ((ARoom.FAssetId = BedroomProgram) and (LRole = 'bed')) then
+      begin
+        LIndex := Length(ARequest.FAssets);
+        SetLength(ARequest.FAssets, LIndex + 1);
+        ARequest.FAssets[LIndex] := LProfile.FFloor;
+        { Quotas count independently useful furniture roles, not each visual
+          variant. One bed does not become two when another model is admitted. }
+        LQuota := 0;
+        while (LQuota < Length(ARequest.FQuotas)) and
+          (ARequest.FQuotas[LQuota].FRole <> LRole) do
+        begin
+          Inc(LQuota);
+        end;
+        if LQuota = Length(ARequest.FQuotas) then
+        begin
+          SetLength(ARequest.FQuotas, LQuota + 1);
+          ARequest.FQuotas[LQuota].FRole := LRole;
+          ARequest.FQuotas[LQuota].FMinimum := 1;
+          ARequest.FQuotas[LQuota].FMaximum := 1;
+        end;
+      end;
+    end;
+    { These new v1 programs choose the finest admitted lattice from this fixed
+      sequence. Larger complete footprints and variants retain the existing
+      work allowance; neither meshes nor the player are scaled to fit. Old
+      programs retain their original pitch rule and saved-pose interpretation. }
+    ARequest.FPitch := 750;
+    while ARequest.FPitch <= 1500 do
+    begin
+      if ValidateFloorRequest(ARequest, AReason) then
+      begin
+        Exit(True);
+      end;
+      Inc(ARequest.FPitch, 250);
+    end;
+    Exit(False);
   end;
   { The empty program still has a declared fixture so the generic
     floor adapter has a catalog domain; its exact zero quota admits only floor. }
