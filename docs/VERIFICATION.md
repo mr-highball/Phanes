@@ -54,8 +54,37 @@ fixture now reads `cluster` with the production-equivalent default of one and
 validates its baseline before route checks. The native buildings suite passes
 308 assertions after the correction; retained before/after logs are
 `build/logs/ci-34727812670-buildings-before-fix.log` and
-`build/logs/ci-34727812670-buildings-after-fix.log`. A clean Actions rerun remains
-required.
+`build/logs/ci-34727812670-buildings-after-fix.log`. The subsequent clean run
+below also passed these checks.
+
+Actions run 34728304188 at `baef6a54` passed every native corpus and world
+check, rebuilt Castle, compiled the web application and staged Pages. The
+existing pas2js named-room harness then reached its fixed 60-second deadline.
+A fresh local build reproduced the failure. A bounded diagnostic completed the
+1,060-check programs phase at 282.581 seconds before the later plan checks hit
+its provisional ceiling. The expanded content catalog amplified two all-pairs
+`NewRule` loops: each call synchronized the entire WFC graph again.
+
+Contents generation now assigns the same complete reciprocal east/west rules
+through WFC's existing public bulk API, as floor generation already does. Every
+group and direction owns a detached value array. Catalog choices, quotas,
+mapped-pass requirements, caller domains and independent validation are retained.
+The original 60-second browser deadlines are unchanged. The full named-room
+suite passes 1,119 core and 513 critic assertions in 5.409 seconds; room-world
+integration passes 1,163 world and 10,071 wall assertions in 7.933 seconds.
+Native composition/assembly checks, 308 modular-building checks, room integration
+and all 4,609 house-profile/optional-object checks also pass. Logs use the
+`build/logs/contents-bulk-` prefix; frozen browser evidence is in
+`build/contents-bulk-spaces-evidence-01.json` and
+`build/contents-bulk-integration-evidence-01.json`.
+These are local suite observations, not phone or rendering benchmarks. A new
+web build, actual application journeys and independent review remain required.
+
+The clean staged site from run 34728304188 contains 9,235 files and 716,712,333
+bytes within the 900,000,000-byte budget. Its generated catalog geometry report
+has a different raw hash from the local report with the same byte length. The
+workflow now retains generated geometry and music-reference reports alongside
+build evidence so their differences can be assessed before review renewal.
 
 The object-catalog candidate adds twelve measured leaf models to the existing
 book/vase pair: books, artifacts, equipment and four food items. The shared

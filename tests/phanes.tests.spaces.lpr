@@ -405,10 +405,18 @@ begin
 end;
 
 begin
+  WriteLn('PHASE programs start checks=', GChecks);
   TestPrograms;
+  WriteLn('PHASE programs complete checks=', GChecks);
+  WriteLn('PHASE plans start checks=', GChecks);
   TestPlans;
+  WriteLn('PHASE plans complete checks=', GChecks);
+  WriteLn('PHASE namespaces start checks=', GChecks);
   TestReservedNamespaces;
+  WriteLn('PHASE namespaces complete checks=', GChecks);
   WriteLn('PASS: ', GChecks, ' named-room composition checks');
+  WriteLn('PHASE critic start');
   GCriticChecks := RunSpaceCriticChecks;
+  WriteLn('PHASE critic complete checks=', GCriticChecks);
   WriteLn('PASS: ', GCriticChecks, ' independent named-room critic checks');
 end.

@@ -32,10 +32,18 @@ const path = require('node:path');
   const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER });
   const messages = [];
   const started = performance.now();
+  const phases = [];
+  const suiteTimeoutMs = 60_000;
   let timeout;
   try {
     const page = await browser.newPage();
-    page.on('console', (message) => messages.push(message.text()));
+    page.on('console', (message) => {
+      const text = message.text();
+      messages.push(text);
+      if (text.startsWith('PHASE ')) {
+        phases.push({ elapsedMs: performance.now() - started, text });
+      }
+    });
     const execution = page.evaluate((compiledPascal) => {
       (0, eval)(compiledPascal);
       try {
@@ -47,10 +55,13 @@ const path = require('node:path');
     await Promise.race([
       execution,
       new Promise((_, reject) => {
-        timeout = setTimeout(() => reject(new Error('Spaces browser suite exceeded 60 seconds')), 60_000);
+        timeout = setTimeout(
+          () => reject(new Error('Spaces browser suite exceeded 60 seconds')),
+          suiteTimeoutMs,
+        );
       }),
     ]);
-    const result = { passed: true, elapsedMs: performance.now() - started, messages };
+    const result = { passed: true, elapsedMs: performance.now() - started, phases, messages };
     fs.writeFileSync(
       path.join(root, 'build/spaces-browser-evidence.json'),
       JSON.stringify(result, null, 2),
@@ -60,7 +71,7 @@ const path = require('node:path');
   } catch (error) {
     fs.writeFileSync(
       path.join(root, 'build/spaces-browser-evidence.json'),
-      JSON.stringify({ passed: false, messages, error: String(error) }, null, 2),
+      JSON.stringify({ passed: false, phases, messages, error: String(error) }, null, 2),
     );
     console.log(messages.join('\n'));
     throw error;

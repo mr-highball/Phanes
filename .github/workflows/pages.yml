@@ -76,7 +76,9 @@ jobs:
           ./tools/assets.ps1 -Action verify-kits
           ./tools/test-kits.ps1
           ./tools/catalog-inspect.ps1 -WithTests
+          Copy-Item data/catalog-geometry.json build/catalog-geometry-evidence.json
           ./tools/assets.ps1 -Action verify-music
+          Copy-Item data/music/references.json build/music-references-evidence.json
           ./tools/test-music.ps1
           ./tools/assets.ps1 -Action verify-materials
           ./tools/test-landscape.ps1

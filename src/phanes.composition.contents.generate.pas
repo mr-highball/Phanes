@@ -44,6 +44,30 @@ uses
   phanes.composition.contents.assembly,
   phanes.composition.contents.validate;
 
+procedure AllowAllContentsNeighbors(const AGraph: TGraph; const AValues: TGraphValues);
+var
+  LRules: TGraphRules;
+  I: Integer;
+begin
+  { Slots have independently checked, disjoint volumes. Every value may neighbor
+    every other value, so this complete matrix is already reciprocal. WFC's
+    scalar NewRule synchronizes the whole graph after each pair; use its public
+    bulk Rules path, as the floor generator does. Keep each group and direction
+    detached so later rule handling cannot alias another group in pas2js. }
+  for I := 0 to High(AValues) do
+  begin
+    LRules := nil;
+    SetLength(LRules, 2);
+    LRules[0].Key := gdWest;
+    LRules[0].Info := False;
+    LRules[0].Value := Copy(AValues, 0, Length(AValues));
+    LRules[1].Key := gdEast;
+    LRules[1].Info := False;
+    LRules[1].Value := Copy(AValues, 0, Length(AValues));
+    AGraph.Rules[AValues[I]].Rules := LRules;
+  end;
+end;
+
 function GenerateContents(const ABaseline: TCompositionDocument;
   const ARequest: TContentRequest; var ACommitted: TCompositionDocument;
   out AReason: String): Boolean;
@@ -63,7 +87,6 @@ var
   LAllowedRoles: TGraphValues;
   LAllowedLooks: TGraphValues;
   LValue: String;
-  LOther: String;
   LRole: String;
   LChosen: String;
   LEditable: array of Boolean;
@@ -181,13 +204,7 @@ begin
     begin
       LGraph.AddValue(LValue);
     end;
-    for LValue in LRoles do
-    begin
-      for LOther in LRoles do
-      begin
-        LGraph.Rules[LValue].NewRule([gdEast, gdWest], LOther);
-      end;
-    end;
+    AllowAllContentsNeighbors(LGraph, LRoles);
     for I := 0 to High(ARequest.FQuotas) do
     begin
       LGraph.RequireValueQuota(MakeGraphValueQuotaConstraint('count-' + IntToStr(I),
@@ -204,13 +221,7 @@ begin
       LGraph.AddValue('asset:' + LAsset.FId).RequireMappedFromPass('contents',
         MakeGraphPassCellQuery(['role:' + LAsset.FRole]));
     end;
-    for LValue in LLooks do
-    begin
-      for LOther in LLooks do
-      begin
-        LGraph.Rules[LValue].NewRule([gdEast, gdWest], LOther);
-      end;
-    end;
+    AllowAllContentsNeighbors(LGraph, LLooks);
     for I := 0 to High(ARequest.FSlots) do
     begin
       LSlot := ARequest.FSlots[I];
