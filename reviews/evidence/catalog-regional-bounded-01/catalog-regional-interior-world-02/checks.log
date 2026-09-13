@@ -1,0 +1,67 @@
+PASS Actual Create world UI publishes a 4 by 4 world
+PASS Validated generation places the requested cabin
+PASS Generated studio exposes a supported book
+PASS Generated studio exposes a supported ornament
+PASS Replacement appears in the actual object controls
+PASS Object replacement publishes the chosen asset
+PASS Book replacement preserves every unaffected composition node exactly
+PASS Replacement appears in the actual object controls
+PASS Object replacement publishes the chosen asset
+PASS Replacement appears in the actual object controls
+PASS Object replacement publishes the chosen asset
+PASS Vase replacement preserves every unaffected composition node exactly
+PASS Published world contains the selected catalog book
+PASS Published world contains the selected catalog vase
+PASS Resident statistics expose usage and enforced limits
+PASS Optional-world publication has no browser errors before reload
+PASS Saved-session reload restores the exact optional world
+PASS Saved-session reload restores optional-world edit history
+PASS Saved-session reload restores optional-world selection
+PASS Resident statistics expose usage and enforced limits
+PASS Interior Undo restores the exact prior world snapshot
+PASS Interior Redo restores the exact catalog world snapshot
+PASS Replacement appears in the actual object controls
+PASS Object replacement publishes the chosen asset
+PASS Replacement appears in the actual object controls
+PASS Object replacement publishes the chosen asset
+PASS Replacement appears in the actual object controls
+PASS Object replacement publishes the chosen asset
+PASS Real object edits remove every optional model from the world
+PASS Resident statistics expose usage and enforced limits
+PASS Retirement releases all optional model residency counters
+PASS Retirement has no browser errors before reload
+PASS Saved-session reload restores the exact current world
+PASS Saved-session reload restores exact edit history
+PASS Saved-session reload restores the exact selection
+PASS Reload does not reacquire models absent from the current world
+PASS Undo target contains an optional model for the failure journey
+PASS Held preparation leaves the old world visible
+PASS Held preparation leaves undo history unchanged
+PASS Held preparation leaves selection unchanged
+PASS Cancel preserves the exact old world
+PASS Cancel preserves exact undo history
+PASS Cancel preserves exact redo history
+PASS Cancel preserves the exact selection
+PASS Cancelled native fetch rejection does not escape to the page
+PASS Selection cancellation preserves the exact old world
+PASS Selection cancellation preserves exact undo history
+PASS Selection cancellation preserves exact redo history
+PASS Selection cancellation retains the newly chosen valid selection
+PASS Released stale fetch cannot overwrite the old world
+PASS Selection-cancelled native fetch rejection does not escape to the page
+PASS Failure journey restores its original selection
+PASS Failed preparation preserves the exact old world
+PASS Failed preparation preserves exact undo history
+PASS Failed preparation preserves the exact selection
+PASS Retry acquires the optional model and publishes the exact undo target
+PASS Successful retry clears the previous preparation error
+PASS Resident statistics expose usage and enforced limits
+PASS Catalog world journey has no browser errors
+PASS Actual module UI creates one world-space home
+PASS Validated modular replacement publishes the chosen asset
+PASS Resident statistics expose usage and enforced limits
+PASS Validated modular replacement publishes the chosen asset
+PASS Modular retirement releases the optional raw scene and derived model
+PASS Modular Undo reacquires and restores the exact optional book world
+PASS Resident statistics expose usage and enforced limits
+PASS Studio and modular cache journeys have no browser errors
