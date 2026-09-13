@@ -1,5 +1,33 @@
 # Initialization verification
 
+## Contents and room renewal, 2026-09-13
+
+The current local runtime passes 188 optional-object application checks and
+24 named-room creation, picking, save/history and graphics-recovery checks.
+Source, built outputs, screenshots and results are bound by the provenance in
+`build/contents-bulk-local-objects-01` and `build/contents-bulk-local-rooms-01`.
+The LAN candidate now serves immutable stage
+`build/pages/ed2079067b215bbe264ff3da18cf5e90cf7829b1904d230564f5c81c4451a771`:
+9,253 files and 770,798,716 bytes. It differs from the tested stage only in the
+canonical catalog geometry metadata; five served file hashes match the stage
+(`build/contents-bulk-local-stage-comparison-02.json` and
+`build/contents-bulk-local-http-02/result.json`).
+
+Luna renewed the full registered named-room-programs and granular-interiors
+scopes in reports `named-room-programs-03.json` and `granular-interiors-05.json`.
+Both pass with B+ intuitiveness, accuracy and wow factor, and A- thinking out
+of the box. All 76 and 57 declared input fingerprints and each report's 22
+evidence fingerprints were independently checked during integration
+(`build/contents-renewal-review-verification-01.json`). Registry pointers now
+select these reports. The checker passes its 26 regressions and these two
+features; fifteen other features remain held
+(`build/logs/contents-renewal-gate-01.log`).
+
+Actions run 34731462559 at `39dfa84a` passed native checks, the clean web build
+and staging, and is running application browser checks. Its final result,
+engine-adoption renewal, physical-phone recovery qualification and the remaining
+feature gates are still required. Local browser phone dimensions are emulated.
+
 ## 2026-09-12 development checkpoint
 
 The current integration candidate pins CGE commit

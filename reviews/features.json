@@ -482,7 +482,7 @@
         "src/phanes.groundworks.assembly.pas",
         "src/phanes.groundworks.geometry.pas"
       ],
-      "review": "reviews/named-room-programs-02.json"
+      "review": "reviews/named-room-programs-03.json"
     },
     {
       "id": "granular-interiors",
@@ -546,7 +546,7 @@
         "cge/code/phanes.scene.picking.pas",
         "src/phanes.interiors.surfaces.pas"
       ],
-      "review": "reviews/granular-interiors-04.json"
+      "review": "reviews/granular-interiors-05.json"
     },
     {
       "id": "critic-workflow",
