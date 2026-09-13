@@ -42,6 +42,7 @@ var
   GExistingCount: Integer;
   GNature: Boolean;
   GEquipment: Boolean;
+  GFurniture: Boolean;
 
 function Quoted(const AText: String): String;
 begin
@@ -60,6 +61,70 @@ begin
     end;
   end;
   Result := False;
+end;
+
+function NameMatches(const AText: String; const AWords: array of String): Boolean;
+var
+  LTokens: String;
+  I: Integer;
+begin
+  { Split delimiters and CamelCase before matching whole words: vegetable is
+    food, while Table_Long, BedKing and SmallSofa are furniture names. }
+  LTokens := ' ';
+  for I := 1 to Length(AText) do
+  begin
+    if not (AText[I] in ['a'..'z', 'A'..'Z']) then
+    begin
+      LTokens := LTokens + ' ';
+    end else
+    begin
+      if (I > 1) and (AText[I] in ['A'..'Z']) and
+        (AText[I - 1] in ['a'..'z']) then
+      begin
+        LTokens := LTokens + ' ';
+      end;
+      LTokens := LTokens + LowerCase(AText[I]);
+    end;
+  end;
+  LTokens := LTokens + ' ';
+  for I := 0 to High(AWords) do
+  begin
+    if Pos(' ' + AWords[I] + ' ', LTokens) > 0 then
+    begin
+      Exit(True);
+    end;
+  end;
+  Result := False;
+end;
+
+procedure FurnitureSize(const AName: String; out ACategory: String;
+  out ATarget: Double);
+begin
+  Require(not NameMatches(AName, ['table', 'kitchentable', 'desk', 'shelf', 'shelves', 'bookcase',
+    'bookshelf', 'counter', 'workbench', 'sink']),
+    'requires editable furniture supports or plumbing placement');
+  Require(not NameMatches(AName, ['bed', 'bunk', 'king', 'large', 'big', 'long']),
+    'requires a larger furniture footprint');
+  ACategory := '';
+  ATarget := 0;
+  if NameMatches(AName, ['sofa', 'couch']) then
+  begin
+    ACategory := 'Sofas';
+    ATarget := 1.7;
+  end else if NameMatches(AName, ['bench']) then
+  begin
+    ACategory := 'Benches';
+    ATarget := 1.5;
+  end else if NameMatches(AName, ['cabinet', 'kitchencabinet', 'dresser', 'wardrobe']) then
+  begin
+    ACategory := 'Cabinets';
+    ATarget := 1.2;
+  end else if NameMatches(AName, ['chair', 'armchair', 'stool', 'ottoman']) then
+  begin
+    ACategory := 'Seating';
+    ATarget := 0.9;
+  end;
+  Require(ACategory <> '', 'outside the compact freestanding furniture categories');
 end;
 
 function VerifiedBytes(const AFile: TJSONObject): TBytes;
@@ -236,9 +301,13 @@ begin
         'carpet', 'rug', 'fence', 'gate', 'bridge', 'mast', 'flag', 'boat', 'ship',
         'cannon', 'palm', 'grass', 'patch', 'extractor', 'shower', 'bathtub']),
         'requires structural, wall, terrain or special placement');
-      Require(not Matches(LName, ['table', 'desk', 'shelf', 'shelves', 'bookcase',
-        'cabinet', 'counter', 'bed', 'couch', 'sofa', 'sink']),
-        'requires measured furniture supports or multi-floor footprint');
+      if not GFurniture then
+      begin
+        Require(not (NameMatches(AModel.Get('name', ''), ['table', 'kitchentable']) or
+          Matches(LName, ['desk', 'shelf', 'shelves', 'bookcase',
+          'cabinet', 'counter', 'bed', 'couch', 'sofa', 'sink'])),
+          'requires measured furniture supports or multi-floor footprint');
+      end;
       LCategory := 'Objects';
       LRole := 'ornament';
       LTarget := 0.45;
@@ -265,6 +334,11 @@ begin
       begin
         LCategory := 'Lighting props';
         LTarget := 1.5;
+      end;
+      if GFurniture then
+      begin
+        FurnitureSize(AModel.Get('name', ''), LCategory, LTarget);
+        LRole := 'ornament';
       end;
       if GEquipment then
       begin
@@ -365,7 +439,7 @@ begin
         'animation requires separate integration');
       Require((LJSON.Find('skins') = nil) or (LJSON.Arrays['skins'].Count = 0),
         'skinned mesh requires separate integration');
-      if (GNature or GEquipment) and (LJSON.Find('materials') <> nil) then
+      if (GNature or GEquipment or GFurniture) and (LJSON.Find('materials') <> nil) then
       begin
         for I := 0 to LJSON.Arrays['materials'].Count - 1 do
         begin
@@ -385,6 +459,10 @@ begin
     if GEquipment then
     begin
       LId := StringReplace(LId, '.batch.', '.batch.equipment.', []);
+    end;
+    if GFurniture then
+    begin
+      LId := StringReplace(LId, '.batch.', '.batch.furniture.', []);
     end;
     Require(GProfiles.IndexOf(LId) < 0, 'asset id collision');
     GProfiles.AddObject(LId, LRow);
@@ -440,10 +518,18 @@ var
   J: Integer;
 begin
   Require((ParamCount <= 2) and ((ParamStr(2) = '') or
-    (ParamStr(2) = '--nature') or (ParamStr(2) = '--equipment')),
-    'Usage: catalog-batch [published-root] [--nature|--equipment]');
+    (ParamStr(2) = '--nature') or (ParamStr(2) = '--equipment') or
+    (ParamStr(2) = '--furniture')),
+    'Usage: catalog-batch [published-root] [--nature|--equipment|--furniture]');
+  Require(not NameMatches('maki-vegetable', ['table']) and
+    not NameMatches('skewer-vegetables', ['table']) and
+    NameMatches('Table_Long.gltf', ['table']) and
+    NameMatches('kitchentable_A', ['table', 'kitchentable']) and
+    NameMatches('BedKing', ['bed']) and NameMatches('SmallSofa', ['sofa']) and
+    NameMatches('kitchencabinet_corner', ['kitchencabinet']), 'name matching regression');
   GNature := ParamStr(2) = '--nature';
   GEquipment := ParamStr(2) = '--equipment';
+  GFurniture := ParamStr(2) = '--furniture';
   LPrefix := 'phanes.catalog.batch.';
   LType := 'TObjectAssetAdmission';
   LIncludePath := 'src/phanes.catalog.batch.inc';
@@ -460,6 +546,12 @@ begin
     LPrefix := 'phanes.catalog.batch.equipment.';
     LIncludePath := 'src/phanes.catalog.equipment.inc';
     LReportPath := 'data/catalog-integration-equipment.json';
+  end;
+  if GFurniture then
+  begin
+    LPrefix := 'phanes.catalog.batch.furniture.';
+    LIncludePath := 'src/phanes.catalog.furniture.batch.inc';
+    LReportPath := 'data/catalog-integration-furniture.json';
   end;
   GSite := ParamStr(1);
   if GSite = '' then
@@ -486,7 +578,9 @@ begin
   LIds := OptionalAssetIds;
   for I := 0 to High(LIds) do
   begin
+    { Earlier batch ledgers remain reproducible after furniture re-screening. }
     if (Pos(LPrefix, LIds[I]) <> 1) and
+      (Pos('phanes.catalog.batch.furniture.', LIds[I]) <> 1) and
       OptionalAssetAdmission(LIds[I], LAdmission) then
     begin
       GExisting.Add(LAdmission.FModelId);
@@ -500,6 +594,15 @@ begin
     begin
       if not Matches(LKit.Get('id', ''), ['mini-forest', 'nature-pack',
         'nature-megakit', 'trees-and-bushes', 'textured-trees', 'crops-pack']) then
+      begin
+        Continue;
+      end;
+    end else if GFurniture then
+    begin
+      if not Matches(LKit.Get('id', ''), ['furniture-bits', 'restaurant-bits',
+        'house-interior', 'furniture-low-poly', 'low-poly-furniture-1',
+        'dungeon-remastered', 'fantasy-props-megakit', 'sci-fi-essentials',
+        'space-station-kit', 'graveyard-kit']) then
       begin
         Continue;
       end;
@@ -595,12 +698,20 @@ begin
     LCode.Text := StringReplace(StringReplace(LCode.Text, 'BatchIds', 'EquipmentIds',
       [rfReplaceAll]), 'BatchAdmission', 'EquipmentAdmission', [rfReplaceAll]);
   end;
+  if GFurniture then
+  begin
+    LCode.Text := StringReplace(StringReplace(LCode.Text, 'BatchIds', 'FurnitureBatchIds',
+      [rfReplaceAll]), 'BatchAdmission', 'FurnitureBatchAdmission', [rfReplaceAll]);
+  end;
   WriteText(LIncludePath, LCode.Text);
   LReport := TJSONObject.Create;
   LReport.Add('version', 1);
   if GNature then
   begin
     LReport.Add('policy', 'static outdoor nature v1; uniform role-bounded normalization; no repairs');
+  end else if GFurniture then
+  begin
+    LReport.Add('policy', 'static compact furniture v1; uniform category sizes; no editable supports or repairs');
   end else if GEquipment then
   begin
     LReport.Add('policy', 'static freestanding equipment v1; uniform category sizes; no repairs');

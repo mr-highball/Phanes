@@ -24,7 +24,7 @@ SOFTWARE.
 [CmdletBinding()]
 param(
   [switch]$Regenerate,
-  [ValidateSet('props', 'nature', 'equipment')][string]$Category = 'props',
+  [ValidateSet('props', 'nature', 'equipment', 'furniture')][string]$Category = 'props',
   [string]$PublishedRoot = 'build/web',
   [string]$NativeCompiler = $(if ($env:FPC_NATIVE) { $env:FPC_NATIVE } else { 'fpc' })
 )
@@ -44,6 +44,7 @@ try {
     $importArguments = @($PublishedRoot)
     if ($Category -eq 'nature') { $importArguments += '--nature' }
     if ($Category -eq 'equipment') { $importArguments += '--equipment' }
+    if ($Category -eq 'furniture') { $importArguments += '--furniture' }
     & "$outputRoot/phanes.tools.catalog.batch$suffix" @importArguments
     if ($LASTEXITCODE -ne 0) { throw 'Batch importer failed' }
     if ($Category -eq 'nature') {
@@ -54,6 +55,7 @@ try {
   & $NativeCompiler @arguments "tests/$testProgram.lpr" *> "$outputRoot/placement-build.log"
   if ($LASTEXITCODE -ne 0) { throw "Placement checks compile failed: $outputRoot/placement-build.log" }
   $testMode = if ($Category -eq 'equipment') { '--catalog-equipment' } else { '--catalog-batch' }
+  if ($Category -eq 'furniture') { $testMode = '--catalog-furniture' }
   & "$outputRoot/$testProgram$suffix" $testMode
   if ($LASTEXITCODE -ne 0) { throw 'Batch placement checks failed' }
 } finally {

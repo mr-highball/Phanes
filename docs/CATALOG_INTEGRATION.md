@@ -1,20 +1,23 @@
 # Usable catalog integration
 
-The `catalog-integration` branch adds **991 selectable models** from existing
+The `catalog-integration` branch adds **1,021 selectable models** from existing
 downloads. The source inventory remains 8,365 files; no models were collected.
 
 | Batch | Screened | Newly passed | Set aside | Already integrated |
 | --- | ---: | ---: | ---: | ---: |
-| Floor props, food and seating | 915 | 553 | 347 | 15 |
+| Floor props, food and seating | 915 | 558 | 342 | 15 |
 | Outdoor nature | 343 | 237 | 90 | 16 |
 | Equipment and adventure props | 732 | 201 | 523 | 8 |
-| Total | 1,990 | 991 | 960 | 39 |
+| Compact furniture (re-screened kits) | 860 | 25 | 560 | 275 |
 
-These batches cover different source kits. Another 6,375 source models remain
-outside their scope; they are not counted as failures.
+The furniture batch revisits kits covered by earlier batches, so these rows must
+not be added as unique coverage. Across the ledgers, **1,990 distinct sources**
+have been screened: **1,021 newly admitted, 39 previously integrated and 930 still
+deferred**. A pass takes precedence over a historical failure for the same source.
+Another 6,375 source models remain outside scope; they are not counted as failures.
 
-The complete optional catalog now contains **1,031 source models**, up from 40.
-These are source-file counts, not a claim of 1,031 distinct geometric designs.
+The complete optional catalog now contains **1,061 source models**, up from 40.
+These are source-file counts, not a claim of 1,061 distinct geometric designs.
 Core and procedural choices are additional.
 
 ## Using the additions
@@ -51,6 +54,19 @@ containers do not open, tools are not usable equipment, and machinery is not
 simulated. Uniform longest-axis targets are 0.3 m for artifacts, 0.7 m for
 equipment, 0.8 m for containers, 1.2 m for technology and 1.4 m for sculptures.
 
+The compact furniture batch adds **11 cabinets, 6 sofas, 6 chairs and 2 benches**.
+Search Cabinets, Sofas, Seating or Benches in the same floor and density selectors.
+These are static furnishings; cabinet doors and their contents are not editable.
+Uniform longest-axis targets are 1.2 m for cabinets, 1.7 m for sofas, 0.9 m for
+chairs and 1.5 m for benches. Beds and explicitly large/long sofas are deferred
+instead of being shrunk into the current single-floor allowance. Tables and shelves
+remain deferred pending editable support surfaces. Existing furniture profiles
+and default mixtures are preserved.
+
+The name filter now matches `table` as a word, retaining the `kitchentable` alias.
+This recovers **five vegetable food models** previously mistaken for tables.
+All 553 previously passing floor-prop profiles retain their original values.
+
 ## Pass/fail ledger and quick workflow
 
 [`data/catalog-integration.json`](../data/catalog-integration.json) records every
@@ -72,7 +88,16 @@ records the equipment batch; `src/phanes.catalog.equipment.inc` is its registry.
 The 523 deferred entries include structural/attached parts and effects (257),
 models outside this category (146), furniture needing supports (32), download
 budgets (70), texture budgets (11), triangle budgets (4), degenerate bounds (2)
-and animation (1). Both previous ledgers remain intact.
+and animation (1). These counts describe the equipment screening.
+
+[`data/catalog-integration-furniture.json`](../data/catalog-integration-furniture.json)
+records the furniture re-screen; `src/phanes.catalog.furniture.batch.inc` is its
+registry. Of 860 source entries, 275 were already integrated and 25 pass now.
+The 560 failed screening rows include 280 structural/special placements, 164
+outside this category, 86 needing supports/plumbing, 25 larger footprints and
+5 sources over the four-MiB budget. Those are screening outcomes, not 560 broken
+furniture models. Earlier equipment/nature ledgers are historical snapshots;
+the first props ledger includes the five recovered foods.
 
 The native Pascal importer reuses the existing CGE geometry report. It verifies
 the inventory fingerprint, published kit manifests, model closures and file hashes;
@@ -82,7 +107,7 @@ It never re-decodes the full corpus, downloads assets or repairs rejected models
 The generated registry is `src/phanes.catalog.batch.inc`.
 
 Failures in the floor-props batch: 236 need structural, wall, terrain or special placement;
-110 need furniture supports or larger footprints; one contains animation.
+105 need furniture supports or larger footprints; one contains animation.
 
 ```powershell
 # Check all admitted profiles through the actual placement solver.
@@ -98,6 +123,10 @@ Failures in the floor-props batch: 236 need structural, wall, terrain or special
 # Equipment-only validation or regeneration, without repeating the older batches.
 ./tools/catalog-batch.ps1 -Category equipment
 ./tools/catalog-batch.ps1 -Category equipment -Regenerate -PublishedRoot build/web
+
+# Compact furniture only, reusing the same published sources and cached geometry.
+./tools/catalog-batch.ps1 -Category furniture
+./tools/catalog-batch.ps1 -Category furniture -Regenerate -PublishedRoot build/web
 ```
 
 Pass means mechanically admitted, not individually visually reviewed. The batch
@@ -138,3 +167,13 @@ renderer admission. Individual visual review of all 201 models is not claimed.
 Verified on 2026-09-13: web build passed; 1,657 native assertions covered the new
 equipment profiles and existing building behavior; 72 desktop/phone-layout browser
 assertions passed. All three ledgers and generated registries reproduced exactly.
+
+Compact furniture evidence is under `build/catalog-furniture-01/`. Verified on
+2026-09-13: web build passed; 601 furniture-only native assertions passed, then
+5,155 assertions covered all 784 generated floor profiles, including the five
+recovered foods. The population browser driver with `--catalog-furniture` passed
+72 desktop/phone-layout checks, sampling a Kenney bench, a decorated KayKit
+cabinet and a Quaternius sofa. Search, density, undo/redo and actual renderer
+admission passed; representative screenshots were inspected. The props and
+furniture registries/ledgers reproduced exactly. No full-corpus decode, physical
+phone test or individual visual review of every model was performed.

@@ -343,6 +343,11 @@ begin
     begin
       Continue;
     end;
+    if (ParamStr(1) = '--catalog-furniture') and
+      (Pos('phanes.catalog.batch.furniture.', LIds[I]) <> 1) then
+    begin
+      Continue;
+    end;
     Check(BuildingFloorRequest(AWorld.FComposition, LFloor, LRequest, GReason, LIds[I]),
       'Batch profile enters floor request');
     Check(Length(LRequest.FAssets) < 64, 'Catalog growth keeps placement domain bounded');
@@ -395,7 +400,8 @@ begin
   Check(LWorld.FComposition.FRevision = 1, 'One atomic composition revision');
   Check(LWorld.FDecisions > 0, 'Generation has actual WFC choices');
   FurnishingChecks(LWorld, LId);
-  if (ParamStr(1) = '--catalog-batch') or (ParamStr(1) = '--catalog-equipment') then
+  if (ParamStr(1) = '--catalog-batch') or (ParamStr(1) = '--catalog-equipment') or
+    (ParamStr(1) = '--catalog-furniture') then
   begin
     CatalogChecks(LWorld, LId);
   end;
