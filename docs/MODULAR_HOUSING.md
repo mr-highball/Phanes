@@ -71,17 +71,28 @@ No separate interior room is entered when walking into a modular home.
 ### Populate painted floors
 
 With a home selected, use Draw floors and Box, Brush or Lasso over its existing
-floor tiles. **Furnish selected floors** offers an exact furnishing, plants, or
-a mix of tables, chairs, shelves and plants, plus 10–100% density. The preview
-counts empty, unlocked selected floors belonging to that home. The target is
-that count times the chosen percentage, rounded up to a whole furnishing.
+floor tiles. **Furnish selected floors** offers a top-level category (Food,
+Kitchen, Seating and others), then an optional exact-model picker. Leave
+**Mix from…** selected for a category mixture. The single-floor picker uses
+the same categories. Search filters items within the chosen category.
 
-Population adds one primary furnishing per chosen tile, visiting tiles in a
-seeded shuffled order. Each placement uses the existing furniture solver and
-physical access checks. Occupied and locked floors are excluded; unsuccessful
-placements are skipped, so access constraints can produce fewer furnishings
-than requested. Existing objects, other homes and unselected tiles are preserved.
-The result reports the actual count; the entire batch uses one Undo/Redo step.
+Density targets **floor-area coverage**: summed admitted width × depth divided
+by the area of empty, unlocked selected floors. Small objects share tiles in
+non-overlapping measured slots; the result reports actual count and achieved
+coverage. This measures bounding footprints, not mesh volume or stacked objects.
+Category mixtures use up to three seed-selected model types per operation to
+bound source residency. Whole items and access constraints make the percentage
+approximate. Work is capped at 128 items per floor and 512 per operation; very
+small items can reach these caps before achieving the requested percentage.
+
+Floors are visited in seeded order. Each candidate floor uses the contents WFC
+solver and physical access checks. Occupied and locked floors are excluded;
+unsuccessful placements are skipped. Existing objects, other homes and unselected
+tiles are preserved. Packed objects have persistent individual IDs and support
+ownership; saved scenes reconstruct their slots from admitted dimensions.
+Clearing a floor removes its packed contents through the existing lock-aware
+contents solver. The entire population uses one Undo/Redo step. Legacy internal
+`plants` and `mixed` requests retain their old tile-count semantics.
 
 `tools/test-buildings.ps1` covers density, replay, scope, preservation and locks.
 `tests/phanes.tests.population.browser.lpr` exercises the controls, count feedback
@@ -90,8 +101,8 @@ path, site URL and evidence directory, using the standard Pascal browser tools.
 
 The current kit supports one storey, 2.8-metre walls, a flat roof, up to 256
 connected tiles and a maximum span of 64 metres. It admits dry footprints with
-reasonable terrain support and a clear entrance. One primary furnishing fits
-each floor tile, with independently editable supported contents. It does not
+reasonable terrain support and a clear entrance. A floor can hold several
+non-overlapping furnishings, with independently editable supported contents. It does not
 yet offer stairs, stacked storeys, free-angle walls or animated door motion.
 Existing imported houses retain their saved portal interiors; they are not
 silently converted to this new construction contract.

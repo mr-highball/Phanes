@@ -30,7 +30,7 @@ uses
   phanes.composition.types, phanes.composition.document,
   phanes.buildings.types, phanes.buildings.validate, phanes.buildings.furniture,
   phanes.catalog.objects, phanes.composition.contents.types,
-  phanes.composition.contents.generate;
+  phanes.composition.contents.generate, phanes.buildings.catalog;
 
 var
   GChecks: Integer;
@@ -321,6 +321,109 @@ begin
   Check(not GenerateWorld(LRequest, LRepeat, GReason), 'Batch cannot clear furnishings');
 end;
 
+procedure CoverageChecks;
+const
+  CLolly = 'phanes.catalog.batch.0ecae365dba6d4b8.v1';
+  CApple = 'phanes.catalog.batch.29126d7453aa558d.v1';
+var
+  LBase: TWorld;
+  LWorld: TWorld;
+  LOther: TWorld;
+  LRequest: TWorldRequest;
+  LRoot: String;
+  LFloor: String;
+  LIds: TContentNames;
+  LSeen: TContentNames;
+  LCount: Integer;
+  LFirst: Integer;
+  LSecond: Integer;
+  I: Integer;
+begin
+  LIds := FloorCatalogIds('Food');
+  Check(ContentRoleAllowed(LIds, CLolly), 'Food category includes lollipop');
+  Check(not ContentRoleAllowed(FloorCatalogIds('Kitchen'), CLolly),
+    'Kitchen picker excludes food-only items');
+  Check(Length(FloorCatalogIds('Kitchen')) > 0, 'Kitchen category has usable models');
+  LRequest := Request(Baseline, 'module-build', '');
+  SelectRect(LRequest, 12, 12, 4, 4);
+  Check(GenerateWorld(LRequest, LBase, GReason), 'Coverage home generated');
+  LRoot := LBase.FComposition.FNodes[1].FId;
+  LFloor := ModuleFloorId(LRoot, 13, 13);
+  LRequest := Request(LBase, 'module-populate', LRoot);
+  SelectRect(LRequest, 13, 13, 1, 1);
+  LRequest.FModuleDensity := 25;
+  LRequest.FContentAsset := CLolly;
+  Check(GenerateWorld(LRequest, LWorld, GReason), 'Small props populate a single floor');
+  Check(Pos('coverage', GReason) > 0, 'Actual footprint coverage is reported');
+  LCount := 0;
+  LFirst := -1;
+  LSecond := -1;
+  for I := 0 to High(LWorld.FComposition.FNodes) do
+  begin
+    if LWorld.FComposition.FNodes[I].FParentId = LFloor then
+    begin
+      Inc(LCount);
+      LSecond := LFirst;
+      LFirst := I;
+      Check(LWorld.FComposition.FNodes[I].FAssetId = CLolly, 'Exact model is respected');
+    end;
+  end;
+  Check((LCount > 1) and (LCount <= 128), 'Many lollipops share a bounded floor');
+  Check(GenerateWorld(LRequest, LOther, GReason), 'Packed population replays');
+  Check(Length(LOther.FComposition.FNodes) = Length(LWorld.FComposition.FNodes), 'Replay count matches');
+  for I := 0 to High(LWorld.FComposition.FNodes) do
+  begin
+    Check(SameNode(LWorld.FComposition.FNodes[I], LOther.FComposition.FNodes[I]), 'Packed replay is exact');
+  end;
+  LOther.FComposition.FNodes[LSecond].FX := LOther.FComposition.FNodes[LFirst].FX;
+  LOther.FComposition.FNodes[LSecond].FZ := LOther.FComposition.FNodes[LFirst].FZ;
+  Check(not ValidateModularBuildings(LOther, GReason), 'Overlapping packed objects are rejected');
+  LRequest := Request(LWorld, 'module-furnish', LFloor);
+  LRequest.FContentAsset := 'empty';
+  Check(GenerateWorld(LRequest, LOther, GReason), 'Packed floor can be cleared');
+  Check(not FloorHasContents(LOther.FComposition, LFloor), 'Clear removes every packed object');
+  LRequest := Request(LBase, 'module-populate', LRoot);
+  SelectRect(LRequest, 13, 13, 1, 1);
+  LRequest.FContentAsset := CApple;
+  LRequest.FModuleDensity := 10;
+  Check(GenerateWorld(LRequest, LWorld, GReason), 'Low coverage apples populate');
+  LCount := Length(LWorld.FComposition.FNodes);
+  LRequest.FModuleDensity := 25;
+  Check(GenerateWorld(LRequest, LOther, GReason), 'Higher coverage apples populate');
+  Check(Length(LOther.FComposition.FNodes) > LCount, 'More coverage places more exact objects');
+  LRequest.FContentAsset := 'category:Food';
+  Check(GenerateWorld(LRequest, LWorld, GReason), 'Food category population succeeds');
+  LSeen := nil;
+  for I := 0 to High(LWorld.FComposition.FNodes) do
+  begin
+    if LWorld.FComposition.FNodes[I].FParentId = LFloor then
+    begin
+      Check(ContentRoleAllowed(LIds, LWorld.FComposition.FNodes[I].FAssetId), 'Mix stays in selected category');
+      if not ContentRoleAllowed(LSeen, LWorld.FComposition.FNodes[I].FAssetId) then
+      begin
+        SetLength(LSeen, Length(LSeen) + 1);
+        LSeen[High(LSeen)] := LWorld.FComposition.FNodes[I].FAssetId;
+      end;
+    end;
+  end;
+  Check((Length(LSeen) > 1) and (Length(LSeen) <= 3), 'Category produces a bounded variety');
+  for I := 0 to High(LBase.FComposition.FNodes) do
+  begin
+    Check(SameNode(LBase.FComposition.FNodes[I], LWorld.FComposition.FNodes[I]),
+      'Population preserves existing nodes');
+  end;
+  for I := 0 to High(FloorCategories) do
+  begin
+    LRequest.FContentAsset := 'category:' + FloorCategories[I];
+    Check(GenerateWorld(LRequest, LOther, GReason), 'Category can populate: ' + FloorCategories[I]);
+  end;
+  LRequest.FContentAsset := 'category:Kitchen';
+  LRequest.FSeed := 735;
+  SelectRect(LRequest, 12, 12, 4, 4);
+  Check(GenerateWorld(LRequest, LOther, GReason), 'Kitchen population skips blocked walking routes');
+  Check(ValidateModularBuildings(LOther, GReason), 'Populated kitchen retains full physical access');
+end;
+
 procedure CatalogChecks(const AWorld: TWorld; const ARoot: String);
 var
   LIds: TObjectAssetIds;
@@ -390,6 +493,7 @@ begin
   Check(ValidateWorld(LBase, GAssets, GReason), 'Baseline fixture and loaded palette admitted');
   AccessChecks;
   PopulationChecks;
+  CoverageChecks;
   LRequest := Request(LBase, 'module-build', '');
   SelectRect(LRequest, 12, 12, 3, 3);
   Check(ValidateSelection(LRequest, GReason), 'Operation-specific 2m selection admitted');

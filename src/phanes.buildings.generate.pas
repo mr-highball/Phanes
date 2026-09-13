@@ -39,7 +39,8 @@ uses
   SysUtils, Math, wfc, phanes.composition.types, phanes.composition.document,
   phanes.selection.grid, phanes.world.height, phanes.buildings.types,
   phanes.buildings.validate, phanes.buildings.furniture,
-  phanes.composition.contents.types, phanes.composition.contents.generate;
+  phanes.composition.contents.types, phanes.composition.contents.generate,
+  phanes.buildings.catalog, phanes.buildings.population;
 
 const
   CTokens: array[0..11] of String = ('void', 'floor.oak', 'floor.stone', 'opening',
@@ -93,6 +94,10 @@ var
 
 begin
   Result := False;
+  if (ARequest.FContentAsset <> 'mixed') and (ARequest.FContentAsset <> 'plants') then
+  begin
+    Exit(PopulateCatalogFloors(ARequest, ARoot, AWorld, AReason));
+  end;
   AReason := 'Choose a density between 1 and 100 percent.';
   if (ARequest.FModuleDensity < 1) or (ARequest.FModuleDensity > 100) then
   begin
@@ -232,6 +237,8 @@ var
   LConnectivity: TGraphConnectivityValues;
   LGraphRoot: TGraphPosition;
   LContents: TContentRequest;
+  LContentAsset: String;
+  LCategoryIds: TContentNames;
   I: Integer;
   J: Integer;
 
@@ -335,13 +342,24 @@ begin
       end
       else if ARequest.FOperation = 'module-furnish' then
       begin
+        LContentAsset := ARequest.FContentAsset;
+        if Pos('category:', LContentAsset) = 1 then
+        begin
+          LCategoryIds := FloorCatalogIds(Copy(LContentAsset, 10, MaxInt));
+          if Length(LCategoryIds) = 0 then
+          begin
+            AReason := 'Choose a category with available floor models.';
+            Exit;
+          end;
+          LContentAsset := LCategoryIds[ARequest.FSeed mod Cardinal(Length(LCategoryIds))];
+        end;
         if not BuildingFloorRequest(LCandidate.FComposition, ARequest.FObjectId,
-          LContents, AReason, ARequest.FContentAsset) then
+          LContents, AReason, LContentAsset) then
         begin
           Exit;
         end;
         LContents.FSeed := ARequest.FSeed;
-        if ARequest.FModulePose then
+        if ARequest.FModulePose and (Length(LContents.FSlots) = 1) then
         begin
           if (Abs(ARequest.FModuleX) > 750) or (Abs(ARequest.FModuleZ) > 750) or
             (ARequest.FModuleX mod 250 <> 0) or (ARequest.FModuleZ mod 250 <> 0) or
@@ -357,7 +375,7 @@ begin
           LContents.FSlots[0].FQuarterTurn := ARequest.FModuleTurn;
           LContents.FAllowAssemblyMoves := True;
         end;
-        if ARequest.FContentAsset = 'empty' then
+        if LContentAsset = 'empty' then
         begin
           LContents.FRemovableAssemblyRoles := LContents.FSlots[0].FAllowedRoles;
           SetLength(LContents.FQuotas, Length(LContents.FSlots[0].FAllowedRoles));
@@ -371,8 +389,8 @@ begin
         else
         begin
           LContents.FSlots[0].FAllowEmpty := False;
-          LContents.FSlots[0].FAllowedAssets := [ARequest.FContentAsset];
-          if ARequest.FContentAsset = 'plants' then
+          LContents.FSlots[0].FAllowedAssets := [LContentAsset];
+          if LContentAsset = 'plants' then
           begin
             LContents.FSlots[0].FAllowedAssets :=
               ['phanes.plant.fern.v1', 'phanes.plant.moon.v1'];
