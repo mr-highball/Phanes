@@ -2777,7 +2777,7 @@
     {
       "id" : "nature-kit/crops_cornStageD",
       "sha256" : "d90d9cbba85e99526b254adee638495f914480831ab41d00807378c004c112c3",
-      "staticGeometryHash" : "11c2d1491bb6a4cc12b1b70ed5160132023ac0513d38df59dae9f5c2389af818",
+      "staticGeometryHash" : "60323202820e7d4a95184458380c9ce4a724771fa576103ed342f38e3eaa9e6f",
       "status" : "decoded",
       "triangles" : 300,
       "minimum" : [
@@ -2786,7 +2786,7 @@
         -2.2078582644462585E-001
       ],
       "maximum" : [
-        2.2078581154346466E-001,
+        2.2078585624694824E-001,
         1.2000000476837158E+000,
         2.2078579664230347E-001
       ]
@@ -3106,7 +3106,7 @@
       "minimum" : [
         -5.0000000000000000E-001,
         -5.0000000745058060E-002,
-        -5.0000000000000000E-001
+        -5.0000005960464478E-001
       ],
       "maximum" : [
         5.0000000000000000E-001,
@@ -6211,7 +6211,7 @@
     {
       "id" : "nature-kit/tree_palmDetailedTall",
       "sha256" : "2cbea0f9621cde884c63a7b4ad787bda1d051fa27ef3c66b9f2b65328dc53683",
-      "staticGeometryHash" : "5fea3e1d5d9761a772d5c3fd3175691fd4b883184ffbe83861bc00208a68e3a1",
+      "staticGeometryHash" : "0dfa0f39978ecfa1dc079da19dd13bf8ebbbffec20d89bcca6d1f98d4c5ee096",
       "status" : "decoded",
       "triangles" : 336,
       "minimum" : [
@@ -7010,7 +7010,7 @@
     {
       "id" : "furniture-kit/bedBunk",
       "sha256" : "a3eccbc4a04340dd84878d959e15eede76f517fb8d4de6862ca46877c88d764e",
-      "staticGeometryHash" : "ef63ff687b3038f416b8cc0d25b8e1d06b2ff9d588d4376ce888f41923110e7e",
+      "staticGeometryHash" : "13a6366ba3161f6a16939a48c3b71b2f9524b0031f91551c05ddedcd33832dfb",
       "status" : "decoded",
       "triangles" : 580,
       "minimum" : [
@@ -7019,7 +7019,7 @@
         -1.0950000286102295E+000
       ],
       "maximum" : [
-        5.7100003957748413E-001,
+        5.7100009918212891E-001,
         8.4999996423721313E-001,
         0.0000000000000000E+000
       ]
@@ -7031,12 +7031,12 @@
       "status" : "decoded",
       "triangles" : 264,
       "minimum" : [
-        7.4505805969238281E-009,
+        3.7252902984619141E-009,
         0.0000000000000000E+000,
         -1.1250000000000000E+000
       ],
       "maximum" : [
-        9.5600003004074097E-001,
+        9.5600014925003052E-001,
         3.7500000000000000E-001,
         0.0000000000000000E+000
       ]
@@ -7044,7 +7044,7 @@
     {
       "id" : "furniture-kit/bedSingle",
       "sha256" : "ca00c63f9a12da3138d902b2f5f18e0360fb6e8a5ac42ccb4bc3f185724b65d1",
-      "staticGeometryHash" : "ce035033f432dc080d9da01e96ff25dc5b7c488cceecdbc3629fa9b146bc3e83",
+      "staticGeometryHash" : "4eee15ee09371e702aa7190cd835084f569b21677c1f60fb214016efdb656fdb",
       "status" : "decoded",
       "triangles" : 214,
       "minimum" : [
@@ -7053,7 +7053,7 @@
         -1.1250000000000000E+000
       ],
       "maximum" : [
-        9.5600003004074097E-001,
+        9.5600014925003052E-001,
         3.7500000000000000E-001,
         0.0000000000000000E+000
       ]
@@ -8442,14 +8442,14 @@
       "status" : "decoded",
       "triangles" : 102,
       "minimum" : [
-        -4.7330368310213089E-002,
+        -4.7330372035503387E-002,
         0.0000000000000000E+000,
-        -4.7330368310213089E-002
+        -4.7330372035503387E-002
       ],
       "maximum" : [
-        4.7330368310213089E-002,
+        4.7330372035503387E-002,
         1.4000000059604645E-001,
-        4.7330368310213089E-002
+        4.7330372035503387E-002
       ]
     },
     {
@@ -8459,14 +8459,14 @@
       "status" : "decoded",
       "triangles" : 158,
       "minimum" : [
-        -4.7330368310213089E-002,
+        -4.7330372035503387E-002,
         0.0000000000000000E+000,
-        -4.7330368310213089E-002
+        -4.7330372035503387E-002
       ],
       "maximum" : [
-        4.7330368310213089E-002,
+        4.7330372035503387E-002,
         1.4000000059604645E-001,
-        4.7330368310213089E-002
+        4.7330372035503387E-002
       ]
     },
     {
@@ -8476,14 +8476,14 @@
       "status" : "decoded",
       "triangles" : 98,
       "minimum" : [
-        -4.9000002443790436E-002,
+        -4.9000006169080734E-002,
         0.0000000000000000E+000,
-        -4.2435247451066971E-002
+        -4.2435254901647568E-002
       ],
       "maximum" : [
-        4.9000002443790436E-002,
+        4.9000006169080734E-002,
         1.4499999582767487E-001,
-        4.2435247451066971E-002
+        4.2435254901647568E-002
       ]
     },
     {
@@ -8608,18 +8608,18 @@
     {
       "id" : "furniture-kit/shower",
       "sha256" : "25c1cebad681fe369dc04839a8f08f5da2ccbd99b3a70aa83fe2e4d1590c6951",
-      "staticGeometryHash" : "87c5d3fbe93b4589d41534b3c33cd94799cdde2200e4f2cdd50177359409b171",
+      "staticGeometryHash" : "f8d26742c4f4800fca7db59816f008a6113b34f1fbf52479b535ab1ace4a42fd",
       "status" : "decoded",
       "triangles" : 810,
       "minimum" : [
         -5.6179195642471313E-001,
         0.0000000000000000E+000,
-        -5.6179201602935791E-001
+        -5.6179207563400269E-001
       ],
       "maximum" : [
-        4.2414114886923926E-008,
+        1.0938493488765744E-007,
         1.0940332412719727E+000,
-        2.0000003278255463E-002
+        1.9999999552965164E-002
       ]
     },
     {
@@ -9050,16 +9050,16 @@
     {
       "id" : "furniture-kit/toilet",
       "sha256" : "16165cfd03c56c2cb443b800570810a22ef770f65e7a468f6761d9dc14eaaeae",
-      "staticGeometryHash" : "1cbc144f1b96367fbb657ff6408c9143c4562fc2403584244f30164609daedcb",
+      "staticGeometryHash" : "14cdbb017614ff55286e2bc70bdaac6bd76ada7a631fc0c613dbe56cf51a4e00",
       "status" : "decoded",
       "triangles" : 230,
       "minimum" : [
         0.0000000000000000E+000,
         0.0000000000000000E+000,
-        -2.3596870235564893E-008
+        -6.0855732897380221E-008
       ],
       "maximum" : [
-        3.1255000829696655E-001,
+        3.1255006790161133E-001,
         4.5096498727798462E-001,
         4.7717669606208801E-001
       ]
@@ -9067,7 +9067,7 @@
     {
       "id" : "furniture-kit/toiletSquare",
       "sha256" : "f241e26a22b0d9512d8455f3e868124f8032710c83c5265a546c19c67ecdd4b9",
-      "staticGeometryHash" : "247e666a246fc0db480e9eb7b03ccd97f7b98356e1378cf7c415c240ea2e7266",
+      "staticGeometryHash" : "47457d2581673a5579921a7ccd373ef98bab308262af633c1669476715dbe252",
       "status" : "decoded",
       "triangles" : 228,
       "minimum" : [
@@ -9088,14 +9088,14 @@
       "status" : "decoded",
       "triangles" : 68,
       "minimum" : [
-        -1.0384674370288849E-001,
+        -1.0384675860404968E-001,
         0.0000000000000000E+000,
-        -1.1163648217916489E-001
+        -1.1163649708032608E-001
       ],
       "maximum" : [
-        1.0384674370288849E-001,
+        1.0384675860404968E-001,
         4.2786598205566406E-001,
-        1.2248777598142624E-001
+        1.2248779088258743E-001
       ]
     },
     {
@@ -9248,13 +9248,13 @@
       "maximum" : [
         3.9000001549720764E-001,
         4.6999999880790710E-001,
-        4.0000010281801224E-002
+        4.0000025182962418E-002
       ]
     },
     {
       "id" : "furniture-kit/washerDryerStacked",
       "sha256" : "efcc2155ef170092dc2602a98179380de3442c2500998a6ca37cc5554d275676",
-      "staticGeometryHash" : "ae4a02058bf5c30b8634c165faa9f35899beb27d0ada26c6447c0f660e6295e0",
+      "staticGeometryHash" : "1d71185af296e6065e6cf28b95d4f6137a1d25bdbdae605cd87ccb990c0fe570",
       "status" : "decoded",
       "triangles" : 992,
       "minimum" : [
@@ -9265,7 +9265,7 @@
       "maximum" : [
         3.9000001549720764E-001,
         9.3999999761581421E-001,
-        4.0000010281801224E-002
+        4.0000025182962418E-002
       ]
     },
     {
@@ -11821,7 +11821,7 @@
     {
       "id" : "space-kit/turret_single",
       "sha256" : "ef27f43718c846297f90a0b20446b13c6a1f092cd995ea730f27d6e003efd1e0",
-      "staticGeometryHash" : "b0d26a9476e5d90b3e3ba8583b7b0bb3de3df231ccfcab501f240da44b154042",
+      "staticGeometryHash" : "1bbbeec11c80c0362fd70b1c79d4f3385c3e9afd22a38daa7df2dbf2b4693071",
       "status" : "decoded",
       "triangles" : 576,
       "minimum" : [
@@ -32833,7 +32833,7 @@
     {
       "id" : "food-kit/burger-cheese-double",
       "sha256" : "d82a5ac064d8c4afa696aea945c94ab6f74b419f589703f902b01c1cc0fdd757",
-      "staticGeometryHash" : "7838deaf5b1f66d10456800026befbd27bb4531e3f213e3aadd57a04f943aaee",
+      "staticGeometryHash" : "94c734a02ff89b2665506c0792cb23525a9d73fb46523be7fdd03eff6f8c9ac3",
       "status" : "decoded",
       "triangles" : 392,
       "minimum" : [
@@ -33207,7 +33207,7 @@
     {
       "id" : "food-kit/chinese",
       "sha256" : "6aa08a486ba711b7565062b691d286d16b3916cc01574a4fcb8287d7369e0396",
-      "staticGeometryHash" : "4346d50ffd5aacdac587fd1dc4ebc6d11e5f2dd932a08cc23733e59ede25af08",
+      "staticGeometryHash" : "0eb8d5d8b868d1b866aad64190873aaf914d37e2c0e6eae0eaf1a67851303482",
       "status" : "decoded",
       "triangles" : 162,
       "minimum" : [
@@ -33468,12 +33468,12 @@
       "minimum" : [
         -3.0219599604606628E-001,
         8.4598995521993223E-018,
-        -5.4272413253784180E-002
+        -5.4272439330816269E-002
       ],
       "maximum" : [
         3.0219596624374390E-001,
         9.4002552330493927E-002,
-        5.4272413253784180E-002
+        5.4272439330816269E-002
       ]
     },
     {
@@ -33870,7 +33870,7 @@
     {
       "id" : "food-kit/fries",
       "sha256" : "fa172a6333404a473db7b98a6c9a2b74adab1e1181d92bcd39625b89df55d377",
-      "staticGeometryHash" : "9257949c8be9c8a1346197240f87ab772ae400993f00a3e674a29ad1f86be2df",
+      "staticGeometryHash" : "33a54172642778db7829e6f436dbf9108533a900c54f1ecc3ea4668029f65a1d",
       "status" : "decoded",
       "triangles" : 564,
       "minimum" : [
@@ -33887,7 +33887,7 @@
     {
       "id" : "food-kit/frikandel-speciaal",
       "sha256" : "fd1bcb89ddf4fafc8a105dee54130714cdf3748e8c0275b34735aa66ca88d4d3",
-      "staticGeometryHash" : "a6a9aafc4d0eddde876e37110c493c6ff9eb4c6ef9deb84327bc9d0e1b5b4e2d",
+      "staticGeometryHash" : "43e23aeb1e700cfb95191b415e87f4c4d31048d0e3a24b19da2bcf4c6dd6c5d9",
       "status" : "decoded",
       "triangles" : 308,
       "minimum" : [
@@ -34057,11 +34057,11 @@
     {
       "id" : "food-kit/hot-dog",
       "sha256" : "9248794c75184c195d495d93281a756e850a0f299e9734ac2bd88aa900d720d6",
-      "staticGeometryHash" : "11b99d5540e94c5fae649f8e9ea297fc4c5fe1e5bba62e2ead443263b531504c",
+      "staticGeometryHash" : "d85f7a1d445a69a803f1458185d3298d6bbf0a7afe9fdb065ccafe2e4bf016d8",
       "status" : "decoded",
       "triangles" : 272,
       "minimum" : [
-        -2.9294994473457336E-001,
+        -2.9295006394386292E-001,
         0.0000000000000000E+000,
         -1.0127700120210648E-001
       ],
@@ -35247,7 +35247,7 @@
     {
       "id" : "food-kit/sandwich",
       "sha256" : "eba221f9fc24bdaad73467e58ce9c09ec4134baeec01f178e7bb3e87ce3b941e",
-      "staticGeometryHash" : "a1a0ddae786e7554793d89510c6548420b2b0b0c51226f6efde350c5cc4c0a04",
+      "staticGeometryHash" : "78733229bfd925de90b5268dc3397560ba0be644ca70db2993abf844a863b0d1",
       "status" : "decoded",
       "triangles" : 176,
       "minimum" : [
@@ -35338,12 +35338,12 @@
       "minimum" : [
         -2.9835000634193420E-001,
         0.0000000000000000E+000,
-        -5.4272405803203583E-002
+        -5.4272409528493881E-002
       ],
       "maximum" : [
         2.9835000634193420E-001,
         1.0767046362161636E-001,
-        5.4272405803203583E-002
+        5.4272409528493881E-002
       ]
     },
     {
@@ -35355,12 +35355,12 @@
       "minimum" : [
         -2.9835000634193420E-001,
         -3.1019630312763161E-017,
-        -5.4272405803203583E-002
+        -5.4272409528493881E-002
       ],
       "maximum" : [
         2.9835000634193420E-001,
         9.4002552330493927E-002,
-        5.4272405803203583E-002
+        5.4272409528493881E-002
       ]
     },
     {
@@ -35417,7 +35417,7 @@
     {
       "id" : "food-kit/soda-glass",
       "sha256" : "2dc3d8f401d0df4ce0693af5528157e8c263f0e7707e362bb35d23e404ce7dba",
-      "staticGeometryHash" : "72a2eafea7f77d78a4b5ad6ccd18663f40ab7d2a593ce4f9bd6eb1617d4f121e",
+      "staticGeometryHash" : "8f9566225de491279d6c786da48335f833ee982862eaacc570370b346e8bcea6",
       "status" : "decoded",
       "triangles" : 124,
       "minimum" : [
@@ -35536,7 +35536,7 @@
     {
       "id" : "food-kit/sub",
       "sha256" : "a927b74fa21cafd9828c9fa11b3b5072f5c887035dc992ef2feac26b44c960f1",
-      "staticGeometryHash" : "47b1b50d28406358b73fdc02b922335438e2be075911164d3a24093f09982303",
+      "staticGeometryHash" : "b5d5b108d3237654c249261b6341dca1a8dd8cb949757dd805d28e74fb41c1a6",
       "status" : "decoded",
       "triangles" : 574,
       "minimum" : [
@@ -35689,7 +35689,7 @@
     {
       "id" : "food-kit/turkey",
       "sha256" : "7d5edab26f512fdc8a5be1e31023b559b0755fcebff06ef766842e0dd356dbf5",
-      "staticGeometryHash" : "a03daec37c1c4f2096235700be3db44ec6990203882a4ffc9fca977ea700323d",
+      "staticGeometryHash" : "80cc269e0d72f0519935f949684eacd15824a232674e433f8acbff635cf6ccbf",
       "status" : "decoded",
       "triangles" : 368,
       "minimum" : [
@@ -47351,7 +47351,7 @@
     {
       "id" : "mini-market/display-bread",
       "sha256" : "33a57fee0e331e5e40df5f0dc7af302e93266fd978dda810ab9f0ea4a2c205d1",
-      "staticGeometryHash" : "7326bb779deac5cd3d8e8eea2e878af1364f10de2d7dbaa93f0547c7ebb5cf60",
+      "staticGeometryHash" : "36a4f89838431b0085e53c788c3c4388ff0b9eb0f6d05de724c2579967f60686",
       "status" : "decoded",
       "triangles" : 362,
       "minimum" : [
@@ -47470,7 +47470,7 @@
     {
       "id" : "mini-market/shelf-bags",
       "sha256" : "17725a5f680aff17dbc6ac3398ef0339d78b5b76bbfaa29292a5084479c4bd69",
-      "staticGeometryHash" : "517df9ac4d0090228531e8609fe66bc39a75fcee6bf508a9d4b0994c6cc78a6c",
+      "staticGeometryHash" : "612548639a73c0e6181792ec27e65c3f3ae50e6e35f7258a178aab165ccf93ee",
       "status" : "decoded",
       "triangles" : 892,
       "minimum" : [
@@ -68346,7 +68346,7 @@
     {
       "id" : "pirate-kit/ship-wreck",
       "sha256" : "0b2cac74f23ffdc3bf5020880126338287a0a0317d6a98ce4250123d8821ad2b",
-      "staticGeometryHash" : "9246fe9b7ab16aa910026ff387a98903aa7bf6b4c26db07967175b72f6fdd391",
+      "staticGeometryHash" : "cd3c432e5059eb6b2794aa46c1a540c1069ce035b6ac6e9000db57ef5f8f6749",
       "status" : "decoded",
       "triangles" : 2282,
       "minimum" : [
@@ -71922,7 +71922,7 @@
       "minimum" : [
         -3.4999999403953552E-001,
         -9.9999997764825821E-003,
-        -6.5000003576278687E-001
+        -6.5000015497207642E-001
       ],
       "maximum" : [
         6.4999997615814209E-001,
@@ -71939,7 +71939,7 @@
       "minimum" : [
         -3.4999999403953552E-001,
         -9.9999997764825821E-003,
-        -6.5000003576278687E-001
+        -6.5000015497207642E-001
       ],
       "maximum" : [
         6.4999997615814209E-001,
@@ -90072,7 +90072,7 @@
     {
       "id" : "quaternius-fantasy-props-megakit/Exports/glTF/Axe_Bronze",
       "sha256" : "338ce6e6947b8849774aac2deb9d2bf3a1cb14dc869effb7be0a91053e67b64f",
-      "staticGeometryHash" : "b0b9279e996f2843d91e771da87a5ac90edfab6d13a933945440447b5617c6da",
+      "staticGeometryHash" : "279dcc5ddf996ca74e75b5ae58b0c920bec025306eb4769cafeab3fdeee2194a",
       "status" : "decoded",
       "triangles" : 826,
       "minimum" : [
@@ -103978,7 +103978,7 @@
     {
       "id" : "basemesh-20260908/globe/globe",
       "sha256" : "50f5a22f8569eb9e3cc331454ca19952a66f0b49ef87c0a784860c6f5d1a2ad0",
-      "staticGeometryHash" : "7b7f60ae297593cfaf0b25dc5b805a88b415d0b0d5c04f6ed02567e1fcc10e08",
+      "staticGeometryHash" : "c5fadd6816401cd49cb109897ee67d7fa58e1d1f3b419231f24c040175134784",
       "status" : "decoded",
       "triangles" : 1520,
       "minimum" : [
@@ -119244,7 +119244,7 @@
     {
       "id" : "quaternius-modular-sci-fi-megakit/Modular SciFi MegaKit[Standard]/glTF/Props/Prop_ItemHolder",
       "sha256" : "4e0c1867d92bd4d1ff2c96a5b1312defbdb4ace13d1d842f48bf201556f2f501",
-      "staticGeometryHash" : "943adf5e9de359be6a8c4d229057a097c9c6440bb0c99a29be9b2ad7e76e9bad",
+      "staticGeometryHash" : "fa3e77eb2737c097ff3e64ce3c1f379b7d1e5e6bab80bd2113aca8fa40f4c48a",
       "status" : "decoded",
       "triangles" : 198,
       "minimum" : [
@@ -119448,7 +119448,7 @@
     {
       "id" : "quaternius-modular-sci-fi-megakit/Modular SciFi MegaKit[Standard]/glTF/Props/Prop_Rail_Incline_Short_R",
       "sha256" : "14c8c61c3cf15174efeda6e8ce972dbb0b6add49eee4d466d71dbc730d07256d",
-      "staticGeometryHash" : "335a2dc5333d265b80a7ac565171203c2bc08dc59fd6876667dfe55fd440b4b4",
+      "staticGeometryHash" : "89229103a7024b8071dc2c81440d87c40b1fb22065a3a42799d9333f64072530",
       "status" : "decoded",
       "triangles" : 612,
       "minimum" : [

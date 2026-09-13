@@ -99,6 +99,25 @@ has a different raw hash from the local report with the same byte length. The
 workflow now retains generated geometry and music-reference reports alongside
 build evidence so their differences can be assessed before review renewal.
 
+The retained run 34730331921 geometry report has the same raw hash as run
+34728304188 and is now the committed CI-generated report. The comparison in
+`build/ci-generated-metadata-summary-04.json` finds 37 differing model rows
+against the earlier Windows report, 25 changed quantized geometry hashes,
+maximum bounds delta `1.1920928955078125e-7`, and zero group-membership changes
+across all 7,717 groups. Source identities, decoded status and triangle counts
+match throughout. Music reports are identical after LF normalization.
+`build/ci-generated-geometry-comparison-04.json` retains every differing row;
+`build/catalog-geometry-windows-before-ci-adoption-01.json` retains the previous
+report. This adopts the actual clean-runner output without claiming that raw
+geometry hashes are portable across the two native compiler/decoder platforms.
+Against this report, the native optional admission suite passes 1,018 checks,
+the regional suite passes 669 checks, and both units compile with the pinned
+pas2js compiler. Evidence is retained in
+`build/ci-canonical-catalog-admission-02` and
+`build/logs/ci-canonical-catalog-regional-01.log`.
+The recovery-room CI wrapper now selects its executable suffix by platform,
+matching the other three Pascal browser wrappers; all four parse successfully.
+
 The object-catalog candidate adds twelve measured leaf models to the existing
 book/vase pair: books, artifacts, equipment and four food items. The shared
 contents catalog now contains 28 choices, including fourteen optional models.

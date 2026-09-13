@@ -52,7 +52,8 @@ try {
   )
   & $NativeCompiler $arguments
   if ($LASTEXITCODE -ne 0) { throw 'The recovery rooms browser driver did not compile.' }
-  $driver = Join-Path $binaryRoot 'phanes.tests.recovery.rooms.browser.exe'
+  $suffix = if ($IsWindows) { '.exe' } else { '' }
+  $driver = Join-Path $binaryRoot "phanes.tests.recovery.rooms.browser$suffix"
   & $driver $Browser $TestUrl $EvidenceDirectory 'build/phanes.tests.styles.probe.js'
   if ($LASTEXITCODE -ne 0) {
     throw "Recovery rooms checks failed. Evidence: $EvidenceDirectory"

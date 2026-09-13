@@ -17,7 +17,17 @@ The accepted acquisition count is reached; playable expansion remains open.
 
 The native Pascal Castle inspector decoded all 8,365 models, obtained finite
 transformed scene bounds and found rendered triangles in each. The report is
-`data/catalog-geometry.json`, bound to the inventory hash. Static decode does
+`data/catalog-geometry.json`, bound to the inventory hash. The committed report
+uses the Ubuntu 24.04 x86-64 CI toolchain and pinned CGE decoder; its SHA-256 is
+`b39c94157cc2bbecc4d30a46c6ca0137f776b0a380d39530793c07c914aea05f`.
+Actions runs 34728304188 and 34730331921 produced that same report hash.
+The Windows i386 development decoder differs in 37 rows, including 25 shape
+hashes and bounds differing by at most `1.1920928955078125e-7` model units.
+All 7,717 geometry groups have identical membership in those two outputs.
+Thus individual quantized shape hashes are decoder/platform results, not a
+cross-platform identity guarantee. Regenerating on another platform may change
+this tracked report and requires review; source model hashes remain authoritative.
+Static decode does
 not certify animation playback, collision, doors, support surfaces or physical
 placement. The regional palette now has 19 core choices plus 18 optional nature
 profiles with verified rendered journeys; their earlier bounded approval requires
