@@ -162,6 +162,8 @@ jobs:
               sleep 1
             done
             curl --fail --silent "$url" > /dev/null
+            # Check worker contracts before the longer rendered journeys.
+            TEST_URL="$url" node tools/test-world.cjs
           done
           pwsh -File tools/test-startup.ps1 -Browser "$browser_path" \
             -TestUrl http://127.0.0.1:4186/ -EvidenceDirectory build/ci-browser \
@@ -181,7 +183,6 @@ jobs:
             -EvidenceDirectory build/ci-browser/pages-rooms \
             -NativeCompiler "$native_compiler"
           for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
-            TEST_URL="$url" node tools/test-world.cjs
             TEST_URL="$url" node tools/test-interiors.cjs
             TEST_URL="$url" node tools/test-room-journeys.cjs
             TEST_URL="$url" node tools/test-structures.cjs

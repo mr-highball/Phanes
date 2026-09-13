@@ -27,7 +27,68 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 
+const legacyBaseHeight = (x, z) =>
+  4 +
+  2.6 * Math.sin(x * 0.035) +
+  1.8 * Math.cos(z * 0.041) +
+  0.9 * Math.sin((x + z) * 0.063);
+
+// Independent saved-field witness: version 1 uses the x-z anti-diagonal and
+// stores integer vertex levels whose physical scale is levelStep millimetres.
+const savedElevationHeight = (elevation, x, z) => {
+  const gridX = (x * 1000 - elevation.originX) / elevation.spacing;
+  const gridZ = (z * 1000 - elevation.originZ) / elevation.spacing;
+  const column = Math.min(elevation.columns - 2, Math.floor(gridX));
+  const row = Math.min(elevation.rows - 2, Math.floor(gridZ));
+  const u = gridX - column;
+  const v = gridZ - row;
+  const index = row * elevation.columns + column;
+  const level00 = elevation.levels[index];
+  const level10 = elevation.levels[index + 1];
+  const level01 = elevation.levels[index + elevation.columns];
+  const level11 = elevation.levels[index + elevation.columns + 1];
+  let level;
+  if (u + v <= 1) {
+    level = (1 - u - v) * level00 + u * level10 + v * level01;
+  } else {
+    level = (u + v - 1) * level11 + (1 - u) * level01 + (1 - v) * level10;
+  }
+  return (level * elevation.levelStep) / 1000;
+};
+
+const buildingDatum = (world, cellX, cellZ) => {
+  const x = (cellX + 0.5 - world.size / 2) * 16;
+  const z = (cellZ + 0.5 - world.size / 2) * 16;
+  if (world.formatVersion === 3) {
+    return savedElevationHeight(world.elevation, x, z);
+  }
+  if (world.formatVersion === 4) {
+    return savedElevationHeight(world.elevation, x, z) + legacyBaseHeight(x, z);
+  }
+  return legacyBaseHeight(x, z);
+};
+
 (async () => {
+  const triangulationFixture = {
+    originX: 0,
+    originZ: 0,
+    spacing: 1000,
+    columns: 2,
+    rows: 2,
+    levelStep: 1000,
+    levels: [0, 10, 20, 40],
+  };
+  assert.equal(
+    savedElevationHeight(triangulationFixture, 0.25, 0.5),
+    12.5,
+    'Saved elevation uses the lower x-z triangle weights',
+  );
+  assert.equal(
+    savedElevationHeight(triangulationFixture, 0.75, 0.5),
+    20,
+    'Saved elevation uses the upper x-z triangle weights',
+  );
+
   const base = process.env.TEST_URL || 'http://127.0.0.1:4186/';
   const browser = await chromium.launch({ headless: true, executablePath: process.env.BROWSER });
   const evidence = [];
@@ -63,6 +124,7 @@ const path = require('node:path');
       );
     let baseline;
     let largest;
+    let checkedBuildingCells = 0;
     for (const size of [4, 8, 12, 24, 48]) {
       const request = {
         size,
@@ -86,13 +148,8 @@ const path = require('node:path');
       assert.equal(first.world.layers.length, 5);
       for (let index = 0; index < size * size; index++) {
         if (first.world.layers[1][index] !== 'empty') {
-          const x = ((index % size) + 0.5 - size / 2) * 16;
-          const z = (Math.floor(index / size) + 0.5 - size / 2) * 16;
-          const datum =
-            4 +
-            2.6 * Math.sin(x * 0.035) +
-            1.8 * Math.cos(z * 0.041) +
-            0.9 * Math.sin((x + z) * 0.063);
+          const datum = buildingDatum(first.world, index % size, Math.floor(index / size));
+          checkedBuildingCells += 1;
           assert.ok(datum >= 0.101, 'WFC excludes buildings below safe physical height');
         }
       }
@@ -109,9 +166,19 @@ const path = require('node:path');
         largest = first.world;
       }
     }
-    const lowland = structuredClone(largest);
-    lowland.layers.forEach((layer, index) => layer.fill(index === 0 ? 'meadow' : 'empty'));
-    const lowlandBefore = JSON.stringify(lowland);
+    assert.ok(checkedBuildingCells > 0, 'Physical building checks require generated buildings');
+
+    const legacyLowland = structuredClone(largest);
+    legacyLowland.formatVersion = 2;
+    delete legacyLowland.elevation;
+    legacyLowland.layers.forEach((layer, index) =>
+      layer.fill(index === 0 ? 'meadow' : 'empty'),
+    );
+    assert.ok(
+      buildingDatum(legacyLowland, 43, 9) < 0.101,
+      'Legacy lowland fixture remains physically wet',
+    );
+    const legacyLowlandBefore = JSON.stringify(legacyLowland);
     for (const operation of ['cabin', 'castle', 'modern', 'scifi', 'rocket']) {
       const refused = await solve({
         size: 48,
@@ -121,17 +188,25 @@ const path = require('node:path');
         z: 9,
         width: 1,
         depth: 1,
-        previous: lowland,
+        previous: legacyLowland,
       });
-      assert.equal(refused.success, false, 'Explicit underwater building request is refused');
+      assert.equal(
+        refused.success,
+        false,
+        'Explicit legacy underwater building request is refused',
+      );
       assert.match(refused.message, /safe building height/);
       assert.equal(refused.world, undefined, 'A refused building must not silently become empty');
-      assert.equal(JSON.stringify(lowland), lowlandBefore, 'Refusal preserves the baseline');
+      assert.equal(
+        JSON.stringify(legacyLowland),
+        legacyLowlandBefore,
+        'Legacy refusal preserves the baseline',
+      );
     }
-    const submerged = structuredClone(lowland);
-    submerged.layers[1][9 * 48 + 43] = 'cabin';
-    submerged.layers[3][9 * 48 + 43] = 'cabin';
-    const wetRestore = await solve({
+    const legacySubmerged = structuredClone(legacyLowland);
+    legacySubmerged.layers[1][9 * 48 + 43] = 'cabin';
+    legacySubmerged.layers[3][9 * 48 + 43] = 'cabin';
+    const legacyWetRestore = await solve({
       size: 48,
       seed: 731,
       operation: 'restore',
@@ -139,10 +214,82 @@ const path = require('node:path');
       z: 0,
       width: 48,
       depth: 48,
-      previous: submerged,
+      previous: legacySubmerged,
     });
-    assert.equal(wetRestore.success, false, 'Saved underwater building rejected independently');
-    assert.match(wetRestore.message, /safe standing height/);
+    assert.equal(
+      legacyWetRestore.success,
+      false,
+      'Saved legacy underwater building rejected independently',
+    );
+    assert.match(legacyWetRestore.message, /safe standing height/);
+
+    for (const formatVersion of [3, 4]) {
+      const fieldLowland = structuredClone(largest);
+      fieldLowland.formatVersion = formatVersion;
+      fieldLowland.elevation.minimumLevel = -10;
+      fieldLowland.elevation.maximumLevel = -10;
+      fieldLowland.elevation.maximumRise = 0;
+      fieldLowland.elevation.levelStep = 1000;
+      fieldLowland.elevation.levels.fill(-10);
+      fieldLowland.layers.forEach((layer, index) =>
+        layer.fill(index === 0 ? 'meadow' : 'empty'),
+      );
+      const wetCells = [];
+      for (let z = 0; z < fieldLowland.size; z++) {
+        for (let x = 0; x < fieldLowland.size; x++) {
+          if (buildingDatum(fieldLowland, x, z) < 0.101) {
+            wetCells.push({ x, z });
+          }
+        }
+      }
+      assert.ok(wetCells.length > 0, `Format ${formatVersion} fixture has wet field cells`);
+      const wetCell = wetCells[Math.floor(wetCells.length / 2)];
+      const fieldLowlandBefore = JSON.stringify(fieldLowland);
+      for (const operation of ['cabin', 'castle', 'modern', 'scifi', 'rocket']) {
+        const refused = await solve({
+          size: 48,
+          seed: 731,
+          operation,
+          x: wetCell.x,
+          z: wetCell.z,
+          width: 1,
+          depth: 1,
+          previous: fieldLowland,
+        });
+        assert.equal(
+          refused.success,
+          false,
+          `Format ${formatVersion} underwater building request is refused`,
+        );
+        assert.match(refused.message, /safe building height/);
+        assert.equal(refused.world, undefined, 'A refused building must not silently become empty');
+        assert.equal(
+          JSON.stringify(fieldLowland),
+          fieldLowlandBefore,
+          `Format ${formatVersion} refusal preserves the baseline`,
+        );
+      }
+      const submerged = structuredClone(fieldLowland);
+      const wetIndex = wetCell.z * fieldLowland.size + wetCell.x;
+      submerged.layers[1][wetIndex] = 'cabin';
+      submerged.layers[3][wetIndex] = 'cabin';
+      const wetRestore = await solve({
+        size: 48,
+        seed: 731,
+        operation: 'restore',
+        x: 0,
+        z: 0,
+        width: 48,
+        depth: 48,
+        previous: submerged,
+      });
+      assert.equal(
+        wetRestore.success,
+        false,
+        `Saved format ${formatVersion} underwater building rejected independently`,
+      );
+      assert.match(wetRestore.message, /safe standing height/);
+    }
     for (const operation of [
       'forest',
       'flowers',
@@ -386,8 +533,9 @@ const path = require('node:path');
             'failed edit rejection',
             'exact restore',
             'invalid asset rejection',
-            'physical dry datum domains and explicit-request rejection',
-            'submerged saved building rejection',
+            'saved elevation x-z triangle contract',
+            'physical dry datums for legacy, absolute and relative elevation worlds',
+            'explicit underwater request and submerged restore rejection',
             'atomic groundwork creation and one-panel preservation',
             'groundwork restore, physical admission and option validation',
             'whole-plot clear and partial-clear rejection',
