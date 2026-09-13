@@ -313,6 +313,20 @@ const path = require('node:path');
     ])) {
       const view = await browser.newPage({ viewport, hasTouch: viewport.width < 500 });
       const errors = [];
+      const pendingRequests = new Map();
+      const recentRequests = [];
+      view.on('request', (request) => {
+        pendingRequests.set(request, { url: request.url(), started: Date.now() });
+      });
+      const finishRequest = (request, failure) => {
+        const row = pendingRequests.get(request);
+        if (!row) return;
+        pendingRequests.delete(request);
+        recentRequests.push({ ...row, elapsedMs: Date.now() - row.started, failure });
+        if (recentRequests.length > 16) recentRequests.shift();
+      };
+      view.on('requestfinished', (request) => finishRequest(request, null));
+      view.on('requestfailed', (request) => finishRequest(request, request.failure()));
       view.on('pageerror', (e) => {
         errors.push(e.message);
         console.error(e.message);
@@ -354,11 +368,22 @@ const path = require('node:path');
             workerActive: !!phanesEditor.worker,
             catalogLoading: window.phanesCatalogLoading,
             catalogStageError: window.phanesCatalogStageError,
+            catalogRequest: window.phanesCatalogRequestId,
+            catalogStageRevision: window.phanesCatalogStageRevision,
+            catalogStageAck: window.phanesCatalogStageAck,
+            catalogStageAsset: window.phanesCatalogStage?.asset,
+            catalogStageRequest: window.phanesCatalogStage?.request,
+            catalogReadyIds: window.phanesCatalogReadyIds,
+            suspended: window.phanesWorldSuspended,
+            hidden: document.hidden,
             interiorRoom: phanesEditor.interiorRoom,
             selection: phanesEditor.selection,
           }));
           const failure = { base, viewport, priorVersion,
-            importedFormat: world.formatVersion, state, errors };
+            importedFormat: world.formatVersion, state, errors,
+            pendingRequests: Array.from(pendingRequests.values(), (row) => ({
+              ...row, elapsedMs: Date.now() - row.started,
+            })), recentRequests };
           fs.writeFileSync(path.join(root, 'build',
             'interior-import-failure-' + viewport.width + '-evidence.json'),
           JSON.stringify(failure, null, 2));
