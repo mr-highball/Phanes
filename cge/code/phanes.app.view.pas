@@ -178,6 +178,7 @@ uses
   phanes.interiors.profiles,
   phanes.groundworks.scene,
   phanes.scene.picking,
+  phanes.world.shadowbounds,
   phanes.world.batching,
   phanes.catalog.regional,
   phanes.groundworks.geometry,
@@ -188,6 +189,8 @@ const
 
 type
   TPhanesViewport = class(TCastleViewport)
+  protected
+    function CalculateProjection: TProjection; override;
   public
     function EffectsRendered: Boolean;
   end;
@@ -196,6 +199,48 @@ type
   public
     procedure Configure;
   end;
+
+function TPhanesViewport.CalculateProjection: TProjection;
+var
+  LBounds: TBox3D;
+  LPosition: TVector3;
+  LDirection: TVector3;
+  LUp: TVector3;
+  LLight: TVector4;
+  LDistance: Single;
+  LFar: Single;
+begin
+  Result := inherited;
+  DirectionalShadowDistance := 0;
+  if (Camera = nil) or (Items = nil) then
+  begin
+    Exit;
+  end;
+  { Use the same current world-space light as the renderer. The query resolves
+    parent transforms on demand; an absent or positional light retains the
+    inherited projection and default shadow-volume path. }
+  if not MainLightForShadowVolumes(LLight) then
+  begin
+    Exit;
+  end;
+  if LLight.W <> 0 then
+  begin
+    Exit;
+  end;
+  LBounds := Items.BoundingBox;
+  if LBounds.IsEmpty then
+  begin
+    Exit;
+  end;
+  Camera.GetWorldView(LPosition, LDirection, LUp);
+  FiniteDirectionalShadowBounds(LBounds, LPosition, LDirection, LLight.XYZ,
+    LDistance, LFar);
+  { Use the same closed volume in every camera mode. Its distance depends on
+    world bounds and light, so changing projection does not rebuild every mesh. }
+  DirectionalShadowDistance := LDistance;
+  Result.ProjectionFar := Max(Result.ProjectionFar,
+    Max(LFar, Result.ProjectionNear * 2));
+end;
 
 function TPhanesViewport.EffectsRendered: Boolean;
 begin

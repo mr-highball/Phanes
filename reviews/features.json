@@ -1080,6 +1080,29 @@
         "build/logs/catalog-regional-main-build-02.log"
       ],
       "review": "reviews/catalog-regional-bounded-01.json"
+    },
+    {
+      "id": "finite-directional-shadows",
+      "scope": "Correct directional shadow volumes for overhead, Orbit, fly and first-person cameras using conservative near-plane admission, finite closed geometry and world-derived projection bounds; ordinary and bounded cached paths must agree and preserve transformed/mutable geometry, positional-light fallback, visibility, editing and picking, styles, context recovery and desktop/mobile rendering quality and performance. Includes reviewed engine adoption; fixture success alone does not establish acceptance.",
+      "inputs": [
+        "docs/dependencies/CGE_FINITE_SHADOWS.md",
+        "docs/dependencies/cge-finite-shadows.patch",
+        ".gitmodules",
+        "cge/code/phanes.app.view.pas",
+        "cge/code/phanes.world.shadowbounds.pas",
+        "cge/code/phanes.world.shadowcache.pas",
+        "cge/code/phanes.world.batching.pas",
+        "tests/phanes.tests.shadow.bounds.lpr",
+        "tests/phanes.tests.shadow.geometry.lpr",
+        "tools/phanes.tools.browser.pas",
+        "tests/phanes.tests.styles.probe.lpr",
+        "vendor/castle-engine/src/scene/castlescene.pas",
+        "vendor/castle-engine/src/scene/castleshapeinternalrendershadowvolumes.pas",
+        "vendor/castle-engine/src/scene/castleviewport.pas",
+        "vendor/castle-engine/src/transform/castlefrustum.pas",
+        "vendor/castle-engine/src/transform/castleinternalglshadowvolumes.pas"
+      ],
+      "review": null
     }
   ]
 }
