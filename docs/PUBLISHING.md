@@ -1,14 +1,16 @@
 # Browser build and GitHub Pages
 
-`.github/workflows/pages.yml` builds pushes to `main` and `hello-phanes`, pull requests
-to `main`, and manual runs. Only successful `main` runs outside pull requests
-deploy the verified static Pages stage to the `github-pages` environment.
+`.github/workflows/pages.yml` builds pushes to `main` and `hello-phanes`, pull
+requests to `main`, and manual runs. Successful branch builds outside pull
+requests deploy the staged playable demonstrator to `github-pages`.
 
-Publishing also requires the independent [critic gate](CRITIC_WORKFLOW.md).
-Builds retain their evidence while reviews are pending, but `critic-gate` fails
-and Pages upload/deployment stays on hold until every registered feature has a
-current critic report with at least B+ in every category. Run
-`./tools/reviews.ps1 -WithTests` locally for the same check and per-feature reasons.
+On 2026-09-13 the owner ended the expansion/review cycle and requested a running
+public build. Normal runs now compile the application, validate Pages packaging
+and exercise actual desktop/phone creation, inspection and picking at `/Phanes/`.
+The manual `full_validation` option retains the extended suites described below.
+Independent feature reviews remain recorded, but their unfinished full-product
+acceptance does not block this playable release. This publication does not claim
+completion of the broader product roadmap.
 
 The Ubuntu 24.04 runner installs an FPC bootstrap, builds pinned FPC and pas2js
 revisions using `tools/ci-toolchain.sh`, and caches the toolchain by script hash.
