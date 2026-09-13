@@ -276,8 +276,8 @@ begin
   GPage.Click('#create-world');
   GPage.WaitFor('!!phanesEditor.world&&!phanesEditor.worker&&' +
     'Number(document.body.dataset.renderedRevision)===phanesSceneVersion', 180000);
-  Check(GPage.Number('phanesEditor.palette.assets.length') = 37,
-    'Actual catalog exposes 19 core and 18 optional regional choices');
+  Check(GPage.Number('phanesEditor.palette.assets.length') >= 37,
+    'Actual catalog retains the original core and optional regional choices');
   Check(GPage.Text('!phanesEditor.world.composition.nodes.some(' +
     'n=>n.asset.startsWith("phanes.catalog."))&&!phanesEditor.world.layers[4].some(' +
     'v=>v.startsWith("phanes.catalog."))') = 'true',

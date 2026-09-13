@@ -34,7 +34,7 @@ uses
 
 function BuildingFurnitureAssets: TContentAssets;
 function BuildingFloorRequest(const ADocument: TCompositionDocument; const AId: String;
-  out ARequest: TContentRequest; out AReason: String): Boolean;
+  out ARequest: TContentRequest; out AReason: String; const AExtraAsset: String = ''): Boolean;
 function ValidateBuildingFurniture(const ADocument: TCompositionDocument;
   var ABuilding: TModularBuilding; out AReason: String): Boolean;
 function FurnitureBlocks(const ANode: TCompositionNode; const AX, AZ, ARadius: Double): Boolean;
@@ -64,11 +64,41 @@ begin
 end;
 
 function BuildingFloorRequest(const ADocument: TCompositionDocument; const AId: String;
-  out ARequest: TContentRequest; out AReason: String): Boolean;
+  out ARequest: TContentRequest; out AReason: String; const AExtraAsset: String): Boolean;
 var
   LIndex: TCompositionIndex;
   LAt: Integer;
   LObject: Integer;
+  I: Integer;
+
+  procedure AddBatchAsset(const AAssetId: String);
+  var
+    LAsset: TInteriorAsset;
+    LCount: Integer;
+    J: Integer;
+  begin
+    if (Pos('phanes.catalog.batch.', AAssetId) <> 1) or
+      not InteriorAsset(AAssetId, LAsset) then
+    begin
+      Exit;
+    end;
+    for J := 0 to High(ARequest.FAssets) do
+    begin
+      if ARequest.FAssets[J].FId = AAssetId then
+      begin
+        Exit;
+      end;
+    end;
+    LCount := Length(ARequest.FAssets);
+    SetLength(ARequest.FAssets, LCount + 1);
+    ARequest.FAssets[LCount].FId := AAssetId;
+    ARequest.FAssets[LCount].FName := LAsset.FName;
+    ARequest.FAssets[LCount].FRole := LAsset.FRole;
+    ARequest.FAssets[LCount].FWidth := LAsset.FWidth;
+    ARequest.FAssets[LCount].FDepth := LAsset.FDepth;
+    ARequest.FAssets[LCount].FHeight := LAsset.FHeight;
+    ARequest.FAssets[LCount].FSingleInstance := True;
+  end;
 begin
   Result := False;
   ARequest := Default(TContentRequest);
@@ -87,13 +117,23 @@ begin
     ARequest.FSurfaceDepth := 2000;
     ARequest.FHeadroom := 2800;
     ARequest.FAssets := BuildingFurnitureAssets;
+    { The full browser catalog is not a solver domain. Admit only this choice
+      and the floor's existing props, keeping ordinary requests small. }
+    AddBatchAsset(AExtraAsset);
+    for I := 0 to High(ADocument.FNodes) do
+    begin
+      if ADocument.FNodes[I].FParentId = AId then
+      begin
+        AddBatchAsset(ADocument.FNodes[I].FAssetId);
+      end;
+    end;
     SetLength(ARequest.FSlots, 1);
     ARequest.FSlots[0].FObjectId := AId + '.furnishing';
     ARequest.FSlots[0].FWidth := 2000;
     ARequest.FSlots[0].FDepth := 2000;
     ARequest.FSlots[0].FHeight := 2800;
     ARequest.FSlots[0].FAllowedRoles := ['table', 'bookcase', 'chair', 'bench',
-      'plant', 'sink', 'toilet', 'shower', 'console'];
+      'plant', 'sink', 'toilet', 'shower', 'console', 'ornament'];
     ARequest.FSlots[0].FAllowEmpty := True;
     LObject := LIndex.Find(ARequest.FSlots[0].FObjectId);
     if LObject >= 0 then

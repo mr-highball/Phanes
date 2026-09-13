@@ -267,6 +267,1665 @@
       "theme" : "nature",
       "name" : "Forest stones",
       "width" : 1.1755000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.00fa4de58df4177e.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadBirch 10",
+      "width" : 1.2645000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.035b4cca5de1d317.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.0474e7044b61d0a3.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead 2",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.050addee79c94774.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Tomato Harvested",
+      "width" : 2.8349999999999997E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.0542c04b48401a21.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Lettuce 4",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.0576142cb06f5883.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Rice 1",
+      "width" : 2.5900000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.059fb0c66fa1c53d.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Snow 5",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.0657868771c1868a.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.08068a6e163fa250.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Birch 10",
+      "width" : 1.5725000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.093eba6e4bd56fd7.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.0a77d66e357916c4.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Orange 2",
+      "width" : 3.3400000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.0d06d4d2ba4167cc.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Snow 2",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.0e9d8890f8d27703.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 7",
+      "width" : 1.6665000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.114c6426d49859a5.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Autumn 5",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.12cb62ef2aafa972.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Carrot 3",
+      "width" : 3.8450000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.13aba4b126f14eee.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Snow 2",
+      "width" : 9.9399999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.1533e45497707113.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead 4",
+      "width" : 1.3730000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.1626b680e15d9a0b.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadBirch 6",
+      "width" : 1.6490000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.17f70692e8c01264.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Lettuce 3",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.1828499741cc3e3d.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Bush Snow 1",
+      "width" : 7.5049999999999994E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.195ade0a8923ba6c.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "PalmTree 3",
+      "width" : 4.3850000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.19c91b0d73c10209.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Beet 1",
+      "width" : 3.0750000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.1c2cbc525fbf9bbe.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead Snow 4",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.1d9f671894e888a6.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mushroom Harvested",
+      "width" : 3.8950000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.1dec0ecd4ff005a9.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Cactus 3",
+      "width" : 5.3349999999999997E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.1f0911ce693799c1.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Autumn 5",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.1f484fdd7a86f4a7.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "PalmTree Harvested",
+      "width" : 3.7800000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.1fa30e94856d3fb7.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Lettuce 2",
+      "width" : 5.9950000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.1fb48c987ce7507c.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "PalmTree 4",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.2011b9b72f58575a.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock 1",
+      "width" : 6.0899999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.2021f3b6ef9c7b96.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Apple 2",
+      "width" : 3.3000000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.20d2941fd3971175.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Grass 1",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.20fc243cebe55603.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Corn 2",
+      "width" : 2.7850000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.218909b79e7c8c29.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "PalmTree 4",
+      "width" : 3.7800000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.229419473bc4d889.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Cactus 1",
+      "width" : 3.3400000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.22aa67f8d13d596b.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.245e4f7726b54129.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 10",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.253ae0a82bf45286.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Moss 6",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.25aa8ba6ae8942fb.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Corn 1",
+      "width" : 2.5900000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.272fd736e378ba50.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mushroom 1",
+      "width" : 5.4949999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.278692b712663fef.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass Wispy Short",
+      "width" : 7.5049999999999994E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.2811f4478d99c069.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Bamboo 3",
+      "width" : 1.3950000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.2853a1e85f7d88b6.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock 3",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.2ab65ff4b181c7e9.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Autumn 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.2ce123303bebc9bb.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 3",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.2de2b79d7008e5c1.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree 5",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.2f2407358091f55d.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Round 5",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.2f306bba77869633.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Corn 1",
+      "width" : 3.3200000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.32326ee554b6be48.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Flower3",
+      "width" : 2.7600000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.366c41ab8912232d.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass Short",
+      "width" : 7.5100000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.36fb1240f4da9cee.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Pumpkin 3",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.373b6660685501d4.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree 5",
+      "width" : 1.1585000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.377f67a356743089.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead Snow 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.386a1afd099b4c6b.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Mushroom Common",
+      "width" : 2.7600000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.39415a74be218ea2.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass3",
+      "width" : 5.6950000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.3a1ededb3e4d3f94.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Dead 5",
+      "width" : 7.2399999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.3ae1e8782374c276.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 7",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.3dc40f7e92cfa613.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Pine 5",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.3ddccde59221965e.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Snow 4",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.3de0868a72792ae0.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Carrot 2",
+      "width" : 3.1050000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.3f68d229cc0b6165.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.406b6e6c59c43c9c.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Autumn 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.40b0f56fe5233c6f.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Snow 1",
+      "width" : 5.4349999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.418825a466dc6402.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass",
+      "width" : 2.7750000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.4525e6ffdf690745.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "tree high",
+      "width" : 1.2190000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.474f72ae8bf184c4.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Dead Snow 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.47e637f1889aaa50.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Snow 3",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.48bb4a0d11f768a2.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Wheat",
+      "width" : 1.9550000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.49120ef135409df7.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Mushroom",
+      "width" : 2.7600000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.49a3f98af46bbba0.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "SmallTree",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.4a140732055f4590.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Snow 7",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.4b3d3b08c30620d2.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Bamboo 4",
+      "width" : 1.2350000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.4c9e70fb6da1180d.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Square 6",
+      "width" : 1.1005000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.4d1c4c024ed0cf05.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 6",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.4eb0acddb8c4196d.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Round 3",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.50de5be13a5832a6.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Watermelon Harvested",
+      "width" : 5.9950000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.52c445706a439725.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Snow 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.52e5ea955488bf4b.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.5307b7a50d8385ff.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Watermelon 3",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.547ce5bf905728a8.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Cactus 1",
+      "width" : 4.1949999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.54f93539a8dd6660.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Pumpkin Harvested",
+      "width" : 5.9950000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.55630d6097cd09a7.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Orange 3",
+      "width" : 3.1550000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.559a0190093c2118.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "PalmTree 1",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.55aed385be7776f7.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Pumpkin 2",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.55ba59b0acbb7801.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Dead 3",
+      "width" : 7.6400000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.58476dc5f931d0b7.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "PalmTree 2",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.587c3785676f939f.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Flower 2",
+      "width" : 1.2300000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.58eaafceb36a643c.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Flower 3",
+      "width" : 2.3649999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.59877dde86b4d3e2.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead Snow 3",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.5bddd567f89957ba.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mushroom 4",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.5cf420ebbc741c6e.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow 3",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.618d7c1ec6e64610.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Flower2",
+      "width" : 6.5500000000000003E-002
+    },
+    {
+      "id" : "phanes.catalog.nature.633bf6ca809b6eb6.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Grass 2",
+      "width" : 3.1400000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.6368482b87fde8de.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead Snow 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.6396bfb77d0593b1.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "PalmTree 3",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.651aef17e3b685a0.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "PalmTree 2",
+      "width" : 5.6650000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.66c0e6daf8924a69.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Moss 5",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.677a6d4efa8ec6ee.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Wheat 1",
+      "width" : 3.3250000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.680ec62a60b1adea.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Rice 2",
+      "width" : 2.7150000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.6829c040c9235158.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Orange 1",
+      "width" : 5.7750000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.68d0ce67bed16f5e.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Dead Snow 1",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.69be158d416b07c1.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Snow 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.6bef160a7c6852fb.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Pumpkin 4",
+      "width" : 5.9950000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.6c0981cb74664d66.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass Common Tall",
+      "width" : 3.9850000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.6ceae2a8cf033585.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead Snow 5",
+      "width" : 1.5690000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.6de2b6fd6d91ed08.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead 4",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.6f3a41d6d9e3d595.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Moss 1",
+      "width" : 5.6250000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.6f88ad1042b5cbb0.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Cactus 3",
+      "width" : 3.2800000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.71a92497e8d0a90e.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Autumn 3",
+      "width" : 1.2985000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.75d65b57f8141cb8.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Moss 7",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.7675e8d89b93d9a1.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Pine 2",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.7c155efd8955c76d.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Cactus 4",
+      "width" : 5.0349999999999995E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.7cd674a9a7658587.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Autumn 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.7e779526361e074d.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Tomato 3",
+      "width" : 2.7000000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.7f228961af84fc82.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Pine 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.816b57a3945aec0e.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Birch 6",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.81d61d33440a0e47.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 8",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.81f4610be7628bd5.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Plant 2",
+      "width" : 2.9049999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.83e208f06f34c3da.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Flower",
+      "width" : 1.7449999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.852e4047c188c4c8.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "rocks low",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.859a1d3a2e24fa00.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "BushBerries 1",
+      "width" : 4.4200000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.860a9104a591e5b2.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock 7",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.8644fb9c08938ae4.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Round 4",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.867ee1afb1fd70ab.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Wheat 2",
+      "width" : 1.3950000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.8ac9ec640e65843d.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Tomato 1",
+      "width" : 3.3900000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.8b6aabe19b34d802.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree 3",
+      "width" : 1.2985000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.8ba1630d5aefebe6.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Wheat 4",
+      "width" : 6.2500000000000000E-002
+    },
+    {
+      "id" : "phanes.catalog.nature.8ba657a8a6669e08.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 3",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.8c9f19dd65f27508.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Snow 5",
+      "width" : 1.1465000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.8dde0beae49e719f.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Dead Snow 3",
+      "width" : 7.6400000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.910397a4769bc2e3.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Round 2",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.92e266d07d5fe1d4.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead 2",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.935bbc8497a96cc3.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Pumpkin 1",
+      "width" : 3.3350000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.9389a188f6a83b65.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead 5",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.93df7a744a5b4764.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass Common Short",
+      "width" : 4.1499999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.9423d4c532cee460.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead 3",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.94d4b4789edf40ba.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Pine 3",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.977b75deaee75639.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Cactus 4",
+      "width" : 5.4700000000000004E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.97a1a44c0683e56a.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Snow 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.9898b8e0efd13023.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 9",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.9c3590ee92895e89.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Watermelon 4",
+      "width" : 5.9950000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.9d8b716e506d9a06.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass 2",
+      "width" : 2.7650000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.9dc6e1f2f2ed817d.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Tomato 4",
+      "width" : 2.8349999999999997E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.9f89cd29ef016f51.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Carrot 4",
+      "width" : 3.1800000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.9f8f6a7be6dc112b.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass2",
+      "width" : 6.6149999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.a02169debeb97cb1.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Bush3",
+      "width" : 5.7350000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.a146257d5dcab9c3.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Round 1",
+      "width" : 1.1005000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.a27d2daa5259cd33.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Square 5",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.a2c6cd56b9f9c215.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mushroom 2",
+      "width" : 3.8050000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.a400934aa64f0eed.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock3",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.a570697d8988f26d.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Cactus 2",
+      "width" : 4.6500000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.a616c5a4ceba8fc5.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "PalmTree 1",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.a6349db1f31edf34.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Apple 1",
+      "width" : 5.7750000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.a6f81fb70deb8571.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 5",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.a78529d045523de0.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Apple 3",
+      "width" : 3.3600000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.a8ca5ed46eb850ce.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Cactus 2",
+      "width" : 4.7899999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.a8d1eb8ad0124ecc.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock 5",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.a9f7bc9d18d6fa77.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass1",
+      "width" : 7.2299999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.aac4419d08d452de.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Bamboo 2",
+      "width" : 1.6900000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.ab6c110bd5926b37.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead Snow 3",
+      "width" : 8.1299999999999994E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.ab9511884ad14387.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 4",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ac3943a5b85db7bb.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 2",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ac59f95b771c811b.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead Snow 5",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ad7c44f21fc4f8b6.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 6",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ae83f4ed1ba404cf.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "CactusFlowers 4",
+      "width" : 1.9400000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.ae8db64fe88131a3.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow 2",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.aeb499d01519dbba.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 9",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.b158d5928459396b.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Cactus 5",
+      "width" : 5.7999999999999996E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.b38d5f8c9155f7ea.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Snow 6",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.b47cd80d0f885068.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Grass 4",
+      "width" : 2.2200000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.b4cecff7eb4422b2.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Cactus Harvested",
+      "width" : 5.2349999999999997E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.b5497d5cfd3d128e.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "CactusFlowers 2",
+      "width" : 1.8300000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.b57751a3aa94697b.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree4",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.b5f320cd0b3a4ffc.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Corn 4",
+      "width" : 2.7150000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.b73528ac93961e8a.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Grass Wispy Tall",
+      "width" : 7.1550000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.b77e3aaec99d20f4.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Dead 4",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.b8ed49aaa6f5b101.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Snow 3",
+      "width" : 1.3490000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.b9073230232d1820.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock 6",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ba07d0b37eb45ea9.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Square 2",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ba0bf35a7eb8f628.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Snow 3",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.bbf8c80e10d7a51c.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Beet 4",
+      "width" : 4.0999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.bc50e416b2f6c5cf.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Beet 2",
+      "width" : 1.4949999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.bd7104021ad0dce5.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead 3",
+      "width" : 8.1299999999999994E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.bded959334682962.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Flower 1",
+      "width" : 5.9950000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.be2687f44dd6087d.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Autumn 2",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.bf57ee49a20a837c.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Snow 5",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.c07d908de23d8bbc.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Carrot 1",
+      "width" : 5.9950000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.c2e245c5e8185267.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Lettuce 1",
+      "width" : 5.6399999999999995E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.c41af19f6d334e99.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Beet 3",
+      "width" : 3.5249999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.c7c8e358c119242f.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Snow 3",
+      "width" : 1.2795000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.c7dc6a96d925b416.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Lettuce Harvested",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.c7ea241ceb40b5e9.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 8",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.c856654bd8574d81.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock2",
+      "width" : 1.1005000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ca552c965b48a94b.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow 5",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.cabc063e1dca144b.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 1",
+      "width" : 1.4185000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.cbb3b3447cc92531.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "CactusFlower 1",
+      "width" : 2.7600000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.cbde979fac1aaaeb.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Watermelon 2",
+      "width" : 5.9999999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.d0cbbe81eb91c553.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Square 1",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.d3d6eace0500489d.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Bush2",
+      "width" : 7.5100000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.d3d91160176eac0b.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Square 3",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.d3e939f9feea753e.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.d41b12d155af8824.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Corn 2",
+      "width" : 3.3200000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.d424e5c88ccef24c.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Dead 1",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.d45a24ad338e6589.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Tomato 2",
+      "width" : 2.8649999999999998E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.d4995c407e2f0643.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead 5",
+      "width" : 1.5690000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.d5717c9c8dcd53a6.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "rocks high",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.d5ce03c211653949.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.d79a432a1f92996e.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock1",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.dbeb963c5206f4e7.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 4",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.dfb5dc0404336679.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Autumn 5",
+      "width" : 1.1585000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.dfc3e75057d1b79e.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock 2",
+      "width" : 9.6350000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.e133ecd2f1ab821a.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Bush1",
+      "width" : 5.4100000000000004E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.e1ba418ede81d742.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Moss 3",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.e3832b8432bfed79.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Autumn 3",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.e3c5b75108c58a1f.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Snow 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.e428ad412dc1fe8e.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Grass 3",
+      "width" : 2.8299999999999997E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.e4686c8a92d148f2.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "rocks ramp",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.e48885dcc760cdc7.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Snow 5",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.e54498eda69be4bc.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Pine 1",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.e5532b563cd9981d.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Flowers Harvested",
+      "width" : 1.6250000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.e575b0224623fc10.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Bamboo 1",
+      "width" : 4.4850000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.e6a5e75eda8f3806.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Flower 4",
+      "width" : 2.1450000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.e7c479465cfdfc20.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mushroom 3",
+      "width" : 5.1500000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.e9ef041db32f959c.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BigTree",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ed23f8fd123a97b8.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Rock Moss 2",
+      "width" : 1.0349999999999999E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.edff36279cd0f408.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 5",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ef7e4d9512792698.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Pebble Square 4",
+      "width" : 1.1010000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ef91a4adc3ca8b2a.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Willow Dead Snow 2",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.f1edfe6ad47dc2bc.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "DeadTree 2",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.f4ed3b555c369129.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "BirchTree Autumn 1",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.f5570888a051ad98.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Rice 4",
+      "width" : 5.5500000000000005E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.f749fa66b8f0c8d2.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree 3",
+      "width" : 1.3560000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.f9558a2723ced892.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Corn Harvested",
+      "width" : 2.7150000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.nature.f972b10d1a98043d.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Tree 10",
+      "width" : 1.7995000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.fa217dfb98859035.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Autumn 3",
+      "width" : 1.3560000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.fe25c6a438fa36be.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "CommonTree Dead Snow 4",
+      "width" : 1.3730000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.nature.ff20c6184c0b95ab.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Watermelon 1",
+      "width" : 3.3350000000000002E-001
     }
   ],
   "prefabs" : {

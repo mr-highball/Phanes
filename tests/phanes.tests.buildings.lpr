@@ -28,7 +28,9 @@ uses
   SysUtils, Math, FPJSON, phanes.tools.files, phanes.world.types,
   phanes.world.generate, phanes.world.validate, phanes.world.selection,
   phanes.composition.types, phanes.composition.document,
-  phanes.buildings.types, phanes.buildings.validate;
+  phanes.buildings.types, phanes.buildings.validate, phanes.buildings.furniture,
+  phanes.catalog.objects, phanes.composition.contents.types,
+  phanes.composition.contents.generate;
 
 var
   GChecks: Integer;
@@ -319,6 +321,54 @@ begin
   Check(not GenerateWorld(LRequest, LRepeat, GReason), 'Batch cannot clear furnishings');
 end;
 
+procedure CatalogChecks(const AWorld: TWorld; const ARoot: String);
+var
+  LIds: TObjectAssetIds;
+  LRequest: TContentRequest;
+  LDocument: TCompositionDocument;
+  LIndex: TCompositionIndex;
+  LFloor: String;
+  I: Integer;
+begin
+  LFloor := ModuleFloorId(ARoot, 13, 13);
+  LIds := ObjectAssetIds;
+  for I := 0 to High(LIds) do
+  begin
+    if Pos('phanes.catalog.batch.', LIds[I]) <> 1 then
+    begin
+      Continue;
+    end;
+    if (ParamStr(1) = '--catalog-equipment') and
+      (Pos('phanes.catalog.batch.equipment.', LIds[I]) <> 1) then
+    begin
+      Continue;
+    end;
+    if (ParamStr(1) = '--catalog-furniture') and
+      (Pos('phanes.catalog.batch.furniture.', LIds[I]) <> 1) then
+    begin
+      Continue;
+    end;
+    Check(BuildingFloorRequest(AWorld.FComposition, LFloor, LRequest, GReason, LIds[I]),
+      'Batch profile enters floor request');
+    Check(Length(LRequest.FAssets) < 64, 'Catalog growth keeps placement domain bounded');
+    LRequest.FSlots[0].FAllowedAssets := [LIds[I]];
+    LRequest.FSlots[0].FAllowEmpty := False;
+    Check(GenerateContents(AWorld.FComposition, LRequest, LDocument, GReason),
+      'Batch model fits actual content solver: ' + LIds[I]);
+    LIndex := TCompositionIndex.Create(LDocument.FNodes);
+    try
+      Check(LDocument.FNodes[LIndex.Find(LFloor + '.furnishing')].FAssetId = LIds[I],
+        'Exact requested batch model was placed');
+    finally
+      LIndex.Free;
+    end;
+    Check(BuildingFloorRequest(LDocument, LFloor, LRequest, GReason),
+      'Existing batch model survives request reconstruction');
+    Check(GenerateContents(LDocument, LRequest, LDocument, GReason),
+      'Existing batch furnishing remains valid');
+  end;
+end;
+
 procedure Run;
 var
   LBase: TWorld;
@@ -350,6 +400,11 @@ begin
   Check(LWorld.FComposition.FRevision = 1, 'One atomic composition revision');
   Check(LWorld.FDecisions > 0, 'Generation has actual WFC choices');
   FurnishingChecks(LWorld, LId);
+  if (ParamStr(1) = '--catalog-batch') or (ParamStr(1) = '--catalog-equipment') or
+    (ParamStr(1) = '--catalog-furniture') then
+  begin
+    CatalogChecks(LWorld, LId);
+  end;
   for I := 0 to 4 do
   begin
     Check(Length(LWorld.FLayers[I]) = Length(LBase.FLayers[I]), 'Layer dimensions preserved');

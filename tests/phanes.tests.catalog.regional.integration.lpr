@@ -113,7 +113,8 @@ begin
     LWorld.FLayers[0][14] := 'field';
     Check(ValidateWorld(LWorld, LRequest.FAssets, LReason), 'Fixture baseline: ' + LReason);
     LIds := RegionalAssetIds;
-    Check(Length(LIds) = 18, 'The curated regional batch contains eighteen models');
+    Check(Length(LIds) >= 18, 'The original eighteen regional models remain available');
+    SetLength(LIds, 18);
     LCrops := 0;
     LOther := 0;
     for I := 0 to High(LIds) do

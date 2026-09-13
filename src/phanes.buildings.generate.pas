@@ -335,7 +335,8 @@ begin
       end
       else if ARequest.FOperation = 'module-furnish' then
       begin
-        if not BuildingFloorRequest(LCandidate.FComposition, ARequest.FObjectId, LContents, AReason) then
+        if not BuildingFloorRequest(LCandidate.FComposition, ARequest.FObjectId,
+          LContents, AReason, ARequest.FContentAsset) then
         begin
           Exit;
         end;

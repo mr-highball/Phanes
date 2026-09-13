@@ -424,7 +424,8 @@ begin
   for I := 0 to High(LIds) do
   begin
     if OptionalAssetAdmission(LIds[I], LOptional) and
-      (LOptional.FDomain = oadInterior) then
+      (LOptional.FDomain = oadInterior) and
+      (Pos('phanes.catalog.batch.', LIds[I]) <> 1) then
     begin
       AddAsset(LIds[I]);
     end;

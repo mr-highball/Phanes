@@ -229,8 +229,14 @@ begin
         end;
       end else
       begin
+        LDetail := 'A compatible model from this group in each selected cell';
+        if (FGroup = 'tree') or (FGroup = 'shrub') or (FGroup = 'rock') or
+          (FGroup = 'flowers') or (FGroup = 'wheat') then
+        begin
+          LDetail := 'A mixture of up to 8 models across the selection';
+        end;
         AddChoice('Let WFC choose ' + LowerCase(GroupName(FGroup)),
-          'A compatible model from this group in each selected cell', 'group-choice', FGroup);
+          LDetail, 'group-choice', FGroup);
       end;
     end;
     for I := 0 to LAssets.Length - 1 do

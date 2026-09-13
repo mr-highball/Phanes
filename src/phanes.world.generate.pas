@@ -39,6 +39,8 @@ implementation
 
 uses
   SysUtils,
+  Classes,
+  Types,
   wfc,
   wfc_lattice,
   phanes.composition.types,
@@ -57,6 +59,28 @@ uses
   phanes.terrain.types,
   phanes.world.validate;
 
+function CatalogChoices(const ARequest: TWorldRequest): TGraphValues;
+var
+  LCount: Integer;
+  LStart: Integer;
+  I: Integer;
+begin
+  LCount := Length(ARequest.FAssetChoices);
+  LStart := 0;
+  if (ARequest.FEditLayer = 'foliage') and (LCount > 8) then
+  begin
+    { A broad catalog is a menu, not a demand to load hundreds of models.
+      Rotate a bounded mixture by seed; exact item choices remain unrestricted. }
+    LStart := ARequest.FSeed mod Cardinal(LCount);
+    LCount := 8;
+  end;
+  SetLength(Result, LCount);
+  for I := 0 to LCount - 1 do
+  begin
+    Result[I] := ARequest.FAssetChoices[(LStart + I) mod Length(ARequest.FAssetChoices)];
+  end;
+end;
+
 procedure AddEcology(const AGraph: TGraph; const AKind: String;
   const AWeight: Integer; const ATerrain: TGraphValues);
 begin
@@ -73,87 +97,112 @@ var
   LPitch: Integer;
   LAsset: TAsset;
   LBuilding: Boolean;
+  LNatureIds: TStringList;
+  LChoices: TGraphValues;
+  I: Integer;
 begin
-  { Terrain cells span 8 x 8 world units. Architecture reads the whole cell.
-    Ecology has four 4 x 4 cells inside each terrain cell. The last two passes
-    choose real kit objects consistent with those structural/ecological roles.
-    All constraints here are authored, not learned from the downloaded art. }
-  AGraph.CurrentPass := 'terrain';
-  AGraph.PassMode := gpmOverlay;
-  AGraph.AddValue('meadow', 10).NewRule([gdNorth, gdEast, gdSouth, gdWest],
-    ['water', 'meadow', 'forest', 'field', 'stone']);
-  AGraph.AddValue('forest', 5).NewRule([gdNorth, gdEast, gdSouth, gdWest],
-    ['forest', 'meadow', 'field', 'stone']);
-  AGraph.AddValue('water', 1).NewRule([gdNorth, gdEast, gdSouth, gdWest],
-    ['water', 'meadow', 'field', 'stone']);
-  AGraph.AddValue('field', 2).NewRule([gdNorth, gdEast, gdSouth, gdWest],
-    ['water', 'meadow', 'forest', 'field', 'stone']);
-  AGraph.AddValue('stone', 1).NewRule([gdNorth, gdEast, gdSouth, gdWest],
-    ['water', 'meadow', 'forest', 'field', 'stone']);
-
-  AGraph.SwitchToPass('architecture');
-  AGraph.PassMode := gpmOverlay;
-  AGraph.AddValue('empty', 65);
-  for LAsset in ARequest.FAssets do
-  begin
-    LBuilding := (LAsset.FKind = 'cabin') or (LAsset.FKind = 'castle') or
-      (LAsset.FKind = 'modern') or (LAsset.FKind = 'scifi');
-    if LBuilding then
+  LNatureIds := TStringList.Create;
+  try
+    LNatureIds.Sorted := True;
+    LNatureIds.Duplicates := dupIgnore;
+    LNatureIds.Add(ARequest.FExactAsset);
+    LChoices := CatalogChoices(ARequest);
+    for I := 0 to High(LChoices) do
     begin
-      AGraph.AddValue(LAsset.FKind, 2)
-        .RequireMappedFromPass('terrain', MakeGraphPassCellQuery(['meadow', 'field', 'stone']));
+      LNatureIds.Add(LChoices[I]);
     end;
-  end;
-
-  AGraph.SwitchToPass('ecology');
-  AGraph.PassMode := gpmOverlay;
-  AGraph.AddValue('empty', 5);
-  AddEcology(AGraph, 'tree', 8, ['forest', 'meadow']);
-  AddEcology(AGraph, 'shrub', 4, ['forest', 'meadow', 'field', 'stone']);
-  AddEcology(AGraph, 'flowers', 5, ['meadow', 'field']);
-  AddEcology(AGraph, 'rock', 2, ['forest', 'meadow', 'field', 'stone']);
-  AddEcology(AGraph, 'wheat', 8, ['field']);
-
-  for LLayer := 3 to 4 do
-  begin
-    AGraph.SwitchToPass(LayerName(LLayer));
+    for I := 0 to High(ARequest.FPrevious.FLayers[4]) do
+    begin
+      LNatureIds.Add(ARequest.FPrevious.FLayers[4][I]);
+    end;
+    { Terrain cells span 8 x 8 world units. Architecture reads the whole cell.
+      Ecology has four 4 x 4 cells inside each terrain cell. The last two passes
+      choose real kit objects consistent with those structural/ecological roles.
+      All constraints here are authored, not learned from the downloaded art. }
+    AGraph.CurrentPass := 'terrain';
     AGraph.PassMode := gpmOverlay;
-    if LLayer = 3 then
-    begin
-      AGraph.AddValue('empty').RequireMappedFromPass('architecture',
-        MakeGraphPassCellQuery(['empty']));
-    end
-    else
-    begin
-      AGraph.AddValue('empty').RequireMappedFromPass('ecology',
-        MakeGraphPassCellQuery(['empty']));
-    end;
+    AGraph.AddValue('meadow', 10).NewRule([gdNorth, gdEast, gdSouth, gdWest],
+      ['water', 'meadow', 'forest', 'field', 'stone']);
+    AGraph.AddValue('forest', 5).NewRule([gdNorth, gdEast, gdSouth, gdWest],
+      ['forest', 'meadow', 'field', 'stone']);
+    AGraph.AddValue('water', 1).NewRule([gdNorth, gdEast, gdSouth, gdWest],
+      ['water', 'meadow', 'field', 'stone']);
+    AGraph.AddValue('field', 2).NewRule([gdNorth, gdEast, gdSouth, gdWest],
+      ['water', 'meadow', 'forest', 'field', 'stone']);
+    AGraph.AddValue('stone', 1).NewRule([gdNorth, gdEast, gdSouth, gdWest],
+      ['water', 'meadow', 'forest', 'field', 'stone']);
+
+    AGraph.SwitchToPass('architecture');
+    AGraph.PassMode := gpmOverlay;
+    AGraph.AddValue('empty', 65);
     for LAsset in ARequest.FAssets do
     begin
-      { The first world uses the already downloaded core kit. Explicit regional
-        edits can choose the expanded catalog and prepare its sources on demand. }
-      if (ARequest.FOperation = 'create') and (Pos('phanes.catalog.', LAsset.FId) = 1) then
-      begin
-        Continue;
-      end;
       LBuilding := (LAsset.FKind = 'cabin') or (LAsset.FKind = 'castle') or
         (LAsset.FKind = 'modern') or (LAsset.FKind = 'scifi');
-      if LBuilding = (LLayer = 3) then
+      if LBuilding then
       begin
-        if LLayer = 3 then
+        AGraph.AddValue(LAsset.FKind, 2)
+          .RequireMappedFromPass('terrain', MakeGraphPassCellQuery(['meadow', 'field', 'stone']));
+      end;
+    end;
+
+    AGraph.SwitchToPass('ecology');
+    AGraph.PassMode := gpmOverlay;
+    AGraph.AddValue('empty', 5);
+    AddEcology(AGraph, 'tree', 8, ['forest', 'meadow']);
+    AddEcology(AGraph, 'shrub', 4, ['forest', 'meadow', 'field', 'stone']);
+    AddEcology(AGraph, 'flowers', 5, ['meadow', 'field']);
+    AddEcology(AGraph, 'rock', 2, ['forest', 'meadow', 'field', 'stone']);
+    AddEcology(AGraph, 'wheat', 8, ['field']);
+
+    for LLayer := 3 to 4 do
+    begin
+      AGraph.SwitchToPass(LayerName(LLayer));
+      AGraph.PassMode := gpmOverlay;
+      if LLayer = 3 then
+      begin
+        AGraph.AddValue('empty').RequireMappedFromPass('architecture',
+          MakeGraphPassCellQuery(['empty']));
+      end
+      else
+      begin
+        AGraph.AddValue('empty').RequireMappedFromPass('ecology',
+          MakeGraphPassCellQuery(['empty']));
+      end;
+      for LAsset in ARequest.FAssets do
+      begin
+        { The first world uses the already downloaded core kit. Explicit regional
+          edits can choose the expanded catalog and prepare its sources on demand. }
+        if (ARequest.FOperation = 'create') and (Pos('phanes.catalog.', LAsset.FId) = 1) then
         begin
-          AGraph.AddValue(LAsset.FId).RequireMappedFromPass('architecture',
-            MakeGraphPassCellQuery([LAsset.FKind]));
-        end
-        else
+          Continue;
+        end;
+        if (Pos('phanes.catalog.nature.', LAsset.FId) = 1) and
+          (LNatureIds.IndexOf(LAsset.FId) < 0) then
         begin
-          AGraph.AddValue(LAsset.FId).RequireMappedFromPass('ecology',
-            MakeGraphPassCellQuery([LAsset.FKind]));
+          Continue;
+        end;
+        LBuilding := (LAsset.FKind = 'cabin') or (LAsset.FKind = 'castle') or
+          (LAsset.FKind = 'modern') or (LAsset.FKind = 'scifi');
+        if LBuilding = (LLayer = 3) then
+        begin
+          if LLayer = 3 then
+          begin
+            AGraph.AddValue(LAsset.FId).RequireMappedFromPass('architecture',
+              MakeGraphPassCellQuery([LAsset.FKind]));
+          end
+          else
+          begin
+            AGraph.AddValue(LAsset.FId).RequireMappedFromPass('ecology',
+              MakeGraphPassCellQuery([LAsset.FKind]));
+          end;
         end;
       end;
     end;
-  end;
 
+  finally
+    LNatureIds.Free;
+  end;
   SetLength(LLayouts, 5);
   for LLayer := 0 to 4 do
   begin
@@ -181,7 +230,6 @@ var
   LHasPrevious: Boolean;
   LInSelection: Boolean;
   LChoices: TGraphValues;
-  I: Integer;
 begin
   LHasPrevious := ARequest.FPrevious.FSize = ARequest.FSize;
   LOperation := ARequest.FOperation;
@@ -189,11 +237,7 @@ begin
   begin
     LOperation := AssetKind(ARequest.FAssets, ARequest.FExactAsset);
   end;
-  SetLength(LChoices, Length(ARequest.FAssetChoices));
-  for I := 0 to High(LChoices) do
-  begin
-    LChoices[I] := ARequest.FAssetChoices[I];
-  end;
+  LChoices := CatalogChoices(ARequest);
   for LLayer := 0 to 4 do
   begin
     LPass := AGraph.PassGraph[LLayer];
