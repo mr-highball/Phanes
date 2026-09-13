@@ -100,6 +100,8 @@ begin
   AAdmission.FTexturePixels := ATexturePixels;
 end;
 
+{$I phanes.catalog.batch.inc}
+
 function ObjectAssetAdmission(const AId: String;
   out AAdmission: TObjectAssetAdmission): Boolean;
 const
@@ -205,13 +207,15 @@ begin
       50, 28, 21, 132, 396, 0);
   end else
   begin
-    Result := False;
+    Result := BatchAdmission(AId, AAdmission);
   end;
 end;
 
 function ObjectAssetIds: TObjectAssetIds;
+var
+  I: Integer;
 begin
-  SetLength(Result, 12);
+  SetLength(Result, 12 + Length(BatchIds));
   Result[0] := 'phanes.catalog.book.rpg-closed.v1';
   Result[1] := 'phanes.catalog.artifact.scroll.v1';
   Result[2] := 'phanes.catalog.artifact.crystal-green.v1';
@@ -224,6 +228,10 @@ begin
   Result[9] := 'phanes.catalog.food.strawberry.v1';
   Result[10] := 'phanes.catalog.food.cheese-slice.v1';
   Result[11] := 'phanes.catalog.food.croissant.v1';
+  for I := 0 to High(BatchIds) do
+  begin
+    Result[12 + I] := BatchIds[I];
+  end;
 end;
 
 end.

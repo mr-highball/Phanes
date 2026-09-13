@@ -29,6 +29,13 @@ var
   GPage: TBrowserProbe;
   GOutput, GView, GBefore, GAfter: String;
   GChecks, GViewport: Integer;
+  GSample: Integer;
+  GAsset: String;
+const
+  BatchSamples: array[0..2] of String = (
+    'phanes.catalog.batch.29126d7453aa558d.v1',
+    'phanes.catalog.batch.a5b74fed5d9ab924.v1',
+    'phanes.catalog.batch.08f8aa7805e15d20.v1');
 procedure Check(const ACondition: Boolean; const ALabel: String);
 begin
   Require(ACondition, ALabel + ': ' + GPage.Text('document.getElementById("toast").textContent'));
@@ -53,7 +60,8 @@ begin
     'phanesEditor.selection={x:1,z:1,width:1,depth:1,selectionScale:8,selectionCells:cells};phanesEditorActions.syncSelection()})()');
 end;
 begin
-  Require(ParamCount=3,'Usage: population-browser BROWSER URL EVIDENCE');
+  Require((ParamCount=3) or (ParamCount=4),
+    'Usage: population-browser BROWSER URL EVIDENCE [--catalog-batch]');
   GOutput := ExpandFileName(ParamStr(3));
   ForceDirectories(GOutput);
   for GViewport := 0 to 1 do
@@ -118,6 +126,33 @@ begin
         Check(GPage.Text('JSON.stringify(phanesEditor.world)')=GAfter,'One redo restores the entire population');
         Check(GPage.Text('document.documentElement.scrollWidth<=innerWidth')='true','No horizontal page overflow');
         Check(GPage.Number('populationErrors.length')=0,'No browser runtime errors');
+        if ParamStr(4) = '--catalog-batch' then
+        begin
+          for GSample := 0 to High(BatchSamples) do
+          begin
+            Click('#module-undo');
+            GPage.WaitFor('!phanesCatalogLoading&&Number(document.body.dataset.renderedRevision)===phanesSceneVersion');
+            Click('#module-paint');
+            Floors;
+            GAsset := BatchSamples[GSample];
+            GPage.SetValue('module-population-search', 'chair', 'input');
+            Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')>0,
+              'Search exposes catalog seating');
+            Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')<100,
+              'Search narrows the batch');
+            GPage.SetValue('module-population-search', '', 'input');
+            Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')>500,
+              'Clearing search restores full batch');
+            GPage.SetValue('module-population-furniture', GAsset, 'change');
+            GPage.Execute('document.body.dataset.lastSolve=""');
+            Click('#module-populate');
+            Settled;
+            Check(GPage.Number('phanesEditor.world.composition.nodes.filter(n=>n.asset===' + QuotedStr(GAsset) + ').length')=4,
+              'Density places four exact catalog models');
+            GPage.Screenshot(GOutput + '/' + GView + '-catalog-' + IntToStr(GSample) + '.png');
+            Check(GPage.Number('populationErrors.length')=0,'Catalog models render without browser errors');
+          end;
+        end;
       except
         on E: Exception do
         begin

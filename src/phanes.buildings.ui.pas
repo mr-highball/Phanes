@@ -38,7 +38,8 @@ uses
   JS, Web, SysUtils, Math, phanes.world.types, phanes.world.wire,
   phanes.composition.types, phanes.composition.document, phanes.buildings.types,
   phanes.buildings.validate, phanes.buildings.geometry,
-  phanes.composition.contents.types, phanes.interiors.surfaces;
+    phanes.composition.contents.types, phanes.interiors.surfaces,
+    phanes.catalog.objects;
 
 type
   TEditorState = class external name 'Object'(TJSObject)
@@ -85,6 +86,8 @@ type
     FNextNearby: Double;
     FDisplayedCount: Integer;
     function Click(AEvent: TJSEvent): Boolean;
+    function FilterFurniture(AEvent: TJSEvent): Boolean;
+    procedure AddCatalogOptions(const ASelectId, AQuery: String);
     function Protected(const AId: String): Boolean;
     procedure Paint;
     procedure SelectParts;
@@ -139,6 +142,10 @@ begin
     '<option value="mixed">Mix of tables, chairs, shelves and plants</option>' +
     Element('module-furniture').innerHTML;
   Element('module-population-furniture').querySelector('option[value="empty"]').remove;
+  AddCatalogOptions('module-furniture', '');
+  AddCatalogOptions('module-population-furniture', '');
+  Element('module-furniture-search').addEventListener('input', @FilterFurniture);
+  Element('module-population-search').addEventListener('input', @FilterFurniture);
   Element('module-density').addEventListener('change', @Click);
   LBridge := TJSObject.new;
   LBridge['refresh'] := @Refresh;
@@ -158,6 +165,64 @@ begin
     begin
       Nearby(ATime);
     end);
+end;
+
+procedure TBuildingUI.AddCatalogOptions(const ASelectId, AQuery: String);
+var
+  LIds: TObjectAssetIds;
+  LProfile: TObjectAssetAdmission;
+  LOption: TJSHTMLOptionElement;
+  LOptions: TJSNodeList;
+  LSelect: TJSHTMLSelectElement;
+  LPrevious: String;
+  LLabel: String;
+  I: Integer;
+begin
+  LSelect := TJSHTMLSelectElement(Element(ASelectId));
+  LPrevious := LSelect.value;
+  LOptions := LSelect.querySelectorAll('[data-batch-model]');
+  for I := 0 to LOptions.length - 1 do
+  begin
+    TJSHTMLElement(LOptions[I]).remove;
+  end;
+  LIds := ObjectAssetIds;
+  for I := 0 to High(LIds) do
+  begin
+    if (Pos('phanes.catalog.batch.', LIds[I]) <> 1) or
+      not ObjectAssetAdmission(LIds[I], LProfile) then
+    begin
+      Continue;
+    end;
+    LLabel := LProfile.FCategory + ' / ' + String(LProfile.FName) + ' (' + LProfile.FKitId + ')';
+    if (AQuery <> '') and (Pos(LowerCase(AQuery), LowerCase(LLabel)) = 0) then
+    begin
+      Continue;
+    end;
+    LOption := TJSHTMLOptionElement(document.createElement('option'));
+    LOption.value := LIds[I];
+    LOption.textContent := LLabel;
+    LOption.setAttribute('data-batch-model', 'true');
+    LSelect.appendChild(LOption);
+  end;
+  if LSelect.querySelector('option[value="' + LPrevious + '"]') <> nil then
+  begin
+    LSelect.value := LPrevious;
+  end;
+end;
+
+function TBuildingUI.FilterFurniture(AEvent: TJSEvent): Boolean;
+var
+  LInput: TJSHTMLInputElement;
+begin
+  LInput := TJSHTMLInputElement(AEvent.target);
+  if LInput.id = 'module-furniture-search' then
+  begin
+    AddCatalogOptions('module-furniture', Trim(LInput.value));
+  end else
+  begin
+    AddCatalogOptions('module-population-furniture', Trim(LInput.value));
+  end;
+  Result := True;
 end;
 
 function TBuildingUI.Protected(const AId: String): Boolean;
