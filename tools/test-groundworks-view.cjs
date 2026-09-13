@@ -84,7 +84,10 @@ const path = require('node:path');
       await page.locator('#world-file').setInputFiles({
         name: 'phanes-groundworks.json',
         mimeType: 'application/json',
-        buffer: Buffer.from(JSON.stringify({ version: 2, world: empty })),
+        buffer: Buffer.from(JSON.stringify({
+          version: empty.formatVersion === 3 ? 3 : 2,
+          world: empty,
+        })),
       });
       await settle();
       await page.locator('#open-groundworks').click();

@@ -95,7 +95,10 @@ const path = require('node:path');
           page.locator('#world-file').setInputFiles({
             name: 'phanes-rooms.json',
             mimeType: 'application/json',
-            buffer: Buffer.from(JSON.stringify({ version: 2, world })),
+            buffer: Buffer.from(JSON.stringify({
+              version: world.formatVersion === 3 ? 3 : 2,
+              world,
+            })),
           }),
         );
       // A generated regional cabin is the fixture. Room actions below use the
@@ -201,9 +204,9 @@ const path = require('node:path');
         afterSnail.nodes.filter((n) => n.id !== snailId),
         beforeSnail.nodes.filter((n) => n.id !== snailId),
       );
-      await click('#interior-undo');
+      await changed('#interior-undo');
       assert.deepEqual(await composition(), beforeSnail);
-      await click('#interior-redo');
+      await changed('#interior-redo');
       assert.deepEqual(await composition(), afterSnail);
       await click('#interior-path button[data-node="' + room + '"]');
       await child(bench.id);
@@ -308,7 +311,7 @@ const path = require('node:path');
         await render();
         assert.equal((await composition()).nodes.filter((n) => n.role === 'bay').length, count);
       }
-      await click('#interior-undo');
+      await changed('#interior-undo');
       assert.equal((await composition()).nodes.filter((n) => n.role === 'bay').length, 4);
       await click('#leave-interior');
       assert.equal(await page.evaluate(() => phanesEditor.interiorRoom), '');
@@ -337,14 +340,14 @@ const path = require('node:path');
       await render();
       const supportedPlan = 'site-1-1.deck.building.plan';
       assert.equal(await page.evaluate(() => phanesEditor.interiorRoom), supportedPlan);
-      await click('#interior-undo');
+      await changed('#interior-undo');
       await render();
       assert.equal(
         await page.evaluate(() => phanesEditor.interiorRoom),
         'site-1-1.deck.building.studio',
       );
       assert.deepEqual(await composition(), studioBeforePlan);
-      await click('#interior-redo');
+      await changed('#interior-redo');
       await render();
       assert.equal(await page.evaluate(() => phanesEditor.interiorRoom), supportedPlan);
       await child(supportedPlan + '.bay-5');

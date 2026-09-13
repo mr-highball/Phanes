@@ -71,6 +71,15 @@ const path = require('node:path');
         );
         assert.deepEqual(errors, []);
       };
+      const changed = async (action) => {
+        const priorRevision = await page.evaluate(() => phanesSceneVersion);
+        await action();
+        await page.waitForFunction(
+          (prior) => !phanesEditor.worker && phanesSceneVersion > prior,
+          priorRevision,
+        );
+        await settle();
+      };
       const snapshot = () => page.evaluate(() => structuredClone(phanesEditor.world));
       const shot = (name) =>
         page.screenshot({
@@ -97,12 +106,16 @@ const path = require('node:path');
         );
         return world;
       });
-      await page.locator('#world-file').setInputFiles({
-        name: 'phanes-supported-buildings.json',
-        mimeType: 'application/json',
-        buffer: Buffer.from(JSON.stringify({ version: 2, world: empty })),
-      });
-      await settle();
+      await changed(() =>
+        page.locator('#world-file').setInputFiles({
+          name: 'phanes-supported-buildings.json',
+          mimeType: 'application/json',
+          buffer: Buffer.from(JSON.stringify({
+            version: empty.formatVersion === 3 ? 3 : 2,
+            world: empty,
+          })),
+        }),
+      );
       await click('#open-groundworks');
       const turn = viewport.width < 500 ? 1 : 0;
       await click('[data-groundwork-turn="' + turn + '"]');
@@ -236,8 +249,7 @@ const path = require('node:path');
       else await page.mouse.click(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
       await page.waitForFunction((id) => phanesEditor.interiorSelected === id, snail.id);
       await shot('shelf');
-      await click('#interior-reimagine');
-      await page.waitForFunction(() => !phanesEditor.worker);
+      await changed(() => click('#interior-reimagine'));
       const edited = await snapshot();
       assert.notEqual(edited.composition.nodes.find((n) => n.id === snail.id).asset, snail.asset);
       for (const node of furnished.composition.nodes.filter((n) => n.id !== snail.id)) {
@@ -284,15 +296,18 @@ const path = require('node:path');
         (await snapshot()).composition.nodes.some((n) => n.id.startsWith(buildingId)),
         false,
       );
-      await click('#groundwork-undo');
-      await settle();
+      await changed(() => click('#groundwork-undo'));
       assert.deepEqual(await snapshot(), panel);
-      await page.locator('#world-file').setInputFiles({
-        name: 'phanes-furnished-foundation.json',
-        mimeType: 'application/json',
-        buffer: Buffer.from(JSON.stringify({ version: 2, world: panel })),
-      });
-      await settle();
+      await changed(() =>
+        page.locator('#world-file').setInputFiles({
+          name: 'phanes-furnished-foundation.json',
+          mimeType: 'application/json',
+          buffer: Buffer.from(JSON.stringify({
+            version: panel.formatVersion === 3 ? 3 : 2,
+            world: panel,
+          })),
+        }),
+      );
       assert.deepEqual((await snapshot()).composition, panel.composition);
       assert.deepEqual((await snapshot()).layers, panel.layers);
       await click('#groundwork-inside');

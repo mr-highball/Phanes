@@ -94,7 +94,8 @@ const path = require('node:path');
       const world = requireSuccess(
         await solve({ operation: 'create-interior', previous: unfurnished, seed }),
       );
-      assert.equal(world.formatVersion, 2);
+      assert.equal(world.formatVersion, unfurnished.formatVersion);
+      assert.deepEqual(world.elevation, unfurnished.elevation);
       assert.equal(world.composition.nodes.length, 31);
       const nodes = world.composition.nodes;
       const room = nodes.find((n) => n.role === 'studio');
@@ -333,7 +334,10 @@ const path = require('node:path');
         await view.locator('#world-file').setInputFiles({
           name: 'phanes-test.json',
           mimeType: 'application/json',
-          buffer: Buffer.from(JSON.stringify({ version: 2, world })),
+          buffer: Buffer.from(JSON.stringify({
+            version: world.formatVersion === 3 ? 3 : 2,
+            world,
+          })),
         });
         await view.waitForFunction(
           (prior) => !phanesEditor.worker && phanesSceneVersion > prior,
@@ -461,7 +465,9 @@ const path = require('node:path');
       await view.locator(viewport.width < 500 ? '#interior-export' : '#save-world').click();
       const download = await downloadPromise;
       const saved = JSON.parse(fs.readFileSync(await download.path(), 'utf8'));
-      assert.equal(saved.version, 2);
+      assert.equal(saved.version, saved.world.formatVersion === 3 ? 3 : 2);
+      assert.equal(saved.version, 3);
+      assert.deepEqual(saved.world.elevation, furnished.elevation);
       assert.deepEqual(saved.world.composition, after);
       await importWorld(saved.world);
       assert.deepEqual(await view.evaluate(() => phanesEditor.world.composition), after);
@@ -506,7 +512,10 @@ const path = require('node:path');
       if (viewport.width < 500) await view.touchscreen.tap(fx, fy);
       else await view.mouse.click(fx, fy);
       await view.waitForFunction((id) => phanesEditor.interiorSelected === id, sceneFruit.id, { timeout: 5000 });
-      await view.locator('#interior-looks button:enabled').click();
+      assert.notEqual(sceneFruit.asset, 'phanes.food.fruit.apple.v1');
+      await view
+        .locator('#interior-looks button[data-asset="phanes.food.fruit.apple.v1"]')
+        .click();
       await view.waitForFunction(() => !phanesEditor.worker);
       const foodAfter = await view.evaluate(() => phanesEditor.world.composition);
       assert.notEqual(foodAfter.nodes.find((n) => n.id === sceneFruit.id).asset, sceneFruit.asset);
@@ -553,7 +562,12 @@ const path = require('node:path');
       await chooseChild(well.id);
       await chooseChild(nodes.find((n) => n.parent === well.id && n.role === 'bread').id);
       assert.equal(await view.locator('#interior-reimagine').isEnabled(), true);
-      assert.equal(await view.locator('#interior-looks button:enabled').count(), 1);
+      assert.equal(
+        await view
+          .locator('#interior-looks button[data-asset="phanes.catalog.food.bread-slice.v1"]')
+          .isEnabled(),
+        true,
+      );
       await view.locator('#reset-camera').click();
       await view.locator('[data-camera="walk"]').click();
       await view.waitForTimeout(400);

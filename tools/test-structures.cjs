@@ -74,7 +74,10 @@ const path = require('node:path');
       await page.locator('#world-file').setInputFiles({
         name: 'phanes-structures.json',
         mimeType: 'application/json',
-        buffer: Buffer.from(JSON.stringify({ version: 2, world })),
+        buffer: Buffer.from(JSON.stringify({
+          version: world.formatVersion === 3 ? 3 : 2,
+          world,
+        })),
       });
       await page.waitForFunction(
         () => !phanesEditor.worker && phanesEditor.world?.layers[3][28] === 'rocket',
@@ -138,7 +141,7 @@ const path = require('node:path');
         phanesRenderedVerticalFov,
       ]);
       assert.ok(
-        Math.abs(Math.min(...fov) - (70 * Math.PI) / 180) < 0.0001,
+        Math.abs(Math.max(...fov) - (95 * Math.PI) / 180) < 0.0001,
         'Actual horizontal/vertical FOV: ' + JSON.stringify(fov),
       );
       assert.ok(Math.abs(bounds.cabin.doorClearance[0] - 1.2) < 0.001);

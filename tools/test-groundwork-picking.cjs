@@ -171,6 +171,45 @@ const path = require('node:path');
         }
         picks.push({ label, expected, point, screen });
       };
+      const tapAuthoringPoint = async (point) => {
+        const screen = await screenPoint(point);
+        const priorSelection = await page.evaluate(() => phanesSelectionVersion);
+        if (phone) await page.touchscreen.tap(screen.x, screen.y);
+        else await page.mouse.click(screen.x, screen.y);
+        await page.waitForFunction(
+          (prior) => !phanesAuthoringBusy && phanesSelectionVersion > prior,
+          priorSelection,
+        );
+        await settle();
+      };
+      const drawAuthoringGesture = async (tool, point, offsets) => {
+        await click('[data-authoring-tool="' + tool + '"]');
+        const screen = await screenPoint(point);
+        if (phone) {
+          const touch = await page.context().newCDPSession(page);
+          await touch.send('Input.dispatchTouchEvent', {
+            type: 'touchStart',
+            touchPoints: [{ x: screen.x, y: screen.y }],
+          });
+          for (const [dx, dy] of offsets) {
+            await touch.send('Input.dispatchTouchEvent', {
+              type: 'touchMove',
+              touchPoints: [{ x: screen.x + dx, y: screen.y + dy }],
+            });
+          }
+          await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+          await touch.detach();
+        } else {
+          await page.mouse.move(screen.x, screen.y);
+          await page.mouse.down();
+          for (const [dx, dy] of offsets) {
+            await page.mouse.move(screen.x + dx, screen.y + dy, { steps: 3 });
+          }
+          await page.mouse.up();
+        }
+        await page.waitForFunction(() => !phanesAuthoringBusy);
+        await settle();
+      };
 
       console.log(viewport.width + ': opening ' + base);
       await page.goto(base, { waitUntil: 'domcontentloaded' });
@@ -190,7 +229,10 @@ const path = require('node:path');
       await page.locator('#world-file').setInputFiles({
         name: 'phanes-picking.json',
         mimeType: 'application/json',
-        buffer: Buffer.from(JSON.stringify({ version: 2, world: empty })),
+        buffer: Buffer.from(JSON.stringify({
+          version: empty.formatVersion === 3 ? 3 : 2,
+          world: empty,
+        })),
       });
       await settle();
       await click('#open-groundworks');
@@ -339,8 +381,20 @@ const path = require('node:path');
               ...request,
             });
           });
-        let world = structuredClone(phanesEditor.world);
-        world.size = 16;
+        const created = await solve({
+          operation: 'create',
+          x: 0,
+          z: 0,
+          width: 16,
+          depth: 16,
+        });
+        if (!created.success) throw Error(created.message);
+        let world = created.world;
+        const flatLevel = Math.ceil(1000 / world.elevation.levelStep);
+        world.elevation.minimumLevel = flatLevel;
+        world.elevation.maximumLevel = flatLevel;
+        world.elevation.maximumRise = 0;
+        world.elevation.levels.fill(flatLevel);
         world.layers = world.layers.map((_, i) =>
           Array((i === 2 || i === 4 ? 32 : 16) ** 2).fill(i === 0 ? 'meadow' : 'empty'),
         );
@@ -378,7 +432,10 @@ const path = require('node:path');
       await page.locator('#world-file').setInputFiles({
         name: 'phanes-two-plots.json',
         mimeType: 'application/json',
-        buffer: Buffer.from(JSON.stringify({ version: 2, world: twoPlots.world })),
+        buffer: Buffer.from(JSON.stringify({
+          version: twoPlots.world.formatVersion === 3 ? 3 : 2,
+          world: twoPlots.world,
+        })),
       });
       await settle();
       const firstDeck = twoPlots.world.composition.nodes.find((n) => n.id === plotId + '.deck');
@@ -429,6 +486,43 @@ const path = require('node:path');
         version: oldPick,
       });
       assert.equal(await page.locator('#groundwork-tools').isVisible(), false);
+
+      // An inactive Point gesture keeps fine-grid and combine semantics when it
+      // hits terrain; non-Point authoring gestures never reopen Groundworks.
+      await aim([0, 1, 0]);
+      await click('[data-authoring-tool="point"]');
+      await page.locator('#selection-scale').selectOption('2');
+      await page.locator('#selection-combine').selectOption('replace');
+      await tapAuthoringPoint([0, 1, 0]);
+      assert.equal(await page.evaluate(() => phanesEditor.selection.selectionScale), 2);
+      assert.equal(await page.evaluate(() => phanesEditor.selection.selectionCells.length), 1);
+      await page.locator('#selection-combine').selectOption('add');
+      await tapAuthoringPoint([8, 1, 0]);
+      assert.equal(await page.evaluate(() => phanesEditor.selection.selectionCells.length), 2);
+      await page.locator('#selection-combine').selectOption('subtract');
+      await tapAuthoringPoint([0, 1, 0]);
+      assert.equal(await page.evaluate(() => phanesEditor.selection.selectionCells.length), 1);
+      assert.equal(await page.locator('#groundwork-tools').isVisible(), false);
+
+      await aim(secondPoint);
+      const pickedBeforeAuthoringGestures = await page.evaluate(
+        () => document.body.dataset.groundworkPickedVersion,
+      );
+      for (const [tool, offsets] of [
+        ['brush', [[36, 0], [50, 18]]],
+        ['box', [[42, 34]]],
+        ['lasso', [[38, 0], [38, 32], [0, 32], [0, 0]]],
+      ]) {
+        await drawAuthoringGesture(tool, secondPoint, offsets);
+        assert.equal(await page.locator('#groundwork-tools').isVisible(), false);
+        assert.equal(
+          await page.evaluate(() => document.body.dataset.groundworkPickedVersion),
+          pickedBeforeAuthoringGestures,
+        );
+      }
+      await page.locator('#selection-scale').selectOption('1');
+      await page.locator('#selection-combine').selectOption('replace');
+      await click('[data-authoring-tool="point"]');
       await tapPoint(
         secondPoint,
         twoPlots.id + '.deck.building',
@@ -438,7 +532,15 @@ const path = require('node:path');
       // A drag that returns near its start remains a drag, even after release.
       await aim(secondPoint, 'orbit');
       const dragPoint = await screenPoint(secondPoint);
-      const versionBeforeLoop = await page.evaluate(() => phanesPickVersion);
+      const beforeLoop = await page.evaluate(() => ({
+        pickVersion: phanesPickVersion,
+        pickAction: phanesPickAction,
+        cameraVersion: phanesCameraVersion,
+        selected: document.body.dataset.groundworkSelected,
+        pickedVersion: document.body.dataset.groundworkPickedVersion,
+        selection: structuredClone(phanesEditor.selection),
+      }));
+      const snapshotBeforeLoop = await snapshot();
       if (phone) {
         const touch = await page.context().newCDPSession(page);
         for (const [type, dx] of [
@@ -461,11 +563,24 @@ const path = require('node:path');
         await page.mouse.up();
       }
       await settle();
-      assert.equal(
-        await page.evaluate(() => phanesPickVersion),
-        versionBeforeLoop,
-        'A looping orbit drag must not request selection',
+      const afterLoop = await page.evaluate(() => ({
+        pickVersion: phanesPickVersion,
+        pickAction: phanesPickAction,
+        cameraVersion: phanesCameraVersion,
+        selected: document.body.dataset.groundworkSelected,
+        pickedVersion: document.body.dataset.groundworkPickedVersion,
+        selection: structuredClone(phanesEditor.selection),
+      }));
+      assert.ok(
+        afterLoop.pickVersion > beforeLoop.pickVersion,
+        'A completed drag invalidates its stale pick generation',
       );
+      assert.equal(afterLoop.pickAction, '');
+      assert.ok(afterLoop.cameraVersion > beforeLoop.cameraVersion, 'Orbit drag moves the camera');
+      assert.equal(afterLoop.selected, beforeLoop.selected);
+      assert.equal(afterLoop.pickedVersion, beforeLoop.pickedVersion);
+      assert.deepEqual(afterLoop.selection, beforeLoop.selection);
+      assert.deepEqual(await snapshot(), snapshotBeforeLoop, 'Orbit drag cannot edit world or history');
       const locked = structuredClone(twoPlots.world);
       for (const node of locked.composition.nodes) {
         if (
@@ -479,7 +594,10 @@ const path = require('node:path');
       await page.locator('#world-file').setInputFiles({
         name: 'phanes-locked-parts.json',
         mimeType: 'application/json',
-        buffer: Buffer.from(JSON.stringify({ version: 2, world: locked })),
+        buffer: Buffer.from(JSON.stringify({
+          version: locked.formatVersion === 3 ? 3 : 2,
+          world: locked,
+        })),
       });
       await settle();
       // Import deliberately resets the regional selection to the world centre.

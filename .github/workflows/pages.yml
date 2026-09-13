@@ -164,6 +164,7 @@ jobs:
             curl --fail --silent "$url" > /dev/null
             # Check worker contracts before the longer rendered journeys.
             TEST_URL="$url" node tools/test-world.cjs
+            TEST_WORKER_ONLY=1 TEST_URL="$url" node tools/test-interiors.cjs
           done
           pwsh -File tools/test-startup.ps1 -Browser "$browser_path" \
             -TestUrl http://127.0.0.1:4186/ -EvidenceDirectory build/ci-browser \

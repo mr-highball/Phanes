@@ -1482,9 +1482,21 @@ begin
     begin
       LOrigin := LPoint;
     end;
-    if FBrowser.ReadJSPropertyUtf8String('phanesPickAction') = 'authoring' then
+    if (FBrowser.ReadJSPropertyUtf8String('phanesPickAction') = 'authoring') or
+      (FBrowser.ReadJSPropertyUtf8String('phanesPickAction') = 'authoring-point') then
     begin
-      if not FRenderPending and PickTerrain(LOrigin, LDirection, LPoint) then
+      LObjectId := '';
+      if not FRenderPending and
+        (FBrowser.ReadJSPropertyUtf8String('phanesPickAction') = 'authoring-point') then
+      begin
+        LObjectId := PickGroundwork(LOrigin, LDirection, LPoint, LTerrainHit);
+      end;
+      if LObjectId <> '' then
+      begin
+        FBrowser.InvokeJSNoResult('phanesGroundworkPicked',
+          [UnicodeString(LObjectId), LVersion]);
+      end
+      else if not FRenderPending and PickTerrain(LOrigin, LDirection, LPoint) then
       begin
         FBrowser.InvokeJSNoResult('phanesAuthoringPicked',
           [LPoint.X, LPoint.Z, LVersion, True]);

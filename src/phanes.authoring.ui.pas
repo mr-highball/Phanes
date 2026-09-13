@@ -102,6 +102,7 @@ type
     constructor Create;
     procedure Cancel;
     procedure Refresh;
+    function CompletePointPick(const AVersion: Integer): Boolean;
     procedure Picked(const AX, AZ: Double; const AVersion: Integer; const AHit: Boolean);
     function Request(const AOperation: String; const ASelection, AOptions: TJSObject): TJSObject;
   end;
@@ -129,6 +130,7 @@ begin
   FTool := 'point';
   LBridge := TJSObject.new;
   LBridge['cancel'] := @Cancel;
+  LBridge['completePointPick'] := @CompletePointPick;
   LBridge['refresh'] := @Refresh;
   LBridge['request'] := @Request;
   TJSObject(window)['phanesAuthoringUI'] := LBridge;
@@ -446,8 +448,37 @@ begin
   TJSObject(window)['phanesPickY'] := FPoints[FPointIndex].FZ;
   TJSObject(window)['phanesPickSceneVersion'] := FSceneVersion;
   TJSObject(window)['phanesPickCameraVersion'] := FCameraVersion;
-  TJSObject(window)['phanesPickAction'] := 'authoring';
+  if FStrokeTool = 'point' then
+  begin
+    { A stationary point probes visible Groundworks first. Its terrain fallback
+      returns here, preserving the captured fine scale and combine operation. }
+    TJSObject(window)['phanesPickAction'] := 'authoring-point';
+  end else
+  begin
+    TJSObject(window)['phanesPickAction'] := 'authoring';
+  end;
   TJSObject(window)['phanesPickVersion'] := FPickVersion;
+end;
+
+function TAuthoringUI.CompletePointPick(const AVersion: Integer): Boolean;
+begin
+  Result := FPending and (FStrokeTool = 'point') and (AVersion = FPickVersion) and
+    (String(TJSObject(window)['phanesPickAction']) = 'authoring-point') and
+    (AVersion = Integer(TJSObject(window)['phanesPickVersion'])) and
+    (FSceneVersion = Integer(TJSObject(window)['phanesSceneVersion'])) and
+    (FCameraVersion = Integer(TJSObject(window)['phanesCameraVersion'])) and
+    (FSceneVersion = Integer(TJSObject(window)['phanesPickSceneVersion'])) and
+    (FCameraVersion = Integer(TJSObject(window)['phanesPickCameraVersion']));
+  if not Result then
+  begin
+    Exit;
+  end;
+  FPending := False;
+  FPoints := nil;
+  FWorldPoints := nil;
+  TJSObject(window)['phanesAuthoringBusy'] := False;
+  TJSObject(window)['phanesPickAction'] := '';
+  Element('selection-stroke').setAttribute('points', '');
 end;
 
 procedure TAuthoringUI.Picked(const AX, AZ: Double; const AVersion: Integer; const AHit: Boolean);

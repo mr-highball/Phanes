@@ -75,6 +75,10 @@ type
     procedure notify(const AMessage: String; const AError: Boolean);
   end;
 
+  TAuthoringBridge = class external name 'Object'(TJSObject)
+    function completePointPick(const AVersion: Integer): Boolean;
+  end;
+
   TGroundworkUI = class
   private
     FState: TEditorState;
@@ -212,13 +216,16 @@ end;
 
 procedure TGroundworkUI.Picked(const AId: String; const AVersion: Integer);
 var
+  LAction: String;
+  LAuthoring: TAuthoringBridge;
   LPlot: String;
   LNode: Integer;
   LPlotNode: Integer;
 begin
+  LAction := String(TJSObject(window)['phanesPickAction']);
   if (FState.world = nil) or (FState.worker <> nil) or not FState.editing or
     (FState.interiorRoom <> '') or
-    (String(TJSObject(window)['phanesPickAction']) <> 'end') or
+    ((LAction <> 'end') and (LAction <> 'authoring-point')) or
     (AVersion <> Integer(TJSObject(window)['phanesPickVersion'])) or
     (Integer(TJSObject(window)['phanesPickSceneVersion']) <>
       Integer(TJSObject(window)['phanesSceneVersion'])) or
@@ -233,6 +240,14 @@ begin
   if (LNode < 0) or (LPlotNode < 0) then
   begin
     Exit;
+  end;
+  if LAction = 'authoring-point' then
+  begin
+    LAuthoring := TAuthoringBridge(TJSObject(window)['phanesAuthoringUI']);
+    if (LAuthoring = nil) or not LAuthoring.completePointPick(AVersion) then
+    begin
+      Exit;
+    end;
   end;
   FActive := True;
   document.body.setAttribute('data-groundworks', 'true');
