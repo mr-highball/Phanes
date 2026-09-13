@@ -163,7 +163,7 @@ try {
   $driver = Join-Path $binaryRoot `
     ('phanes.tests.catalog.fetch.browser' + $(if ($IsWindows) { '.exe' } else { '' }))
   $runs = @(
-    @('', 'normal'), @('project/', 'normal'), @('corrupt/', 'corrupt'),
+    @('', 'normal'), @('project/', 'normal'), @('', 'encoded'), @('corrupt/', 'corrupt'),
     @('missing/', 'missing'), @('oversize/', 'oversize'), @('invalid/', 'invalid'),
     @('bounded/', 'bounded'), @('bounded/', 'stream-index'),
     @('bounded/', 'stream-manifest'), @('bounded/', 'stream-model'),

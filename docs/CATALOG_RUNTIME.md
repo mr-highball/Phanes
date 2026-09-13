@@ -16,6 +16,12 @@ relative filenames; rewriting glTF URIs is unnecessary.
 The Pascal browser controller owns asynchronous fetch, cancellation, integrity
 verification and progress. Use fetch integrity as the startup downloader does,
 including on plain HTTP LAN previews where Web Crypto may be unavailable.
+Manifest lengths describe decoded bytes. GitHub Pages may gzip a response and
+retain its compressed `Content-Length` header while Fetch exposes a decoded
+stream. The loader checks the streamed byte count and Fetch integrity instead
+of comparing that header to the manifest. `tools/test-catalog-fetch.ps1` covers
+compressed transfer headers with real GLB/glTF closures and rejects truncated
+decoded bodies; the index and file stream limits remain enforced.
 The native Castle renderer owns decoded scenes and material treatment. Its
 existing `RawAsset` currently loads only `castle-data:/kits/<id>.glb` and caches
 each template until view shutdown; that is not a bounded optional-asset cache.

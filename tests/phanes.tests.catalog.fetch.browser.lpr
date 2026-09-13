@@ -281,7 +281,7 @@ begin
         'Duplicate-row pins balance after release and clear');
       Exit;
     end;
-    if GCase <> 'normal' then
+    if (GCase <> 'normal') and (GCase <> 'encoded') then
     begin
       if GCase = 'missing' then
       begin
@@ -304,6 +304,15 @@ begin
       Check(GPage.Number('phanesCatalogFetchProbe.stats().bytes') = 0,
         GCase + ' publication leaves no partial cache entry');
       Exit;
+    end;
+    if GCase = 'encoded' then
+    begin
+      { Fetch supplies an already decoded body while retaining compressed
+        transfer headers. Reproduce that boundary without changing the bytes. }
+      GPage.Execute('window.encodingFetch=window.fetch;window.fetch=async(u,o)=>{' +
+        'const r=await encodingFetch(u,o),h=new Headers(r.headers);' +
+        'h.set("content-encoding","gzip");h.set("content-length","1");' +
+        'return new Response(r.body,{status:r.status,headers:h})}');
     end;
     GPage.Execute('window.catalogRequests=[];window.catalogNativeFetch=window.fetch;' +
       'window.fetch=(u,o)=>{catalogRequests.push(String(u));return catalogNativeFetch(u,o)}');
@@ -370,6 +379,26 @@ begin
     GPage.Execute('window.fetch=window.originalFetch;' +
       'phanesCatalogFetchProbe.release(rug.lease);' +
       'phanesCatalogFetchProbe.release(fresh.lease);phanesCatalogFetchProbe.clear()');
+    if GCase = 'encoded' then
+    begin
+      GPage.Execute('window.fetch=async(u,o)=>{' +
+        'const r=await encodingFetch(u,o);if(!String(u).includes("library/blobs/"))return r;' +
+        'const b=await r.arrayBuffer(),h=new Headers(r.headers);' +
+        'h.set("content-encoding","gzip");h.set("content-length","1");' +
+        'return new Response(b.slice(0,b.byteLength-1),{status:r.status,headers:h})};' +
+        'window.shortFailed=false;window.shortUnexpected=false;' +
+        'phanesCatalogFetchProbe.fetch(' + QuotedStr(FoodKit) + ',' +
+        QuotedStr(FoodModel) + ').then(()=>shortUnexpected=true,e=>{' +
+        'shortFailure=e.fMessage||e.message||String(e);shortFailed=true})');
+      GPage.WaitFor('window.shortFailed || window.shortUnexpected', 30000);
+      Check((GPage.Text('shortUnexpected') = 'false') and
+        (Pos('bytes differ from its manifest', GPage.Text('shortFailure')) > 0),
+        'Compressed transfer headers cannot hide a truncated decoded body: ' +
+        GPage.Text('window.shortFailure||"unexpected success"'));
+      Check((GPage.Number('phanesCatalogFetchProbe.stats().bytes') = 0) and
+        (GPage.Number('phanesCatalogFetchProbe.stats().leases') = 0),
+        'Truncated encoded response leaves no partial cache or lease');
+    end;
   finally
     GPage.Free;
   end;

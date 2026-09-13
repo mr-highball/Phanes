@@ -422,11 +422,9 @@ begin
   CheckGeneration(AGeneration);
   Require(LResponse.ok, 'Catalog file request failed (HTTP ' +
     IntToStr(LResponse.status) + ').');
-  if LResponse.headers.has('content-length') then
-  begin
-    Require(StrToIntDef(LResponse.headers.get('content-length'), -1) = LExpected,
-      'Catalog response length differs from its manifest.');
-  end;
+  { Content-Length describes the encoded transfer on compressed hosts such as
+    GitHub Pages. Fetch exposes decoded bytes, which are the bytes recorded by
+    the manifest and checked by SRI. Enforce their exact length while reading. }
   Result := await(ReadBoundedResponse(LResponse, LExpected, LExpected, AGeneration));
 end;
 
@@ -448,12 +446,8 @@ begin
   LResponse := await(TJSResponse, window.fetch(AbsoluteUrl(FIndexUrl), LOptions));
   CheckGeneration(AGeneration);
   Require(LResponse.ok, 'The optional catalog index is unavailable.');
-  if LResponse.headers.has('content-length') then
-  begin
-    Require((StrToIntDef(LResponse.headers.get('content-length'), -1) > 0) and
-      (StrToIntDef(LResponse.headers.get('content-length'), -1) <=
-      CatalogFetchIndexBytes), 'Catalog index exceeds its byte allowance.');
-  end;
+  { Bound decoded index bytes too; a transfer header may describe gzip/Brotli
+    data rather than this stream's decoded representation. }
   LBuffer := await(ReadBoundedResponse(LResponse, -1, CatalogFetchIndexBytes,
     AGeneration));
   Result := TJSObject(TJSJSON.parse(TJSTextDecoder.new.decode(LBuffer)));
