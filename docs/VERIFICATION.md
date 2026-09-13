@@ -80,6 +80,19 @@ and all 4,609 house-profile/optional-object checks also pass. Logs use the
 These are local suite observations, not phone or rendering benchmarks. A new
 web build, actual application journeys and independent review remain required.
 
+Clean Actions run 34730331921 at `be6d6e70` passed the rebuilt web target,
+Pages staging and all six pure pas2js browser suites. Named rooms completed in
+4.884 seconds and room integration in 6.910 seconds. The first application
+startup check then failed before browser connection: Ubuntu 24.04 denied the
+downloaded Chromium executable a usable sandbox. The workflow now installs an
+AppArmor profile for that exact test executable, permitting user namespaces
+while retaining Chromium's sandbox, following
+[Chromium's documented setup](https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md).
+An early blank-page launch checks this setup before the expensive build steps.
+Pascal application checks explicitly use SwiftShader on the hosted CI runner;
+their results verify behavior and rendering, not physical GPU performance.
+Application journeys and independent review remain outstanding.
+
 The clean staged site from run 34728304188 contains 9,235 files and 716,712,333
 bytes within the 900,000,000-byte budget. Its generated catalog geometry report
 has a different raw hash from the local report with the same byte length. The
