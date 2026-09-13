@@ -39,7 +39,7 @@ uses
   phanes.composition.types, phanes.composition.document, phanes.buildings.types,
   phanes.buildings.validate, phanes.buildings.geometry,
     phanes.composition.contents.types, phanes.interiors.surfaces,
-    phanes.catalog.objects;
+    phanes.catalog.objects, phanes.buildings.catalog, phanes.buildings.furniture;
 
 type
   TEditorState = class external name 'Object'(TJSObject)
@@ -138,14 +138,19 @@ begin
   Element('module-parts').addEventListener('change', @Click);
   Element('module-cutaway').addEventListener('change', @Click);
   Element('module-content-role').addEventListener('change', @Click);
-  Element('module-population-furniture').innerHTML :=
-    '<option value="mixed">Mix of tables, chairs, shelves and plants</option>' +
-    Element('module-furniture').innerHTML;
-  Element('module-population-furniture').querySelector('option[value="empty"]').remove;
+  for I := 0 to High(FloorCategories) do
+  begin
+    Element('module-population-category').innerHTML :=
+      Element('module-population-category').innerHTML + '<option>' + FloorCategories[I] + '</option>';
+  end;
+  Element('module-furniture-category').innerHTML := Element('module-population-category').innerHTML;
   AddCatalogOptions('module-furniture', '');
   AddCatalogOptions('module-population-furniture', '');
   Element('module-furniture-search').addEventListener('input', @FilterFurniture);
   Element('module-population-search').addEventListener('input', @FilterFurniture);
+  Element('module-population-category').addEventListener('change', @FilterFurniture);
+  Element('module-furniture-category').addEventListener('change', @FilterFurniture);
+  Element('module-population-furniture').addEventListener('change', @Click);
   Element('module-density').addEventListener('change', @Click);
   LBridge := TJSObject.new;
   LBridge['refresh'] := @Refresh;
@@ -169,31 +174,30 @@ end;
 
 procedure TBuildingUI.AddCatalogOptions(const ASelectId, AQuery: String);
 var
-  LIds: TObjectAssetIds;
-  LProfile: TObjectAssetAdmission;
+  LIds: TContentNames;
   LOption: TJSHTMLOptionElement;
-  LOptions: TJSNodeList;
   LSelect: TJSHTMLSelectElement;
   LPrevious: String;
   LLabel: String;
+  LCategory: String;
   I: Integer;
 begin
   LSelect := TJSHTMLSelectElement(Element(ASelectId));
   LPrevious := LSelect.value;
-  LOptions := LSelect.querySelectorAll('[data-batch-model]');
-  for I := 0 to LOptions.length - 1 do
+  LCategory := TJSHTMLSelectElement(Element('module-furniture-category')).value;
+  if ASelectId = 'module-population-furniture' then
   begin
-    TJSHTMLElement(LOptions[I]).remove;
+    LCategory := TJSHTMLSelectElement(Element('module-population-category')).value;
   end;
-  LIds := ObjectAssetIds;
+  LSelect.innerHTML := '';
+  LOption := TJSHTMLOptionElement(document.createElement('option'));
+  LOption.value := 'category:' + LCategory;
+  LOption.textContent := 'Mix from ' + LCategory;
+  LSelect.appendChild(LOption);
+  LIds := FloorCatalogIds(LCategory);
   for I := 0 to High(LIds) do
   begin
-    if (Pos('phanes.catalog.batch.', LIds[I]) <> 1) or
-      not ObjectAssetAdmission(LIds[I], LProfile) then
-    begin
-      Continue;
-    end;
-    LLabel := LProfile.FCategory + ' / ' + String(LProfile.FName) + ' (' + LProfile.FKitId + ')';
+    LLabel := FloorCatalogLabel(LIds[I]);
     if (AQuery <> '') and (Pos(LowerCase(AQuery), LowerCase(LLabel)) = 0) then
     begin
       Continue;
@@ -202,6 +206,13 @@ begin
     LOption.value := LIds[I];
     LOption.textContent := LLabel;
     LOption.setAttribute('data-batch-model', 'true');
+    LSelect.appendChild(LOption);
+  end;
+  if ASelectId = 'module-furniture' then
+  begin
+    LOption := TJSHTMLOptionElement(document.createElement('option'));
+    LOption.value := 'empty';
+    LOption.textContent := 'Clear this floor’s furnishings';
     LSelect.appendChild(LOption);
   end;
   if LSelect.querySelector('option[value="' + LPrevious + '"]') <> nil then
@@ -215,13 +226,14 @@ var
   LInput: TJSHTMLInputElement;
 begin
   LInput := TJSHTMLInputElement(AEvent.target);
-  if LInput.id = 'module-furniture-search' then
+  if (LInput.id = 'module-furniture-search') or (LInput.id = 'module-furniture-category') then
   begin
-    AddCatalogOptions('module-furniture', Trim(LInput.value));
+    AddCatalogOptions('module-furniture', Trim(TJSHTMLInputElement(Element('module-furniture-search')).value));
   end else
   begin
-    AddCatalogOptions('module-population-furniture', Trim(LInput.value));
+    AddCatalogOptions('module-population-furniture', Trim(TJSHTMLInputElement(Element('module-population-search')).value));
   end;
+  Refresh;
   Result := True;
 end;
 
@@ -341,8 +353,12 @@ begin
     TJSHTMLSelectElement(Element('module-position')).value := LPosition;
     TJSHTMLSelectElement(Element('module-turn')).value :=
       IntToStr(FWorld.FComposition.FNodes[LPlaced].FQuarterTurn);
-    TJSHTMLSelectElement(Element('module-furniture')).value :=
-      FWorld.FComposition.FNodes[LPlaced].FAssetId;
+    if Element('module-furniture').querySelector('option[value="' +
+      FWorld.FComposition.FNodes[LPlaced].FAssetId + '"]') <> nil then
+    begin
+      TJSHTMLSelectElement(Element('module-furniture')).value :=
+        FWorld.FComposition.FNodes[LPlaced].FAssetId;
+    end;
   end;
   RenderContents;
 end;
@@ -851,7 +867,7 @@ begin
       LParent := Integer(TJSArray(FState.selection['selectionCells'])[I]);
       LFloor := ModuleFloorId(FRoot, LParent mod (FWorld.FSize * 8),
         LParent div (FWorld.FSize * 8));
-      if (FIndex.Find(LFloor) >= 0) and (FIndex.Find(LFloor + '.furnishing') < 0) and
+      if (FIndex.Find(LFloor) >= 0) and not FloorHasContents(FWorld.FComposition, LFloor) and
         not Protected(LFloor) then
       begin
         Inc(LEligible);
@@ -865,9 +881,8 @@ begin
   if LEligible > 0 then
   begin
     Element('module-population-hint').textContent := IntToStr(LEligible) +
-      ' empty floors selected · target ' + IntToStr((LEligible *
-      StrToInt(TJSHTMLSelectElement(Element('module-density')).value) + 99) div 100) +
-      ' furnishings';
+      ' empty floors selected · target ' +
+      TJSHTMLSelectElement(Element('module-density')).value + '% floor-area coverage';
   end;
   Enable('module-focus', (FRoot <> '') and (FState.worker = nil));
   Enable('module-overview', (FRoot <> '') and (FState.worker = nil));

@@ -69,7 +69,7 @@ begin
 end;
 begin
   Require((ParamCount=3) or (ParamCount=4),
-    'Usage: population-browser BROWSER URL EVIDENCE [--catalog-batch|--catalog-equipment|--catalog-furniture]');
+    'Usage: population-browser BROWSER URL EVIDENCE [--catalog-batch|--catalog-equipment|--catalog-furniture|--catalog-density]');
   GOutput := ExpandFileName(ParamStr(3));
   ForceDirectories(GOutput);
   for GViewport := 0 to 1 do
@@ -112,18 +112,27 @@ begin
         Floors;
         Check(GPage.Text('document.getElementById("module-populate").disabled')='false',
           'Painted floors enable Populate while Draw floors is active');
-        GPage.SetValue('module-population-furniture','plants','change');
+        GPage.SetValue('module-population-category','Food','change');
+        Check(GPage.Number('document.querySelectorAll("#module-population-category option").length')=14,
+          'Top-level picker contains categories only');
+        GPage.SetValue('module-furniture-category','Kitchen','change');
+        Check(GPage.Number('document.querySelectorAll("#module-furniture [data-batch-model]").length')>0,
+          'Single-floor picker also filters by category');
+        GPage.SetValue('module-population-furniture','phanes.catalog.batch.0ecae365dba6d4b8.v1','change');
+        GPage.Execute('phanesEditor.selection={x:1,z:1,width:1,depth:1,selectionScale:8,selectionCells:[13*32+13]};phanesEditorActions.syncSelection()');
         GPage.SetValue('module-density','25','change');
-        Check(Pos('target 4',GPage.Text('document.getElementById("module-population-hint").textContent'))>0,
-          'Density previews four furnishings for sixteen empty floors');
+        Check(Pos('target 25%',GPage.Text('document.getElementById("module-population-hint").textContent'))>0,
+          'Density previews floor-area coverage');
         GBefore := GPage.Text('JSON.stringify(phanesEditor.world)');
         GPage.Execute('document.body.dataset.lastSolve=""');
         Click('#module-populate');
         Settled;
-        Check(GPage.Number('phanesEditor.world.composition.nodes.filter(n=>n.id.endsWith(".furnishing")).length')=4,
-          '25 percent places four actual furnishings');
-        Check(Pos('Added 4 of 4',GPage.Text('document.getElementById("toast").textContent'))>0,
-          'Result reports the actual placement count');
+        Check(GPage.Number('phanesEditor.world.composition.nodes.filter(n=>n.asset==="phanes.catalog.batch.0ecae365dba6d4b8.v1").length')>1,
+          'Several exact lollipops populate one floor');
+        Check(Pos('floor-area coverage',GPage.Text('document.getElementById("toast").textContent'))>0,
+          'Result reports achieved coverage');
+        Check(GPage.Text('JSON.parse(phanesCatalogReadyIds).includes("phanes.catalog.batch.0ecae365dba6d4b8.v1")')='true',
+          'Actual lollipop source is rendered');
         GAfter := GPage.Text('JSON.stringify(phanesEditor.world)');
         GPage.Screenshot(GOutput + '/' + GView + '-populated.png');
         Click('#module-undo');
@@ -135,7 +144,7 @@ begin
         Check(GPage.Text('document.documentElement.scrollWidth<=innerWidth')='true','No horizontal page overflow');
         Check(GPage.Number('populationErrors.length')=0,'No browser runtime errors');
         if (ParamStr(4) = '--catalog-batch') or (ParamStr(4) = '--catalog-equipment') or
-          (ParamStr(4) = '--catalog-furniture') then
+          (ParamStr(4) = '--catalog-furniture') or (ParamStr(4) = '--catalog-density') then
         begin
           for GSample := 0 to High(BatchSamples) do
           begin
@@ -147,40 +156,57 @@ begin
             if ParamStr(4) = '--catalog-equipment' then
             begin
               GAsset := EquipmentSamples[GSample];
-              GPage.SetValue('module-population-search', 'Artifacts', 'input');
             end else if ParamStr(4) = '--catalog-furniture' then
             begin
               GAsset := FurnitureSamples[GSample];
-              GPage.SetValue('module-population-search', 'Cabinets', 'input');
-            end else
-            begin
-              GPage.SetValue('module-population-search', 'chair', 'input');
             end;
+            if ParamStr(4) = '--catalog-density' then
+            begin
+              if GSample = 0 then
+              begin
+                GAsset := 'category:Food';
+              end else if GSample = 1 then
+              begin
+                GAsset := 'category:Kitchen';
+              end else
+              begin
+                GAsset := 'phanes.catalog.batch.0ecae365dba6d4b8.v1';
+              end;
+              if GSample <> 1 then
+              begin
+                GPage.Execute('phanesEditor.selection={x:1,z:1,width:1,depth:1,selectionScale:8,selectionCells:[13*32+13]};phanesEditorActions.syncSelection()');
+              end;
+            end;
+            GPage.Execute('(()=>{const c=document.getElementById("module-population-category");' +
+              'for(const o of c.options){c.value=o.value;c.dispatchEvent(new Event("change"));' +
+              'if([...document.getElementById("module-population-furniture").options].some(x=>x.value===' +
+              QuotedStr(GAsset) + '))return}throw Error("Model not found in any category")})()');
             Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')>0,
               'Search exposes matching catalog choices');
-            Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')<100,
-              'Search narrows the batch');
+            Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')<500,
+              'Category narrows the batch');
             GPage.SetValue('module-population-search', '', 'input');
-            Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')>500,
-              'Clearing search restores full batch');
-            if ParamStr(4) = '--catalog-equipment' then
-            begin
-              Check(GPage.Number('document.querySelectorAll("#module-population-furniture option[value^=''phanes.catalog.batch.equipment.'']").length')=201,
-                'All new equipment choices are exposed');
-            end;
-            if ParamStr(4) = '--catalog-furniture' then
-            begin
-              Check(GPage.Number('document.querySelectorAll("#module-population-furniture option[value^=''phanes.catalog.batch.furniture.'']").length')=25,
-                'All new furniture choices are exposed');
-            end;
             GPage.SetValue('module-population-furniture', GAsset, 'change');
             GPage.Execute('document.body.dataset.lastSolve=""');
             Click('#module-populate');
             Settled;
-            Check(GPage.Number('phanesEditor.world.composition.nodes.filter(n=>n.asset===' + QuotedStr(GAsset) + ').length')=4,
-              'Density places four exact catalog models');
-            Check(GPage.Text('JSON.parse(phanesCatalogReadyIds).includes(' + QuotedStr(GAsset) + ')')='true',
-              'Renderer admitted the actual source model');
+            if Pos('category:', GAsset) = 1 then
+            begin
+              Check(GPage.Number('new Set(phanesEditor.world.composition.nodes.filter(n=>n.id.includes(".scatter.")).map(n=>n.asset)).size')>1,
+                'Category population produces several model types');
+              Check(GPage.Text('phanesEditor.world.composition.nodes.filter(n=>n.id.includes(".scatter.")).every(n=>JSON.parse(phanesCatalogReadyIds).includes(n.asset))')='true',
+                'Category models are actually rendered');
+            end else
+            begin
+              Check(GPage.Number('phanesEditor.world.composition.nodes.filter(n=>n.asset===' + QuotedStr(GAsset) + ').length')>0,
+                'Density places exact catalog models');
+              Check(GPage.Text('JSON.parse(phanesCatalogReadyIds).includes(' + QuotedStr(GAsset) + ')')='true',
+                'Renderer admitted the actual source model');
+            end;
+            if (ParamStr(4) = '--catalog-density') and (GSample <> 1) then
+            begin
+              GPage.Execute('(()=>{const s=document.getElementById("module-parts");s.value=phanesEditor.world.composition.nodes.find(n=>n.id.includes(".scatter.")).parent;s.dispatchEvent(new Event("change"))})()');
+            end;
             Click('#module-focus');
             GPage.WaitFor('phanesRenderedCameraVersion===phanesCameraVersion&&document.getElementById("toast").hidden');
             GPage.Screenshot(GOutput + '/' + GView + '-catalog-' + IntToStr(GSample) + '.png');

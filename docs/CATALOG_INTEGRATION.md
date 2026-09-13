@@ -22,13 +22,14 @@ Core and procedural choices are additional.
 
 ## Using the additions
 
-Open the home builder. Search the catalog under **Imagine on this floor**, or
-paint existing floors and search the **Furniture** selector for density population.
-Search matches category, model name and source kit. Existing default mixtures
-remain small; choosing an exact model also uses a small solver domain.
+Open the home builder and choose a **Category**, such as Food or Kitchen. The
+**Item (optional)** picker then offers matching models. Leave **Mix from…**
+selected for variety, or choose one exact model. Search matches model name and
+source kit within the category. Both single-floor and painted-floor controls use
+this hierarchy. Category population uses up to three model types per operation.
 
 The first batch contains static props, food, seating, storage decorations and plants.
-They are placed on modular floors, one object per occupied tile. They do not add
+They are placed on modular floors, with small objects sharing a tile. They do not add
 editable shelves, tabletop supports, working lights, containers or animations.
 Uniform scales normalize the longest dimension to 0.22 m for food, 0.45 m for
 general props, 0.65 m for storage props, 0.9 m for seating and 0.6 m for plants.
@@ -55,10 +56,14 @@ simulated. Uniform longest-axis targets are 0.3 m for artifacts, 0.7 m for
 equipment, 0.8 m for containers, 1.2 m for technology and 1.4 m for sculptures.
 
 The compact furniture batch adds **11 cabinets, 6 sofas, 6 chairs and 2 benches**.
-Search Cabinets, Sofas, Seating or Benches in the same floor and density selectors.
+Choose Cabinets, Seating or Living spaces in the floor and density selectors;
+sofas and benches are under Living spaces.
 These are static furnishings; cabinet doors and their contents are not editable.
 Uniform longest-axis targets are 1.2 m for cabinets, 1.7 m for sofas, 0.9 m for
-chairs and 1.5 m for benches. Beds and explicitly large/long sofas are deferred
+chairs and 1.5 m for benches. Density aims for the percentage of floor area
+covered by admitted footprints, with actual coverage reported. See
+[modular housing](MODULAR_HOUSING.md#populate-painted-floors) for packing limits.
+Beds and explicitly large/long sofas are deferred
 instead of being shrunk into the current single-floor allowance. Tables and shelves
 remain deferred pending editable support surfaces. Existing furniture profiles
 and default mixtures are preserved.
@@ -177,3 +182,20 @@ cabinet and a Quaternius sofa. Search, density, undo/redo and actual renderer
 admission passed; representative screenshots were inspected. The props and
 furniture registries/ledgers reproduced exactly. No full-corpus decode, physical
 phone test or individual visual review of every model was performed.
+
+Category and coverage controls are implemented in `phanes.buildings.catalog`,
+`phanes.buildings.population` and the existing builder UI. They add no source
+models and do not change the admission ledgers. The population browser driver
+accepts `--catalog-density` to exercise Food/Kitchen mixtures, an exact lollipop,
+category filtering, achieved coverage and batch undo/redo. Evidence belongs under
+`build/catalog-density-01/`. Category membership is shared by the worker and UI;
+Food and Kitchen are separate choices, and Kitchen includes matching cabinetry
+and cookware rather than every model from a kitchen-themed source kit.
+
+Verified on 2026-09-13: final web build passed; 905 focused building assertions
+covered all 14 categories, size-sensitive counts, packed-object overlap rejection,
+clearing, deterministic replay, preservation and kitchen walking routes. The
+catalog regression run also covered all 784 generated floor profiles (5,607
+assertions). The final browser run passed 66 desktop/phone-layout checks, with
+representative screenshots inspected. Its evidence is `browser-final/` under
+the directory above. These are emulated phone viewports, not physical-phone tests.

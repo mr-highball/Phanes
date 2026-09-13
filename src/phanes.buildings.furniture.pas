@@ -38,6 +38,7 @@ function BuildingFloorRequest(const ADocument: TCompositionDocument; const AId: 
 function ValidateBuildingFurniture(const ADocument: TCompositionDocument;
   var ABuilding: TModularBuilding; out AReason: String): Boolean;
 function FurnitureBlocks(const ANode: TCompositionNode; const AX, AZ, ARadius: Double): Boolean;
+function FloorHasContents(const ADocument: TCompositionDocument; const AId: String): Boolean;
 
 implementation
 
@@ -63,12 +64,29 @@ begin
   end;
 end;
 
+function FloorHasContents(const ADocument: TCompositionDocument; const AId: String): Boolean;
+var
+  I: Integer;
+begin
+  for I := 0 to High(ADocument.FNodes) do
+  begin
+    if ADocument.FNodes[I].FParentId = AId then
+    begin
+      Exit(True);
+    end;
+  end;
+  Result := False;
+end;
+
 function BuildingFloorRequest(const ADocument: TCompositionDocument; const AId: String;
   out ARequest: TContentRequest; out AReason: String; const AExtraAsset: String): Boolean;
 var
   LIndex: TCompositionIndex;
   LAt: Integer;
   LObject: Integer;
+  LAsset: TInteriorAsset;
+  LSlot: TContentSlot;
+  LSlots: TContentSlots;
   I: Integer;
 
   procedure AddBatchAsset(const AAssetId: String);
@@ -151,6 +169,45 @@ begin
       ARequest.FSlots[0].FWidth := 2000 - Abs(ARequest.FSlots[0].FX) * 2;
       ARequest.FSlots[0].FDepth := 2000 - Abs(ARequest.FSlots[0].FZ) * 2;
       ARequest.FSlots[0].FQuarterTurn := ADocument.FNodes[LObject].FQuarterTurn;
+    end;
+    { Packed props retain individual identities and measured, non-overlapping
+      bounds. Reconstruct them from saved nodes; no transient grid is required. }
+    LSlots := nil;
+    for I := 0 to High(ADocument.FNodes) do
+    begin
+      if (ADocument.FNodes[I].FParentId <> AId) or
+        (ADocument.FNodes[I].FId = AId + '.furnishing') then
+      begin
+        Continue;
+      end;
+      if not InteriorAsset(ADocument.FNodes[I].FAssetId, LAsset) then
+      begin
+        AReason := 'Unadmitted floor contents.';
+        Exit;
+      end;
+      LSlot := ARequest.FSlots[0];
+      LSlot.FObjectId := ADocument.FNodes[I].FId;
+      LSlot.FX := ADocument.FNodes[I].FX;
+      LSlot.FZ := ADocument.FNodes[I].FZ;
+      LSlot.FQuarterTurn := ADocument.FNodes[I].FQuarterTurn;
+      LSlot.FWidth := LAsset.FWidth;
+      LSlot.FDepth := LAsset.FDepth;
+      if Odd(LSlot.FQuarterTurn) then
+      begin
+        LSlot.FWidth := LAsset.FDepth;
+        LSlot.FDepth := LAsset.FWidth;
+      end;
+      SetLength(LSlots, Length(LSlots) + 1);
+      LSlots[High(LSlots)] := LSlot;
+    end;
+    if Length(LSlots) > 0 then
+    begin
+      if LObject >= 0 then
+      begin
+        SetLength(LSlots, Length(LSlots) + 1);
+        LSlots[High(LSlots)] := ARequest.FSlots[0];
+      end;
+      ARequest.FSlots := LSlots;
     end;
     AReason := '';
     Result := True;
