@@ -209,8 +209,9 @@ end;
 procedure CheckAllResident;
 begin
   Check(GPage.Text('(()=>{const s=JSON.parse(phanesCatalogResidentStats);return ' +
-    's.models===18&&s.sourceBytes===1217856&&s.vertices===22714&&' +
-    's.triangles===7922&&s.texturePixels===1310720&&s.sourceLimit===16777216&&' +
+    's.models===18&&s.sourceBytes===1104190&&s.closureSourceBytes===1217856&&' +
+    's.sourceNamespaces===5&&s.vertices===22714&&' +
+    's.triangles===7922&&s.texturePixels===786432&&s.sourceLimit===16777216&&' +
     's.vertexLimit===250000&&s.triangleLimit===50000&&' +
     's.texturePixelLimit===4194304&&s.modelLimit===32})()') = 'true',
     'All 18 models publish exact distinct-profile residency totals');

@@ -145,6 +145,7 @@ var
   LProbe: UTF8String;
   LBook: String;
   LVase: String;
+  LReplacement: String;
   LUnaffected: String;
   LFinal: String;
   LUndo: String;
@@ -270,14 +271,14 @@ begin
   begin
     LBook := GPage.Text('phanesEditor.world.composition.nodes.find(' +
       'n=>n.asset.startsWith("phanes.catalog.")).id');
-    if GPage.Text('phanesEditor.world.composition.nodes.find(n=>n.id===' +
-      JSString(LBook) + ').role') = 'book' then
-    begin
-      ReplaceAsset(LBook, NativeBookAsset);
-    end else
-    begin
-      ReplaceAsset(LBook, NativeOrnamentAsset);
-    end;
+    { Generated rooms can now contain catalog food as well as books and vases.
+      Retire each through a compatible core choice exposed by the actual UI. }
+    ChooseNode(LBook);
+    LReplacement := GPage.Text('Array.from(document.querySelectorAll(' +
+      '"#interior-looks button[data-asset]")).find(b=>' +
+      '!b.dataset.asset.startsWith("phanes.catalog."))?.dataset.asset||""');
+    Check(LReplacement <> '', 'Optional object exposes a compatible core replacement');
+    ReplaceAsset(LBook, LReplacement);
   end;
   GPage.WaitFor('JSON.parse(phanesCatalogResidentStats).models===0&&' +
     'JSON.parse(phanesCatalogReadyIds).length===0', 180000);
@@ -286,6 +287,8 @@ begin
     'Real object edits remove every optional model from the world');
   CheckResidentStats(False);
   Check(GPage.Text('JSON.parse(phanesCatalogResidentStats).sourceBytes===0&&' +
+    'JSON.parse(phanesCatalogResidentStats).closureSourceBytes===0&&' +
+    'JSON.parse(phanesCatalogResidentStats).sourceNamespaces===0&&' +
     'JSON.parse(phanesCatalogResidentStats).vertices===0&&' +
     'JSON.parse(phanesCatalogResidentStats).triangles===0&&' +
     'JSON.parse(phanesCatalogResidentStats).texturePixels===0') = 'true',
@@ -428,7 +431,9 @@ begin
   GPage.Screenshot(GEvidence + '/modular-book-desktop.png');
   GenerateReplacement(LBook, NativeBookAsset);
   GPage.WaitFor('JSON.parse(phanesCatalogResidentStats).models===0');
-  Check(GPage.Text('JSON.parse(phanesCatalogResidentStats).sourceBytes===0') = 'true',
+  Check(GPage.Text('JSON.parse(phanesCatalogResidentStats).sourceBytes===0&&' +
+    'JSON.parse(phanesCatalogResidentStats).closureSourceBytes===0&&' +
+    'JSON.parse(phanesCatalogResidentStats).sourceNamespaces===0') = 'true',
     'Modular retirement releases the optional raw scene and derived model');
   LTarget := GPage.Text('JSON.stringify(phanesEditor.history[phanesEditor.history.length-1])');
   LRevision := Trunc(GPage.Number('phanesSceneVersion'));

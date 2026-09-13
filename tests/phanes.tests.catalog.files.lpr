@@ -29,8 +29,8 @@ program PhanesTestsCatalogFiles;
 uses
   Classes, SysUtils, FPJSON, CastleScene, CastleDownload, CastleUriUtils,
   phanes.catalog.files, phanes.catalog.shared.files, phanes.catalog.scene,
-  phanes.tests.catalog.shared.scenes, phanes.tools.files,
-  phanes.tools.fingerprint;
+  phanes.catalog.sources, phanes.tests.catalog.shared.scenes, phanes.tools.files,
+  phanes.tests.catalog.textures, phanes.tools.fingerprint;
 
 type
   TOversizedStream = class(TStream)
@@ -446,6 +446,346 @@ begin
   end;
 end;
 
+procedure CheckAggregateSourceBudget;
+var
+  LBudget: TCatalogSourceBudget;
+  LFirstStore: TCatalogSharedFiles;
+  LSecondStore: TCatalogSharedFiles;
+  LInput: TMemoryStream;
+  LRestoreFail: TRestoreFailStream;
+  LFailed: Boolean;
+  LError: String;
+begin
+  LBudget := nil;
+  LError := '';
+  try
+    LBudget := TCatalogSourceBudget.Create(0);
+  except
+    on LException: Exception do
+    begin
+      LError := LException.Message;
+    end;
+  end;
+  Check((LBudget = nil) and
+    (LError =
+      'Catalog aggregate source budget must be between 1 byte and 64 MiB'),
+    'aggregate budget rejects zero without a partial object');
+
+  LBudget := TCatalogSourceBudget.Create(10);
+  LFailed := False;
+  try
+    LBudget.Reserve(0);
+  except
+    on LException: Exception do
+    begin
+      LFailed := LException.Message =
+        'Catalog source reservation must be positive';
+    end;
+  end;
+  Check(LFailed and (LBudget.Bytes = 0),
+    'aggregate budget rejects a nonpositive reservation without mutation');
+  LFailed := False;
+  try
+    LBudget.Reserve(11);
+  except
+    on LException: Exception do
+    begin
+      LFailed := LException.Message = 'Catalog aggregate source budget exceeded';
+    end;
+  end;
+  Check(LFailed and (LBudget.Bytes = 0),
+    'aggregate budget rejects an overflowing reservation without mutation');
+  LBudget.Reserve(10);
+  LFailed := False;
+  try
+    LBudget.Release(11);
+  except
+    on LException: Exception do
+    begin
+      LFailed := LException.Message =
+        'Catalog aggregate source budget underflow';
+    end;
+  end;
+  Check(LFailed and (LBudget.Bytes = 10),
+    'aggregate budget rejects underflow without mutation');
+  LFailed := False;
+  try
+    LBudget.Release(0);
+  except
+    on LException: Exception do
+    begin
+      LFailed := LException.Message = 'Catalog source release must be positive';
+    end;
+  end;
+  Check(LFailed and (LBudget.Bytes = 10),
+    'aggregate budget rejects a nonpositive release without mutation');
+  LBudget.Release(10);
+
+  LFirstStore := TCatalogSharedFiles.Create(10, LBudget);
+  LSecondStore := TCatalogSharedFiles.Create(10, LBudget);
+  try
+    LInput := StreamOf('123456');
+    try
+      LFirstStore.AcquireFile('same.bin', LInput);
+    finally
+      LInput.Free;
+    end;
+    Check((LBudget.Bytes = 6) and (LFirstStore.UniqueBytes = 6),
+      'first namespace reserves its unique source bytes');
+
+    LInput := StreamOf('12345');
+    try
+      LFailed := False;
+      try
+        LSecondStore.AcquireFile('rejected.bin', LInput);
+      except
+        on LException: Exception do
+        begin
+          LFailed := LException.Message =
+            'Catalog aggregate source budget exceeded';
+        end;
+      end;
+    finally
+      LInput.Free;
+    end;
+    Check(LFailed and (LBudget.Bytes = 6) and
+      (LSecondStore.FileCount = 0),
+      'competing namespace rejection preserves aggregate and store state');
+
+    LInput := StreamOf('abcd');
+    try
+      LSecondStore.AcquireFile('same.bin', LInput);
+    finally
+      LInput.Free;
+    end;
+    Check((LBudget.Bytes = 10) and (LFirstStore.FileCount = 1) and
+      (LSecondStore.FileCount = 1),
+      'identical paths in separate namespaces reserve separate bytes');
+
+    LInput := StreamOf('123456');
+    try
+      LFirstStore.AcquireFile('same.bin', LInput);
+    finally
+      LInput.Free;
+    end;
+    Check((LBudget.Bytes = 10) and (LFirstStore.FileCount = 1),
+      'duplicate live path remains acquirable at the full aggregate cap');
+    LFirstStore.ReleaseFile('same.bin');
+
+    FreeAndNil(LSecondStore);
+    Check(LBudget.Bytes = 6,
+      'destroying a namespace returns all of its retained aggregate bytes');
+    FreeAndNil(LFirstStore);
+    Check(LBudget.Bytes = 0,
+      'destroying the final namespace returns the aggregate budget to zero');
+
+    LFirstStore := TCatalogSharedFiles.Create(10, LBudget);
+    LRestoreFail := TRestoreFailStream.Create;
+    try
+      LFailed := False;
+      try
+        LFirstStore.AcquireFile('restore.bin', LRestoreFail);
+      except
+        on LException: Exception do
+        begin
+          LFailed := LException.Message =
+            'Injected stream position restore failure';
+        end;
+      end;
+      Check(LFailed and (LBudget.Bytes = 0) and
+        (LFirstStore.FileCount = 0),
+        'restore failure rolls back a pre-copy aggregate reservation');
+    finally
+      LRestoreFail.Free;
+    end;
+  finally
+    LSecondStore.Free;
+    LFirstStore.Free;
+    LBudget.Free;
+  end;
+end;
+
+procedure CheckSourcePoolIdentity;
+const
+  CHashA = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  CHashB = '1123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+var
+  LPool: TCatalogSourcePool;
+  LSameFirst: TCatalogSharedFiles;
+  LSameSecond: TCatalogSharedFiles;
+  LDifferentKit: TCatalogSharedFiles;
+  LDifferentRevision: TCatalogSharedFiles;
+  LFailed: Boolean;
+begin
+  LPool := TCatalogSourcePool.Create(32);
+  try
+    LSameFirst := LPool.Acquire('kit-a', CHashA);
+    LSameSecond := LPool.Acquire('kit-a', CHashA);
+    LDifferentKit := LPool.Acquire('kit-b', CHashA);
+    LDifferentRevision := LPool.Acquire('kit-a', CHashB);
+    Check(LSameFirst = LSameSecond,
+      'same exact kit and manifest reuse one source namespace');
+    Check((LDifferentKit <> LSameFirst) and
+      (LDifferentRevision <> LSameFirst) and
+      (LDifferentKit <> LDifferentRevision),
+      'different kits and manifest revisions use isolated namespaces');
+    Check(LPool.NamespaceCount = 3,
+      'source pool counts exact namespace identities once');
+
+    LFailed := False;
+    try
+      LPool.Acquire('../kit', CHashA);
+    except
+      on LException: Exception do
+      begin
+        LFailed := LException.Message =
+          'Catalog namespace needs an exact kit and manifest identity';
+      end;
+    end;
+    Check(LFailed and (LPool.NamespaceCount = 3),
+      'invalid kit identity rejects without adding a namespace');
+    LFailed := False;
+    try
+      LPool.Acquire('kit-a', UpperCase(CHashA));
+    except
+      on LException: Exception do
+      begin
+        LFailed := LException.Message =
+          'Catalog manifest identity must be lowercase SHA-256';
+      end;
+    end;
+    Check(LFailed and (LPool.NamespaceCount = 3),
+      'noncanonical manifest identity rejects without adding a namespace');
+
+    LPool.Release(LSameFirst);
+    Check(LPool.NamespaceCount = 3,
+      'one of two same-namespace references leaves the namespace live');
+    LPool.Release(LSameSecond);
+    LPool.Release(LDifferentKit);
+    LPool.Release(LDifferentRevision);
+    Check((LPool.NamespaceCount = 0) and (LPool.UniqueBytes = 0),
+      'balanced empty namespace references clear the pool');
+  finally
+    LPool.Free;
+  end;
+end;
+
+procedure CheckSourcePoolLeaseLifecycle;
+const
+  CHash = 'abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789';
+var
+  LPool: TCatalogSourcePool;
+  LStore: TCatalogSharedFiles;
+  LBundle: TCatalogFileBundle;
+  LRead: TStream;
+  LUrl: String;
+  LFreshUrl: String;
+  LFailed: Boolean;
+begin
+  LPool := TCatalogSourcePool.Create(16);
+  LStore := LPool.Acquire('kit-a', CHash);
+  LBundle := TCatalogFileBundle.Create(16, LStore);
+  try
+    AddTextFile(LBundle, 'model.gltf', 'old');
+    LBundle.Seal('model.gltf');
+    LUrl := LBundle.ModelUrl;
+    LFailed := False;
+    try
+      LPool.Release(LStore);
+    except
+      on LException: Exception do
+      begin
+        LFailed := LException.Message =
+          'Catalog scene bundles must release before their final namespace';
+      end;
+    end;
+    Check(LFailed and (LPool.NamespaceCount = 1) and
+      (LPool.UniqueBytes = 3),
+      'premature final namespace release fails without changing ownership');
+    LRead := Download(LUrl);
+    try
+      Check(ReadAll(LRead) = 'old',
+        'premature namespace release leaves the previous lease readable');
+    finally
+      LRead.Free;
+    end;
+  finally
+    FreeAndNil(LBundle);
+  end;
+  LPool.Release(LStore);
+  Check((LPool.NamespaceCount = 0) and (LPool.UniqueBytes = 0),
+    'bundle-first balanced release clears namespace bytes');
+
+  LStore := LPool.Acquire('kit-a', CHash);
+  LBundle := TCatalogFileBundle.Create(16, LStore);
+  try
+    AddTextFile(LBundle, 'model.gltf', 'new');
+    LBundle.Seal('model.gltf');
+    LFreshUrl := LBundle.ModelUrl;
+    Check(LFreshUrl <> LUrl,
+      'reacquiring a retired namespace creates a fresh protocol URL');
+  finally
+    LBundle.Free;
+  end;
+  LPool.Release(LStore);
+  Check((LPool.NamespaceCount = 0) and (LPool.UniqueBytes = 0),
+    'reacquired namespace also releases cleanly');
+  LPool.Free;
+end;
+
+procedure CheckSourcePoolAggregateCompetition;
+const
+  CHash = '123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0';
+var
+  LPool: TCatalogSourcePool;
+  LFirstStore: TCatalogSharedFiles;
+  LSecondStore: TCatalogSharedFiles;
+  LFirstBundle: TCatalogFileBundle;
+  LSecondBundle: TCatalogFileBundle;
+  LRead: TStream;
+  LUrl: String;
+  LFailed: Boolean;
+begin
+  LPool := TCatalogSourcePool.Create(5);
+  LFirstStore := LPool.Acquire('kit-a', CHash);
+  LSecondStore := LPool.Acquire('kit-b', CHash);
+  LFirstBundle := TCatalogFileBundle.Create(5, LFirstStore);
+  LSecondBundle := TCatalogFileBundle.Create(5, LSecondStore);
+  try
+    AddTextFile(LFirstBundle, 'model.gltf', '1234');
+    LFirstBundle.Seal('model.gltf');
+    LUrl := LFirstBundle.ModelUrl;
+    LFailed := False;
+    try
+      AddTextFile(LSecondBundle, 'model.gltf', '12');
+    except
+      on LException: Exception do
+      begin
+        LFailed := LException.Message =
+          'Catalog aggregate source budget exceeded';
+      end;
+    end;
+    Check(LFailed and (LPool.UniqueBytes = 4) and
+      (LSecondStore.FileCount = 0),
+      'second namespace cannot exceed the shared global source cap');
+    LRead := Download(LUrl);
+    try
+      Check(ReadAll(LRead) = '1234',
+        'aggregate rejection leaves the previous namespace readable');
+    finally
+      LRead.Free;
+    end;
+  finally
+    LSecondBundle.Free;
+    LFirstBundle.Free;
+  end;
+  LPool.Release(LSecondStore);
+  LPool.Release(LFirstStore);
+  Check((LPool.NamespaceCount = 0) and (LPool.UniqueBytes = 0),
+    'competing namespaces release to an empty aggregate pool');
+  LPool.Free;
+end;
+
 procedure CheckSceneOwnership;
 var
   LBundle: TCatalogFileBundle;
@@ -697,6 +1037,10 @@ begin
     CheckSharedStoreBoundaries;
     CheckSharedBundles;
     CheckSharedStoreIsolation;
+    CheckAggregateSourceBudget;
+    CheckSourcePoolIdentity;
+    CheckSourcePoolLeaseLifecycle;
+    CheckSourcePoolAggregateCompetition;
     CheckGuards;
     CheckSceneOwnership;
     CheckModel(ParamStr(1), 'quaternius-low-poly-food-pack-surface-v1',
@@ -704,6 +1048,7 @@ begin
     CheckModel(ParamStr(1), 'kaykit-furniture-bits-1-0',
       'kaykit-furniture-bits-1-0/gltf/rug_rectangle_A');
     Inc(GChecks, CheckSharedCatalogScenes(ParamStr(1)));
+    Inc(GChecks, CheckCatalogTextureProfiles);
     WriteLn('PASS ', GChecks, ' catalog filesystem checks');
   except
     on LException: Exception do

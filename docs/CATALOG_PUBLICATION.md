@@ -72,17 +72,45 @@ notices. Read streams own their copies. The caller must keep the store alive
 until every scene and bundle using it has been destroyed; scene leases destroy
 their scene before releasing their source bundle.
 
-Browser staging still uses the isolated constructor, and residency accounting
-and limits remain unchanged. Production sharing needs namespaces bound to exact
-kit manifests, a source budget spanning those namespaces, and renderer/context
-recovery evidence before shared texture accounting is enabled. Native decoded
-image identity alone does not establish GPU texture sharing.
+Browser staging shares source files only within an exact kit ID and manifest
+SHA-256 namespace. `phanes.catalog.sources` owns these namespaces and one source
+budget spanning them. New bytes reserve capacity before allocation or reading;
+duplicate live files consume no additional capacity. Each scene releases its
+bundle before releasing its namespace, and the pool outlives every resident.
+The 16 MiB source limit still includes the current world and staged candidates.
+
+Before GPU preparation, `phanes.catalog.textures` captures conservative claims
+from decoded image URLs, dimensions, texture classes, flip/repeat state, texture
+properties and effective rendering filters. Only identical claims share their
+pixel cost. Different samplers remain separate even when the decoded image is
+shared. Missing decoded images and known costs above the declaration reject;
+unsupported texture kinds and unmeasured declared padding retain a per-profile
+cost. Texture nodes and filtering must remain unchanged while these snapshots
+are resident. World surface changes only replace shader effects.
+
+Diagnostics report `sourceBytes` as the unique retained source total,
+`closureSourceBytes` as the sum of complete resident closures, and
+`sourceNamespaces` as the live namespace count. `texturePixels` is the union of
+the conservative claims. All existing caps remain unchanged. GPU texture sharing
+and resource reload require browser evidence; native image identity alone is
+insufficient. Full feature acceptance remains pending.
 
 `tools/test-catalog-files.ps1` exercises storage failures and scene ownership,
 including eight pinned furniture closures with their notices. Its shared and
 isolated controls compare complete transformed geometry, release four scenes,
 reload the surviving textures, and require zero retained files after final
 release. These fixtures do not admit the furniture to the playable catalog.
+
+`tools/test-catalog-shared-runtime.ps1 -Browser <Chromium executable>` builds and
+serves the isolated WebAssembly fixture using the pinned library in `build/web`.
+It compares eight isolated atlas allocations against one shared allocation,
+checks the texture profiles against intercepted GPU uploads, releases and reloads
+survivors, and exercises context loss followed by a fresh page. A sampler variant
+must allocate separately while retaining the shared decoded image. Source hashes,
+runtime hashes, screenshots and results are retained under its evidence directory.
+Its isolated eight-texture control exceeds the application texture cap by design;
+the fixture is a resource regression check, not a playable admission or a phone
+performance benchmark.
 
 The current admissions are leaf contents with known transforms. The interior
 picker filters compatible choices by category, subgroup and name. Additional

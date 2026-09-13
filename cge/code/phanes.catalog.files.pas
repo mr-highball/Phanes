@@ -64,7 +64,8 @@ function CatalogFilePathValid(const APath: String): Boolean;
 {$ifdef WASI}
 function CatalogBundleFromBrowser(const AValue: IJSObject;
   const AExpectedGeneration: LongInt;
-  const AMaximumBytes: Int64 = 64 * 1024 * 1024): TCatalogFileBundle;
+  const AMaximumBytes: Int64 = 64 * 1024 * 1024;
+  const ASharedFiles: TCatalogSharedFiles = nil): TCatalogFileBundle;
 {$endif}
 
 implementation
@@ -196,7 +197,8 @@ end;
 
 {$ifdef WASI}
 function CatalogBundleFromBrowser(const AValue: IJSObject;
-  const AExpectedGeneration: LongInt; const AMaximumBytes: Int64): TCatalogFileBundle;
+  const AExpectedGeneration: LongInt; const AMaximumBytes: Int64;
+  const ASharedFiles: TCatalogSharedFiles): TCatalogFileBundle;
 var
   LFiles: IJSObject;
   LFile: IJSObject;
@@ -223,7 +225,13 @@ begin
   begin
     raise Exception.Create('Catalog file count is outside the staging limit');
   end;
-  LBundle := TCatalogFileBundle.Create(AMaximumBytes);
+  if ASharedFiles = nil then
+  begin
+    LBundle := TCatalogFileBundle.Create(AMaximumBytes);
+  end else
+  begin
+    LBundle := TCatalogFileBundle.Create(AMaximumBytes, ASharedFiles);
+  end;
   try
     for I := 0 to LCount - 1 do
     begin

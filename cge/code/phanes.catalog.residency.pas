@@ -30,7 +30,7 @@ interface
 
 uses
   Classes, JOB.JS, CastleScene, CastleViewport, phanes.world.types,
-  phanes.world.appearance;
+  phanes.world.appearance, phanes.catalog.sources, phanes.catalog.textures;
 
 type
   TCatalogRetireTemplate = procedure(const AId: String) of object;
@@ -46,12 +46,14 @@ type
     FEntries: TStringList;
     FActive: TStringList;
     FSeen: LongInt;
-    FSourceBytes: Int64;
+    FSources: TCatalogSourcePool;
+    FClosureSourceBytes: Int64;
     FVertices: Int64;
     FTexturePixels: Int64;
     FTriangles: Int64;
     FRetireTemplate: TCatalogRetireTemplate;
     procedure PublishState;
+    function TexturePixelsIncluding(const ACandidate: TCatalogTextureProfile): Int64;
   public
     constructor Create(const ABrowser: TJSObject; const AViewport: TCastleViewport;
       const ATemplates: TStringList);
@@ -70,7 +72,8 @@ implementation
 
 uses
   SysUtils, FPJSON, CastleBoxes, phanes.catalog.admission,
-  phanes.catalog.files, phanes.catalog.scene, phanes.world.surfaces;
+  phanes.catalog.files, phanes.catalog.scene, phanes.catalog.shared.files,
+  phanes.world.surfaces;
 
 const
   SourceLimit = 16 * 1024 * 1024;
@@ -83,12 +86,20 @@ type
   TResidentModel = class
     FLease: TCatalogSceneLease;
     FAdmission: TOptionalAssetAdmission;
+    FSources: TCatalogSourcePool;
+    FStore: TCatalogSharedFiles;
+    FTextureProfile: TCatalogTextureProfile;
     destructor Destroy; override;
   end;
 
 destructor TResidentModel.Destroy;
 begin
+  FTextureProfile.Free;
   FLease.Free;
+  if FStore <> nil then
+  begin
+    FSources.Release(FStore);
+  end;
   inherited Destroy;
 end;
 
@@ -103,6 +114,7 @@ begin
   FEntries.CaseSensitive := True;
   FActive := TStringList.Create;
   FActive.CaseSensitive := True;
+  FSources := TCatalogSourcePool.Create(SourceLimit);
   PublishState;
 end;
 
@@ -110,13 +122,41 @@ destructor TCatalogSceneStore.Destroy;
 var
   I: Integer;
 begin
-  for I := 0 to FEntries.Count - 1 do
+  if FEntries <> nil then
   begin
-    FEntries.Objects[I].Free;
+    for I := 0 to FEntries.Count - 1 do
+    begin
+      FEntries.Objects[I].Free;
+    end;
   end;
   FEntries.Free;
   FActive.Free;
+  FSources.Free;
   inherited Destroy;
+end;
+
+function TCatalogSceneStore.TexturePixelsIncluding(
+  const ACandidate: TCatalogTextureProfile): Int64;
+var
+  LProfiles: array of TCatalogTextureProfile;
+  LCount: Integer;
+  I: Integer;
+begin
+  LCount := FEntries.Count;
+  if ACandidate <> nil then
+  begin
+    Inc(LCount);
+  end;
+  SetLength(LProfiles, LCount);
+  for I := 0 to FEntries.Count - 1 do
+  begin
+    LProfiles[I] := TResidentModel(FEntries.Objects[I]).FTextureProfile;
+  end;
+  if ACandidate <> nil then
+  begin
+    LProfiles[High(LProfiles)] := ACandidate;
+  end;
+  Result := CatalogTexturePixels(LProfiles);
 end;
 
 procedure TCatalogSceneStore.PublishState;
@@ -134,7 +174,9 @@ begin
     end;
     FBrowser.WriteJSPropertyUtf8String('phanesCatalogReadyIds', LIds.AsJSON);
     LStats.Add('models', FEntries.Count);
-    LStats.Add('sourceBytes', FSourceBytes);
+    LStats.Add('sourceBytes', FSources.UniqueBytes);
+    LStats.Add('closureSourceBytes', FClosureSourceBytes);
+    LStats.Add('sourceNamespaces', FSources.NamespaceCount);
     LStats.Add('vertices', FVertices);
     LStats.Add('triangles', FTriangles);
     LStats.Add('texturePixels', FTexturePixels);
@@ -160,6 +202,8 @@ var
   LAdmission: TOptionalAssetAdmission;
   LBundle: TCatalogFileBundle;
   LResident: TResidentModel;
+  LStore: TCatalogSharedFiles;
+  LTexturePixels: Int64;
   LBounds: TBox3D;
   LId: String;
   LRoot: String;
@@ -182,6 +226,7 @@ begin
   end;
   LBundle := nil;
   LResident := nil;
+  LStore := nil;
   try
     try
       LId := LMessage.ReadJSPropertyUtf8String('asset');
@@ -193,9 +238,7 @@ begin
       begin
         if (FEntries.Count >= ModelLimit) or
           (FVertices + LAdmission.FVertices > VertexLimit) or
-          (FTriangles + LAdmission.FTriangles > TriangleLimit) or
-          (FTexturePixels + LAdmission.FTexturePixels > TexturePixelLimit) or
-          (FSourceBytes >= SourceLimit) then
+          (FTriangles + LAdmission.FTriangles > TriangleLimit) then
         begin
           raise Exception.Create('Optional objects reached the scene budget; remove unused items first');
         end;
@@ -232,9 +275,16 @@ begin
         begin
           raise Exception.Create('The prepared root model hash differs from its admission');
         end;
+        { Namespace identity is checked before sharing any bytes. The pool's
+          aggregate reservation includes every old-world and candidate lease;
+          each bundle independently retains its bounded complete closure. }
+        LStore := FSources.Acquire(LAdmission.FKitId, LAdmission.FManifestSha256);
         LBundle := CatalogBundleFromBrowser(LValue,
-          LValue.ReadJSPropertyLongInt('generation'), SourceLimit - FSourceBytes);
+          LValue.ReadJSPropertyLongInt('generation'), SourceLimit, LStore);
         LResident := TResidentModel.Create;
+        LResident.FSources := FSources;
+        LResident.FStore := LStore;
+        LStore := nil;
         LResident.FAdmission := LAdmission;
         LResident.FLease := TCatalogSceneLease.Create(LBundle);
         LBounds := LResident.FLease.Scene.BoundingBox;
@@ -246,12 +296,22 @@ begin
           raise Exception.Create('Decoded object geometry differs from its placement admission');
         end;
         ApplyWorldSurface(LResident.FLease.Scene, AAppearance);
+        { Texture identity includes every sampler/filter input used by the
+          pinned renderer. Keep conservative declared padding for unknown cost.
+          Check the old world plus candidate before allocating GPU resources. }
+        LResident.FTextureProfile := TCatalogTextureProfile.Create(
+          LResident.FLease.Scene, LId, LAdmission.FTexturePixels);
+        LTexturePixels := TexturePixelsIncluding(LResident.FTextureProfile);
+        if LTexturePixels > TexturePixelLimit then
+        begin
+          raise Exception.Create('Optional objects reached the texture budget; remove unused items first');
+        end;
         LResident.FLease.PrepareResources(FViewport);
         FEntries.AddObject(LId, LResident);
-        Inc(FSourceBytes, LResident.FLease.SourceBytes);
+        Inc(FClosureSourceBytes, LResident.FLease.SourceBytes);
         Inc(FVertices, LAdmission.FVertices);
         Inc(FTriangles, LAdmission.FTriangles);
-        Inc(FTexturePixels, LAdmission.FTexturePixels);
+        FTexturePixels := LTexturePixels;
         LResident := nil;
         PublishState;
       end;
@@ -263,8 +323,12 @@ begin
       end;
     end;
   finally
-    LResident.Free;
     LBundle.Free;
+    LResident.Free;
+    if LStore <> nil then
+    begin
+      FSources.Release(LStore);
+    end;
     FBrowser.WriteJSPropertyLongInt('phanesCatalogStageAck', LRevision);
   end;
 end;
@@ -301,6 +365,8 @@ var
 begin
   for I := 0 to FEntries.Count - 1 do
   begin
+    { Appearance changes replace shader effects, preserving the image/sampler
+      and effective filter options captured by each resident texture profile. }
     ApplyWorldSurface(TResidentModel(FEntries.Objects[I]).FLease.Scene, AAppearance);
   end;
 end;
@@ -338,16 +404,16 @@ begin
       FTemplates.Delete(LTemplate);
     end;
     LResident := TResidentModel(FEntries.Objects[I]);
-    Dec(FSourceBytes, LResident.FLease.SourceBytes);
+    Dec(FClosureSourceBytes, LResident.FLease.SourceBytes);
     Dec(FVertices, LResident.FAdmission.FVertices);
     Dec(FTriangles, LResident.FAdmission.FTriangles);
-    Dec(FTexturePixels, LResident.FAdmission.FTexturePixels);
     LResident.Free;
     FEntries.Delete(I);
     LChanged := True;
   end;
   if LChanged then
   begin
+    FTexturePixels := TexturePixelsIncluding(nil);
     PublishState;
   end;
 end;

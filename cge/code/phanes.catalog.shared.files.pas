@@ -32,6 +32,20 @@ uses
   Classes, SysUtils, CastleUriUtils;
 
 type
+  { Aggregate retained-source accounting shared by independent namespace
+    stores. A borrowed budget must outlive every store that uses it. }
+  TCatalogSourceBudget = class
+  private
+    FByteLimit: Int64;
+    FBytes: Int64;
+  public
+    constructor Create(const AByteLimit: Int64);
+    procedure Reserve(const ABytes: Int64);
+    procedure Release(const ABytes: Int64);
+    property ByteLimit: Int64 read FByteLimit;
+    property Bytes: Int64 read FBytes;
+  end;
+
   { A source-byte store shared by catalog bundles. Paths keep immutable bytes
     while at least one bundle holds a reference. The caller must keep an
     externally supplied store alive longer than every bundle that uses it. }
@@ -46,12 +60,17 @@ type
     FProtocol: String;
     FByteLimit: Int64;
     FUniqueBytes: Int64;
+    FBudget: TCatalogSourceBudget;
+    FOwnsBudget: Boolean;
+    procedure Initialize(const AByteLimit: Int64);
     function PathFromUrl(const AUrl: String): String;
     function ReadUrl(const AUrl: String; out AMimeType: String): TStream;
     function ExistsUrl(const AUrl: String): TUriExists;
     function GetFileCount: Integer;
   public
-    constructor Create(const AByteLimit: Int64);
+    constructor Create(const AByteLimit: Int64); overload;
+    constructor Create(const AByteLimit: Int64;
+      const ABudget: TCatalogSourceBudget); overload;
     destructor Destroy; override;
     procedure AcquireFile(const APath: String; const AContents: TStream);
     procedure ReleaseFile(const APath: String);
@@ -68,12 +87,48 @@ uses
 var
   GNextSharedStore: QWord;
 
-constructor TCatalogSharedFiles.Create(const AByteLimit: Int64);
+constructor TCatalogSourceBudget.Create(const AByteLimit: Int64);
+begin
+  inherited Create;
+  if (AByteLimit < 1) or (AByteLimit > 64 * 1024 * 1024) then
+  begin
+    raise Exception.Create(
+      'Catalog aggregate source budget must be between 1 byte and 64 MiB');
+  end;
+  FByteLimit := AByteLimit;
+end;
+
+procedure TCatalogSourceBudget.Reserve(const ABytes: Int64);
+begin
+  if ABytes <= 0 then
+  begin
+    raise Exception.Create('Catalog source reservation must be positive');
+  end;
+  if ABytes > FByteLimit - FBytes then
+  begin
+    raise Exception.Create('Catalog aggregate source budget exceeded');
+  end;
+  Inc(FBytes, ABytes);
+end;
+
+procedure TCatalogSourceBudget.Release(const ABytes: Int64);
+begin
+  if ABytes <= 0 then
+  begin
+    raise Exception.Create('Catalog source release must be positive');
+  end;
+  if ABytes > FBytes then
+  begin
+    raise Exception.Create('Catalog aggregate source budget underflow');
+  end;
+  Dec(FBytes, ABytes);
+end;
+
+procedure TCatalogSharedFiles.Initialize(const AByteLimit: Int64);
 var
   LProtocol: TRegisteredProtocol;
   LProtocolName: String;
 begin
-  inherited Create;
   if (AByteLimit < 1) or (AByteLimit > 64 * 1024 * 1024) then
   begin
     raise Exception.Create(
@@ -95,6 +150,31 @@ begin
   LProtocol.ExistsEvent := ExistsUrl;
 end;
 
+constructor TCatalogSharedFiles.Create(const AByteLimit: Int64);
+begin
+  inherited Create;
+  if (AByteLimit < 1) or (AByteLimit > 64 * 1024 * 1024) then
+  begin
+    raise Exception.Create(
+      'Shared catalog source budget must be between 1 byte and 64 MiB');
+  end;
+  FBudget := TCatalogSourceBudget.Create(AByteLimit);
+  FOwnsBudget := True;
+  Initialize(AByteLimit);
+end;
+
+constructor TCatalogSharedFiles.Create(const AByteLimit: Int64;
+  const ABudget: TCatalogSourceBudget);
+begin
+  inherited Create;
+  if ABudget = nil then
+  begin
+    raise Exception.Create('Catalog aggregate source budget is missing');
+  end;
+  FBudget := ABudget;
+  Initialize(AByteLimit);
+end;
+
 destructor TCatalogSharedFiles.Destroy;
 var
   I: Integer;
@@ -107,9 +187,14 @@ begin
   begin
     for I := 0 to FFiles.Count - 1 do
     begin
+      FBudget.Release(Length(TEntry(FFiles.Objects[I]).FBytes));
       FFiles.Objects[I].Free;
     end;
     FFiles.Free;
+  end;
+  if FOwnsBudget then
+  begin
+    FBudget.Free;
   end;
   inherited Destroy;
 end;
@@ -185,11 +270,13 @@ var
   LIndex: Integer;
   I: Integer;
   LEntry: TEntry;
+  LBudgetReserved: Boolean;
 begin
   if AContents = nil then
   begin
     raise Exception.Create('Shared catalog file contents are missing');
   end;
+  LBudgetReserved := False;
   LPosition := AContents.Position;
   try
     if not CatalogFilePathValid(APath) then
@@ -229,38 +316,49 @@ begin
         raise Exception.Create(
           'Shared catalog file exceeds the remaining source budget');
       end;
+      FBudget.Reserve(LSize);
+      LBudgetReserved := True;
     end;
-    SetLength(LData, LSize);
-    AContents.Position := 0;
-    AContents.ReadBuffer(LData[0], LSize);
-  finally
-    { Restore before publishing bytes or a reference. A stream whose restore
-      fails cannot leave state that its caller has no opportunity to release. }
-    AContents.Position := LPosition;
-  end;
+    try
+      SetLength(LData, LSize);
+      AContents.Position := 0;
+      AContents.ReadBuffer(LData[0], LSize);
+    finally
+      { Restore before publishing bytes or a reference. A stream whose restore
+        fails cannot leave state that its caller has no opportunity to release. }
+      AContents.Position := LPosition;
+    end;
 
-  if LIndex >= 0 then
-  begin
-    LEntry := TEntry(FFiles.Objects[LIndex]);
-    if CompareByte(LEntry.FBytes[0], LData[0], Length(LData)) <> 0 then
+    if LIndex >= 0 then
     begin
-      raise Exception.Create(
-        'Shared catalog path already has different immutable bytes');
+      LEntry := TEntry(FFiles.Objects[LIndex]);
+      if CompareByte(LEntry.FBytes[0], LData[0], Length(LData)) <> 0 then
+      begin
+        raise Exception.Create(
+          'Shared catalog path already has different immutable bytes');
+      end;
+      Inc(LEntry.FReferences);
+      Exit;
     end;
-    Inc(LEntry.FReferences);
-    Exit;
-  end;
 
-  LEntry := TEntry.Create;
-  LEntry.FBytes := LData;
-  LEntry.FReferences := 1;
-  try
-    FFiles.AddObject(APath, LEntry);
+    LEntry := TEntry.Create;
+    LEntry.FBytes := LData;
+    LEntry.FReferences := 1;
+    try
+      FFiles.AddObject(APath, LEntry);
+    except
+      LEntry.Free;
+      raise;
+    end;
+    Inc(FUniqueBytes, LSize);
+    LBudgetReserved := False;
   except
-    LEntry.Free;
+    if LBudgetReserved then
+    begin
+      FBudget.Release(LSize);
+    end;
     raise;
   end;
-  Inc(FUniqueBytes, LSize);
 end;
 
 procedure TCatalogSharedFiles.ReleaseFile(const APath: String);
@@ -274,12 +372,15 @@ begin
     raise Exception.Create('Shared catalog file has no live reference');
   end;
   LEntry := TEntry(FFiles.Objects[LIndex]);
-  Dec(LEntry.FReferences);
-  if LEntry.FReferences = 0 then
+  if LEntry.FReferences = 1 then
   begin
+    FBudget.Release(Length(LEntry.FBytes));
     Dec(FUniqueBytes, Length(LEntry.FBytes));
     FFiles.Delete(LIndex);
     LEntry.Free;
+  end else
+  begin
+    Dec(LEntry.FReferences);
   end;
 end;
 

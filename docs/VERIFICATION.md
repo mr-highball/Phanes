@@ -1268,3 +1268,49 @@ All 26 synthetic critic-gate regressions pass (`landforms-gate-16.log`). The 15
 registered feature gates still hold for pending, rejected or stale reports;
 no grades were changed or bypassed. The engine and WFC submodule pins remain
 unchanged. No publication or full objective completion is claimed.
+
+## Shared catalog residency checkpoint — 2026-09-13
+
+The runtime candidate shares immutable source files within exact kit/manifest
+namespaces and reserves unique bytes against the existing 16 MiB global source
+cap. Conservative image/sampler profiles are checked before GPU preparation;
+the 4,194,304-pixel and 32-model limits remain unchanged. This is source and
+texture-pixel accounting, not a total decoded-memory or GPU-byte budget.
+
+Native storage, pool and texture-profile checks pass 365 assertions
+(`build/catalog-texture-profiles-01`). The source audit decodes all 32 existing
+admissions, verifies every pinned closure and notice, and independently unions
+manifest bytes and external PNG dimensions (`build/catalog-resource-audit-01`).
+The 18 regional models retain 1,104,190 unique bytes instead of a 1,217,856-byte
+closure sum, with 786,432 texture pixels instead of the 1,310,720 declared sum.
+The 14 interior admissions measure 596,183 unique bytes and 1,835,008 pixels.
+
+The tracked `tools/test-catalog-shared-runtime.ps1` fixture passes 72 browser
+checks (`build/catalog-sharing-wrapper-02`). Eight real furniture models render
+with one shared GPU atlas instead of eight isolated atlases. Profile totals
+agree with intercepted GPU allocations through partial release and reload; a
+sampler variant correctly requires a second allocation. Actual context loss is
+followed by a fresh page and verified source reacquisition. Isolated, shared and
+fresh-context screenshots are byte-identical. This fixture does not admit the
+furniture or establish phone layout/performance acceptance.
+
+The fresh full WebAssembly application build succeeds
+(`build/catalog-sharing-app-01`). Its world journey passes 81 checks
+(`build/catalog-sharing-world-03`), including exact history/session restoration,
+cancelled and failed fetch preservation, retry, zero source/namespace retirement,
+and modular-house reacquisition. Its regional journey passes 129 checks
+(`build/catalog-sharing-regional-01`), including all 18 visible models, exact
+residency totals, phone controls, reload, retirement and distant streaming, with
+no browser errors, console errors or warnings. The world fixture's cleanup now
+chooses a compatible core item from the UI: its earlier book/ornament-only
+assumption incorrectly attempted to replace catalog food with an ornament.
+
+All 14 interior admissions also pass their application selection, rendering,
+preservation and Undo/Redo journeys (`build/catalog-sharing-objects-01`). Forced
+graphics recovery restores the exact saved world with no browser or shader
+errors. These captures use desktop hardware and emulated phone viewports.
+
+These are bounded development results. Full feature reviews, playable furniture
+admission and release remain open. The separate Actions run at `99b8df3a` failed
+later in the project-path interior fruit-picking check; its root-path evidence
+must not be mistaken for a successful project-path run. Publication is held.
