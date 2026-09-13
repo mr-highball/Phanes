@@ -344,54 +344,155 @@ const path = require('node:path');
         timeout: 120000,
       });
       const importWorld = async (world) => {
-        const priorVersion = await view.evaluate(() => phanesSceneVersion);
+        const importStarted = Date.now();
+        const baseline = await view.evaluate(() => ({
+          priorVersion: phanesSceneVersion,
+          world: structuredClone(phanesEditor.world),
+          history: structuredClone(phanesEditor.history),
+          future: structuredClone(phanesEditor.future),
+          camera: window.phanesCamera,
+          editorCamera: {
+            mode: phanesEditor.camera,
+            yaw: phanesEditor.yaw,
+            pitch: phanesEditor.pitch,
+            zoom: phanesEditor.zoom,
+            panX: phanesEditor.panX,
+            panY: phanesEditor.panY,
+            panZ: phanesEditor.panZ,
+            x: phanesEditor.x,
+            y: phanesEditor.y,
+            z: phanesEditor.z,
+          },
+          cameraVersion: window.phanesCameraVersion,
+          renderedCameraVersion: window.phanesRenderedCameraVersion,
+          interiorRoom: phanesEditor.interiorRoom,
+          interiorSelected: phanesEditor.interiorSelected,
+          selection: structuredClone(phanesEditor.selection),
+        }));
+        const priorVersion = baseline.priorVersion;
+        const envelope = {
+          version: world.formatVersion === 3 ? 3 : 2,
+          world: structuredClone(world),
+        };
+        const fileInputStarted = Date.now();
         await view.locator('#world-file').setInputFiles({
           name: 'phanes-test.json',
           mimeType: 'application/json',
-          buffer: Buffer.from(JSON.stringify({
-            version: world.formatVersion === 3 ? 3 : 2,
-            world,
-          })),
+          buffer: Buffer.from(JSON.stringify(envelope)),
         });
+        const fileInputCompleted = Date.now();
+        const waitStarted = Date.now();
         try {
+          // Optional models have a 180-second preparation deadline, also used by
+          // the catalog browser journeys. Wait for their rendered publication;
+          // a worker finishing alone does not establish that imported assets are ready.
           await view.waitForFunction(
-            (prior) => !phanesEditor.worker && phanesSceneVersion > prior,
+            (prior) => !phanesEditor.worker && !window.phanesCatalogLoading &&
+              phanesSceneVersion > prior &&
+              Number(document.body.dataset.renderedRevision) === phanesSceneVersion,
             priorVersion,
+            { timeout: 180000 },
           );
         } catch (error) {
-          const state = await view.evaluate(() => ({
-            sceneVersion: phanesSceneVersion,
-            renderedRevision: document.body.dataset.renderedRevision,
-            lastSolve: document.body.dataset.lastSolve,
-            status: document.getElementById('status')?.textContent,
-            toast: document.getElementById('toast')?.textContent,
-            workerActive: !!phanesEditor.worker,
-            catalogLoading: window.phanesCatalogLoading,
-            catalogStageError: window.phanesCatalogStageError,
-            catalogRequest: window.phanesCatalogRequestId,
-            catalogStageRevision: window.phanesCatalogStageRevision,
-            catalogStageAck: window.phanesCatalogStageAck,
-            catalogStageAsset: window.phanesCatalogStage?.asset,
-            catalogStageRequest: window.phanesCatalogStage?.request,
-            catalogReadyIds: window.phanesCatalogReadyIds,
-            suspended: window.phanesWorldSuspended,
-            hidden: document.hidden,
-            interiorRoom: phanesEditor.interiorRoom,
-            selection: phanesEditor.selection,
-          }));
-          const failure = { base, viewport, priorVersion,
-            importedFormat: world.formatVersion, state, errors,
-            pendingRequests: Array.from(pendingRequests.values(), (row) => ({
-              ...row, elapsedMs: Date.now() - row.started,
-            })), recentRequests };
-          fs.writeFileSync(path.join(root, 'build',
-            'interior-import-failure-' + viewport.width + '-evidence.json'),
-          JSON.stringify(failure, null, 2));
-          await view.screenshot({ path: path.join(root, 'build',
-            'interior-import-failure-' + viewport.width + '.png') });
-          console.error('Interior import failure:', JSON.stringify(failure));
+          const failedAt = Date.now();
+          try {
+            const state = await view.evaluate(() => ({
+              sceneVersion: phanesSceneVersion,
+              renderedRevision: document.body.dataset.renderedRevision,
+              lastSolve: document.body.dataset.lastSolve,
+              status: document.getElementById('status')?.textContent,
+              toast: document.getElementById('toast')?.textContent,
+              workerActive: !!phanesEditor.worker,
+              catalogLoading: window.phanesCatalogLoading,
+              catalogStageError: window.phanesCatalogStageError,
+              catalogRequest: window.phanesCatalogRequestId,
+              catalogStageRevision: window.phanesCatalogStageRevision,
+              catalogStageAck: window.phanesCatalogStageAck,
+              catalogStageAsset: window.phanesCatalogStage?.asset,
+              catalogStageRequest: window.phanesCatalogStage?.request,
+              catalogReadyIds: window.phanesCatalogReadyIds,
+              suspended: window.phanesWorldSuspended,
+              hidden: document.hidden,
+              interiorRoom: phanesEditor.interiorRoom,
+              selection: phanesEditor.selection,
+            }));
+            const failure = { base, viewport, priorVersion,
+              importedFormat: world.formatVersion, state, errors,
+              timing: {
+                importStartedAt: new Date(importStarted).toISOString(),
+                fileInputStartedAt: new Date(fileInputStarted).toISOString(),
+                fileInputElapsedMs: fileInputCompleted - fileInputStarted,
+                waitStartedAt: new Date(waitStarted).toISOString(),
+                waitElapsedMs: failedAt - waitStarted,
+                initialFailureAt: new Date(failedAt).toISOString(),
+                importElapsedMs: failedAt - importStarted,
+              },
+              pendingRequests: Array.from(pendingRequests.values(), (row) => ({
+                ...row, elapsedMs: Date.now() - row.started,
+              })), recentRequests };
+            fs.writeFileSync(path.join(root, 'build',
+              'interior-import-failure-' + viewport.width + '-evidence.json'),
+            JSON.stringify(failure, null, 2));
+            await view.screenshot({ path: path.join(root, 'build',
+              'interior-import-failure-' + viewport.width + '.png') });
+            const observationStarted = Date.now();
+            let lateObservation = { completed: false };
+            try {
+              await view.waitForFunction(
+                (prior) => !phanesEditor.worker && !window.phanesCatalogLoading &&
+                  phanesSceneVersion > prior &&
+                  Number(document.body.dataset.renderedRevision) === phanesSceneVersion,
+                priorVersion,
+                { timeout: 15000 },
+              );
+              lateObservation = await view.evaluate(() => ({
+                completed: true,
+                sceneVersion: phanesSceneVersion,
+                renderedRevision: document.body.dataset.renderedRevision,
+                lastSolve: document.body.dataset.lastSolve,
+                workerActive: !!phanesEditor.worker,
+                catalogLoading: window.phanesCatalogLoading,
+                world: structuredClone(phanesEditor.world),
+              }));
+            } catch (observationError) {
+              lateObservation.error = observationError.message;
+              try {
+                Object.assign(lateObservation, await view.evaluate(() => ({
+                  sceneVersion: phanesSceneVersion,
+                  renderedRevision: document.body.dataset.renderedRevision,
+                  lastSolve: document.body.dataset.lastSolve,
+                  workerActive: !!phanesEditor.worker,
+                  catalogLoading: window.phanesCatalogLoading,
+                  world: structuredClone(phanesEditor.world),
+                })));
+              } catch (stateError) {
+                lateObservation.stateError = stateError.message;
+              }
+            }
+            const observationFinished = Date.now();
+            lateObservation.observationStartedAt = new Date(observationStarted).toISOString();
+            lateObservation.observationElapsedMs = observationFinished - observationStarted;
+            lateObservation.observationFinishedAt = new Date(observationFinished).toISOString();
+            const replay = { base, viewport, baseline, attemptedEnvelope: envelope,
+              timing: failure.timing, lateObservation };
+            try {
+              fs.writeFileSync(path.join(root, 'build',
+                'interior-import-failure-' + viewport.width + '-replay.json'),
+              JSON.stringify(replay, null, 2));
+            } catch (replayError) {
+              console.error('Interior import replay evidence failed:', replayError.message);
+            }
+            console.error('Interior import failure:', JSON.stringify(failure));
+          } catch (diagnosticError) {
+            console.error('Interior import failure evidence failed:', diagnosticError.message);
+          }
           throw error;
         }
+        console.log('Interior import ready:', JSON.stringify({
+          base, viewport, priorVersion, importedFormat: world.formatVersion,
+          importElapsedMs: Date.now() - importStarted,
+          waitElapsedMs: Date.now() - waitStarted,
+        }));
         assert.equal(await view.evaluate(() => document.body.dataset.lastSolve), 'passed');
       };
       await importWorld(unfurnished);
