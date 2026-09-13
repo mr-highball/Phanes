@@ -103,7 +103,7 @@ var
   LWorld: String;
   LBounds: TJSONObject;
 begin
-  GPage.WaitFor('document.body.dataset.startupState==="ready"', 180000);
+  GPage.WaitFor('document.body&&document.body.dataset.startupState==="ready"', 180000);
   GPage.SetValue('region-size', '4');
   GPage.SetValue('world-seed', '732');
   GPage.Click('#create-world');
@@ -211,7 +211,8 @@ begin
   Check(GPage.Text('phanesStyleProbeSnapshot().errors.length===0') = 'true',
     'Named-room authoring has no uncaught browser errors before graphics loss');
   GPage.Execute('window.phanesRecoveryRoomsOldPage=true;phanesStyleProbeLoseContext()');
-  GPage.WaitFor('document.body.dataset.rendererState==="ready"&&!phanesRecovering&&' +
+  GPage.WaitFor('document.body&&document.body.dataset.rendererState==="ready"&&' +
+    '!phanesRecovering&&' +
     'typeof phanesRecoveryRoomsOldPage==="undefined"&&' +
     'Number(document.body.dataset.renderedRevision)===phanesSceneVersion&&' +
     'phanesRenderedCameraVersion===phanesCameraVersion', 180000);

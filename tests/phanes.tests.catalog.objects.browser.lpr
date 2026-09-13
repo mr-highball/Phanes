@@ -115,7 +115,7 @@ begin
   GPage.InstallScript('(()=>{' + String(LStyles) + #10 + 'rtl.run();})();');
   GPage.Resize(1280, 900);
   GPage.Navigate(ParamStr(2));
-  GPage.WaitFor('document.body.dataset.startupState==="ready"', 180000);
+  GPage.WaitFor('document.body&&document.body.dataset.startupState==="ready"', 180000);
   GPage.SetValue('region-size', '4');
   GPage.SetValue('world-seed', '732');
   GPage.Click('#create-world');
@@ -224,7 +224,7 @@ begin
   GPage.Execute('window.dispatchEvent(new Event("pagehide"))');
   GPage.WaitFor('phanesSessionSaved===true', 30000);
   GPage.Execute('window.phanesObjectsOldPage=true;phanesStyleProbeLoseContext()');
-  GPage.WaitFor('typeof phanesObjectsOldPage==="undefined"&&' +
+  GPage.WaitFor('document.body&&typeof phanesObjectsOldPage==="undefined"&&' +
     'document.body.dataset.rendererState==="ready"&&!phanesRecovering&&' +
     'Number(document.body.dataset.renderedRevision)===phanesSceneVersion', 180000);
   Check(GPage.Text('JSON.stringify(phanesEditor.world)') = LAfter,
