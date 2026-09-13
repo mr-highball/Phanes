@@ -36,6 +36,10 @@ const
     'phanes.catalog.batch.29126d7453aa558d.v1',
     'phanes.catalog.batch.a5b74fed5d9ab924.v1',
     'phanes.catalog.batch.08f8aa7805e15d20.v1');
+  EquipmentSamples: array[0..2] of String = (
+    'phanes.catalog.batch.equipment.bb1a8ac28be7dff7.v1',
+    'phanes.catalog.batch.equipment.946d29dc06e1d673.v1',
+    'phanes.catalog.batch.equipment.45af32c4a86be7bf.v1');
 procedure Check(const ACondition: Boolean; const ALabel: String);
 begin
   Require(ACondition, ALabel + ': ' + GPage.Text('document.getElementById("toast").textContent'));
@@ -61,7 +65,7 @@ begin
 end;
 begin
   Require((ParamCount=3) or (ParamCount=4),
-    'Usage: population-browser BROWSER URL EVIDENCE [--catalog-batch]');
+    'Usage: population-browser BROWSER URL EVIDENCE [--catalog-batch|--catalog-equipment]');
   GOutput := ExpandFileName(ParamStr(3));
   ForceDirectories(GOutput);
   for GViewport := 0 to 1 do
@@ -126,7 +130,7 @@ begin
         Check(GPage.Text('JSON.stringify(phanesEditor.world)')=GAfter,'One redo restores the entire population');
         Check(GPage.Text('document.documentElement.scrollWidth<=innerWidth')='true','No horizontal page overflow');
         Check(GPage.Number('populationErrors.length')=0,'No browser runtime errors');
-        if ParamStr(4) = '--catalog-batch' then
+        if (ParamStr(4) = '--catalog-batch') or (ParamStr(4) = '--catalog-equipment') then
         begin
           for GSample := 0 to High(BatchSamples) do
           begin
@@ -135,20 +139,36 @@ begin
             Click('#module-paint');
             Floors;
             GAsset := BatchSamples[GSample];
-            GPage.SetValue('module-population-search', 'chair', 'input');
+            if ParamStr(4) = '--catalog-equipment' then
+            begin
+              GAsset := EquipmentSamples[GSample];
+              GPage.SetValue('module-population-search', 'Artifacts', 'input');
+            end else
+            begin
+              GPage.SetValue('module-population-search', 'chair', 'input');
+            end;
             Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')>0,
-              'Search exposes catalog seating');
+              'Search exposes matching catalog choices');
             Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')<100,
               'Search narrows the batch');
             GPage.SetValue('module-population-search', '', 'input');
             Check(GPage.Number('document.querySelectorAll("#module-population-furniture [data-batch-model]").length')>500,
               'Clearing search restores full batch');
+            if ParamStr(4) = '--catalog-equipment' then
+            begin
+              Check(GPage.Number('document.querySelectorAll("#module-population-furniture option[value^=''phanes.catalog.batch.equipment.'']").length')=201,
+                'All new equipment choices are exposed');
+            end;
             GPage.SetValue('module-population-furniture', GAsset, 'change');
             GPage.Execute('document.body.dataset.lastSolve=""');
             Click('#module-populate');
             Settled;
             Check(GPage.Number('phanesEditor.world.composition.nodes.filter(n=>n.asset===' + QuotedStr(GAsset) + ').length')=4,
               'Density places four exact catalog models');
+            Check(GPage.Text('JSON.parse(phanesCatalogReadyIds).includes(' + QuotedStr(GAsset) + ')')='true',
+              'Renderer admitted the actual source model');
+            Click('#module-focus');
+            GPage.WaitFor('phanesRenderedCameraVersion===phanesCameraVersion&&document.getElementById("toast").hidden');
             GPage.Screenshot(GOutput + '/' + GView + '-catalog-' + IntToStr(GSample) + '.png');
             Check(GPage.Number('populationErrors.length')=0,'Catalog models render without browser errors');
           end;

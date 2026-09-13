@@ -101,6 +101,7 @@ begin
 end;
 
 {$I phanes.catalog.batch.inc}
+{$I phanes.catalog.equipment.inc}
 
 function ObjectAssetAdmission(const AId: String;
   out AAdmission: TObjectAssetAdmission): Boolean;
@@ -207,7 +208,7 @@ begin
       50, 28, 21, 132, 396, 0);
   end else
   begin
-    Result := BatchAdmission(AId, AAdmission);
+    Result := BatchAdmission(AId, AAdmission) or EquipmentAdmission(AId, AAdmission);
   end;
 end;
 
@@ -215,7 +216,7 @@ function ObjectAssetIds: TObjectAssetIds;
 var
   I: Integer;
 begin
-  SetLength(Result, 12 + Length(BatchIds));
+  SetLength(Result, 12 + Length(BatchIds) + Length(EquipmentIds));
   Result[0] := 'phanes.catalog.book.rpg-closed.v1';
   Result[1] := 'phanes.catalog.artifact.scroll.v1';
   Result[2] := 'phanes.catalog.artifact.crystal-green.v1';
@@ -231,6 +232,10 @@ begin
   for I := 0 to High(BatchIds) do
   begin
     Result[12 + I] := BatchIds[I];
+  end;
+  for I := 0 to High(EquipmentIds) do
+  begin
+    Result[12 + Length(BatchIds) + I] := EquipmentIds[I];
   end;
 end;
 

@@ -41,6 +41,7 @@ var
   GFailed: Integer;
   GExistingCount: Integer;
   GNature: Boolean;
+  GEquipment: Boolean;
 
 function Quoted(const AText: String): String;
 begin
@@ -265,6 +266,50 @@ begin
         LCategory := 'Lighting props';
         LTarget := 1.5;
       end;
+      if GEquipment then
+      begin
+        Require(not Matches(LName, ['catwalk', 'rail', 'pipe', 'conveyor', 'chandelier',
+          'hanging', 'character', 'enemy', 'terrain', 'depot', 'structure', 'module',
+          'stand', 'holder', 'rack', 'fire', 'flame', 'smoke', 'arrow-basic', 'arrow-rounded']),
+          'requires structural, attached-part, character or effect integration');
+        Require(Matches(LName, ['box', 'crate', 'cargo', 'container', 'barrel', 'bucket',
+          'chest', 'locker', 'bag', 'backpack', 'pouch', 'sack', 'bottle', 'can_', 'can-',
+          'canister', 'tank', 'battery', 'computer', 'terminal', 'console', 'generator',
+          'reactor', 'machine', 'antenna', 'radar', 'satellite', 'drill', 'cog', 'gear',
+          'radio', 'phone', 'compass', 'aidkit', 'bandage', 'healthpack', 'syringe',
+          'anvil', 'axe', 'hammer', 'shovel', 'knife', 'sword', 'dagger', 'shield',
+          'armor', 'helmet', 'bow', 'arrow', 'gun', 'revolver', 'shotgun', 'ammo',
+          'grenade', 'mine', 'beartrap', 'key', 'padlock', 'book', 'scroll', 'parchment',
+          'potion', 'crystal', 'gem', 'mineral', 'ingot', 'coin', 'crown', 'necklace',
+          'ring', 'chalice', 'vase', 'pot', 'pan', 'mug', 'candle', 'lantern', 'torch',
+          'statue', 'sculpture', 'skull', 'bone', 'gravestone', 'tombstone', 'cross',
+          'pumpkin', 'cauldron', 'rope', 'chain', 'match', 'whetstone']),
+          'outside the freestanding equipment and artifact categories');
+        LCategory := 'Equipment';
+        LRole := 'ornament';
+        LTarget := 0.7;
+        if Matches(LName, ['box', 'crate', 'cargo', 'container', 'barrel', 'bucket',
+          'chest', 'locker', 'bag', 'backpack', 'pouch', 'sack']) then
+        begin
+          LCategory := 'Containers';
+          LTarget := 0.8;
+        end else if Matches(LName, ['statue', 'sculpture', 'gravestone', 'tombstone', 'cross']) then
+        begin
+          LCategory := 'Sculptures';
+          LTarget := 1.4;
+        end else if Matches(LName, ['book', 'scroll', 'parchment', 'potion', 'crystal',
+          'gem', 'mineral', 'ingot', 'coin', 'crown', 'necklace', 'ring', 'chalice', 'vase',
+          'candle', 'skull', 'bone', 'key', 'padlock']) then
+        begin
+          LCategory := 'Artifacts';
+          LTarget := 0.3;
+        end else if Matches(LName, ['tank', 'computer', 'terminal', 'console',
+          'generator', 'reactor', 'machine', 'antenna', 'radar', 'satellite']) then
+        begin
+          LCategory := 'Technology';
+          LTarget := 1.2;
+        end;
+      end;
     end;
     LAt := GGeometryIndex.IndexOf(AModel.Get('id', ''));
     Require(LAt >= 0, 'no cached geometry');
@@ -320,7 +365,7 @@ begin
         'animation requires separate integration');
       Require((LJSON.Find('skins') = nil) or (LJSON.Arrays['skins'].Count = 0),
         'skinned mesh requires separate integration');
-      if GNature and (LJSON.Find('materials') <> nil) then
+      if (GNature or GEquipment) and (LJSON.Find('materials') <> nil) then
       begin
         for I := 0 to LJSON.Arrays['materials'].Count - 1 do
         begin
@@ -336,6 +381,10 @@ begin
     if GNature then
     begin
       LId := StringReplace(LId, '.batch.', '.nature.', []);
+    end;
+    if GEquipment then
+    begin
+      LId := StringReplace(LId, '.batch.', '.batch.equipment.', []);
     end;
     Require(GProfiles.IndexOf(LId) < 0, 'asset id collision');
     GProfiles.AddObject(LId, LRow);
@@ -390,9 +439,11 @@ var
   I: Integer;
   J: Integer;
 begin
-  Require((ParamCount <= 2) and ((ParamStr(2) = '') or (ParamStr(2) = '--nature')),
-    'Usage: catalog-batch [published-root] [--nature]');
+  Require((ParamCount <= 2) and ((ParamStr(2) = '') or
+    (ParamStr(2) = '--nature') or (ParamStr(2) = '--equipment')),
+    'Usage: catalog-batch [published-root] [--nature|--equipment]');
   GNature := ParamStr(2) = '--nature';
+  GEquipment := ParamStr(2) = '--equipment';
   LPrefix := 'phanes.catalog.batch.';
   LType := 'TObjectAssetAdmission';
   LIncludePath := 'src/phanes.catalog.batch.inc';
@@ -403,6 +454,12 @@ begin
     LType := 'TRegionalAssetAdmission';
     LIncludePath := 'src/phanes.catalog.nature.inc';
     LReportPath := 'data/catalog-integration-nature.json';
+  end;
+  if GEquipment then
+  begin
+    LPrefix := 'phanes.catalog.batch.equipment.';
+    LIncludePath := 'src/phanes.catalog.equipment.inc';
+    LReportPath := 'data/catalog-integration-equipment.json';
   end;
   GSite := ParamStr(1);
   if GSite = '' then
@@ -443,6 +500,14 @@ begin
     begin
       if not Matches(LKit.Get('id', ''), ['mini-forest', 'nature-pack',
         'nature-megakit', 'trees-and-bushes', 'textured-trees', 'crops-pack']) then
+      begin
+        Continue;
+      end;
+    end else if GEquipment then
+    begin
+      if not Matches(LKit.Get('id', ''), ['factory-kit', 'graveyard-kit', 'space-station-kit',
+        'halloween-bits', 'space-base-bits', 'fantasy-props-megakit', 'sci-fi-essentials',
+        'low-poly-rpg-pack', 'lowpoly-survival-pack']) then
       begin
         Continue;
       end;
@@ -525,12 +590,20 @@ begin
   LCode.Add('  end;');
   LCode.Add('end;');
   Require(GPassed > 0, 'batch admitted no models');
+  if GEquipment then
+  begin
+    LCode.Text := StringReplace(StringReplace(LCode.Text, 'BatchIds', 'EquipmentIds',
+      [rfReplaceAll]), 'BatchAdmission', 'EquipmentAdmission', [rfReplaceAll]);
+  end;
   WriteText(LIncludePath, LCode.Text);
   LReport := TJSONObject.Create;
   LReport.Add('version', 1);
   if GNature then
   begin
     LReport.Add('policy', 'static outdoor nature v1; uniform role-bounded normalization; no repairs');
+  end else if GEquipment then
+  begin
+    LReport.Add('policy', 'static freestanding equipment v1; uniform category sizes; no repairs');
   end else
   begin
     LReport.Add('policy', 'static single-floor props v1; automatic uniform longest-axis normalization; no repairs');

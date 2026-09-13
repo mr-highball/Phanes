@@ -1,19 +1,20 @@
 # Usable catalog integration
 
-The `catalog-integration` branch adds **790 selectable models** from existing
+The `catalog-integration` branch adds **991 selectable models** from existing
 downloads. The source inventory remains 8,365 files; no models were collected.
 
 | Batch | Screened | Newly passed | Set aside | Already integrated |
 | --- | ---: | ---: | ---: | ---: |
 | Floor props, food and seating | 915 | 553 | 347 | 15 |
 | Outdoor nature | 343 | 237 | 90 | 16 |
-| Total | 1,258 | 790 | 437 | 31 |
+| Equipment and adventure props | 732 | 201 | 523 | 8 |
+| Total | 1,990 | 991 | 960 | 39 |
 
-These batches cover different source kits. Another 7,107 source models remain
+These batches cover different source kits. Another 6,375 source models remain
 outside their scope; they are not counted as failures.
 
-The complete optional catalog now contains **830 source models**, up from 40.
-These are source-file counts, not a claim of 830 distinct geometric designs.
+The complete optional catalog now contains **1,031 source models**, up from 40.
+These are source-file counts, not a claim of 1,031 distinct geometric designs.
 Core and procedural choices are additional.
 
 ## Using the additions
@@ -43,6 +44,13 @@ to 0.55 m; crops up to 1.2 m. Bounds include outward millimetre padding.
 Large foliage groups use a deterministic, seed-selected subset of at most eight
 models per application. Every admitted model remains individually selectable.
 
+The equipment batch adds **79 artifacts, 78 equipment props, 25 containers,
+11 sculptures and 8 technology props**. Use the home-builder search and density
+controls, just like the first floor-props batch. They are static display props;
+containers do not open, tools are not usable equipment, and machinery is not
+simulated. Uniform longest-axis targets are 0.3 m for artifacts, 0.7 m for
+equipment, 0.8 m for containers, 1.2 m for technology and 1.4 m for sculptures.
+
 ## Pass/fail ledger and quick workflow
 
 [`data/catalog-integration.json`](../data/catalog-integration.json) records every
@@ -58,6 +66,13 @@ include structural/attached parts (33), harvested produce (16), texture budgets
 budgets (8) and unsupported roles (5). The alpha-material exclusion follows a
 poor browser visual sample; these models need a separate material review.
 Its generated registry is `src/phanes.catalog.nature.inc`.
+
+[`data/catalog-integration-equipment.json`](../data/catalog-integration-equipment.json)
+records the equipment batch; `src/phanes.catalog.equipment.inc` is its registry.
+The 523 deferred entries include structural/attached parts and effects (257),
+models outside this category (146), furniture needing supports (32), download
+budgets (70), texture budgets (11), triangle budgets (4), degenerate bounds (2)
+and animation (1). Both previous ledgers remain intact.
 
 The native Pascal importer reuses the existing CGE geometry report. It verifies
 the inventory fingerprint, published kit manifests, model closures and file hashes;
@@ -79,6 +94,10 @@ Failures in the floor-props batch: 236 need structural, wall, terrain or special
 # Check nature placement, or re-screen nature and refresh the landscape palette.
 ./tools/catalog-batch.ps1 -Category nature
 ./tools/catalog-batch.ps1 -Category nature -Regenerate -PublishedRoot build/web
+
+# Equipment-only validation or regeneration, without repeating the older batches.
+./tools/catalog-batch.ps1 -Category equipment
+./tools/catalog-batch.ps1 -Category equipment -Regenerate -PublishedRoot build/web
 ```
 
 Pass means mechanically admitted, not individually visually reviewed. The batch
@@ -109,3 +128,13 @@ assertions covered all 237 nature models; 36 browser assertions passed, includin
 the five role samples, phone-layout undo/redo and group rock placement. Evidence:
 `build/catalog-nature-01/browser-final/`. The previous props ledger and generated
 registry were also regenerated and remained byte-identical.
+
+Equipment evidence is under `build/catalog-equipment-01/`. The native check covers
+every new profile using actual floor placement and existing-object reconstruction.
+The population browser driver accepts `--catalog-equipment` to sample a textured
+factory machine, an untextured potion and a KayKit gravestone on desktop and
+phone-sized layouts. Each sample checks search, exact density placement and
+renderer admission. Individual visual review of all 201 models is not claimed.
+Verified on 2026-09-13: web build passed; 1,657 native assertions covered the new
+equipment profiles and existing building behavior; 72 desktop/phone-layout browser
+assertions passed. All three ledgers and generated registries reproduced exactly.
