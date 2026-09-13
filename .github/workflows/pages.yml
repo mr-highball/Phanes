@@ -171,6 +171,14 @@ jobs:
             -NativeCompiler "$native_compiler" -Compiler "$compiler" \
             -RuntimeJs "$PAS2JS_RUNTIME"
           # Diagnose import/editing failures before the longer visual suites.
+          world_file_case=0
+          for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
+            world_file_case=$((world_file_case + 1))
+            pwsh -File tools/test-world-file.ps1 -Browser "$browser_path" \
+              -TestUrl "$url" -EvidenceDirectory "build/ci-browser/world-file-$world_file_case" \
+              -NativeCompiler "$native_compiler" -Compiler "$compiler" \
+              -RuntimeJs "$PAS2JS_RUNTIME"
+          done
           for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
             TEST_URL="$url" node tools/test-interiors.cjs
           done

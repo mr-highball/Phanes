@@ -510,47 +510,6 @@ byId('region-size').oninput = () => {
   const size = Number(byId('region-size').value) * 16;
   byId('size-hint').textContent = `${size} × ${size} metres · 16 metres per region cell`;
 };
-byId('save-world').onclick = () => {
-  const version = state.world.formatVersion === 3 ? 3 : 2;
-  const blob = new Blob([JSON.stringify({ version, world: state.world }, null, 2)], {
-    type: 'application/json',
-  });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `phanes-${state.world.seed}.json`;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-};
-byId('import-world').onclick = () => byId('world-file').click();
-byId('world-file').onchange = async () => {
-  try {
-    const file = byId('world-file').files[0];
-    if (!file || file.size > 8 * 1024 * 1024) {
-      throw new Error('Choose a Phanes world file under 8 MB.');
-    }
-    const saved = JSON.parse(await file.text());
-    if (
-      ![1, 2, 3].includes(saved.version) ||
-      (saved.version === 3 && saved.world?.formatVersion !== 3) ||
-      (saved.version === 2 && saved.world?.formatVersion !== 2) ||
-      (saved.version === 1 && saved.world?.formatVersion > 1) ||
-      !Number.isInteger(saved.world?.size) ||
-      saved.world.size < 4 ||
-      saved.world.size > 48 ||
-      saved.world.layers?.length !== 5
-    ) {
-      throw new Error('This is not a supported Phanes world.');
-    }
-    // Publication requires Pascal validation in the worker, including all
-    // decoded support rules. Import never directly sends arbitrary scene data.
-    cancelSolve();
-    generate('restore', saved.world);
-  } catch (error) {
-    notify(error.message, true);
-  }
-  byId('world-file').value = '';
-};
-
 document.addEventListener('keydown', (event) => {
   if (
     event.target.matches('input, textarea, select') ||

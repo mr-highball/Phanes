@@ -37,6 +37,7 @@ uses
   phanes.groundworks.ui,
   phanes.buildings.ui,
   phanes.landforms.ui,
+  phanes.worldfile.ui,
   phanes.ui.activation;
 
 begin
@@ -49,6 +50,7 @@ begin
   StartCatalogUI;
   StartBuildingUI;
   StartLandformUI;
+  StartWorldFileUI;
   StartAuthoringActivation;
   StartCatalogRuntime;
   StartSessionUI;
