@@ -257,8 +257,8 @@ var
   J: Integer;
 begin
   LBase := Baseline;
+  Check(ValidateWorld(LBase, GAssets, GReason), 'Baseline fixture and loaded palette admitted');
   AccessChecks;
-  Check(ValidateWorld(LBase, GAssets, GReason), 'Baseline admitted');
   LRequest := Request(LBase, 'module-build', '');
   SelectRect(LRequest, 12, 12, 3, 3);
   Check(ValidateSelection(LRequest, GReason), 'Operation-specific 2m selection admitted');
@@ -370,6 +370,7 @@ begin
       GAssets[I].FId := LPalette.Arrays['assets'].Objects[I].Strings['id'];
       GAssets[I].FKind := LPalette.Arrays['assets'].Objects[I].Strings['kind'];
       GAssets[I].FTheme := LPalette.Arrays['assets'].Objects[I].Strings['theme'];
+      GAssets[I].FCluster := LPalette.Arrays['assets'].Objects[I].Get('cluster', 1);
     end;
   finally
     LPalette.Free;

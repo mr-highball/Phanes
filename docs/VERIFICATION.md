@@ -41,8 +41,21 @@ The first Phanes Actions run, 34727283782 at source checkpoint
 `c77b5797a87228bc1c7572befe6272da1971f054`, passed compiler bootstrap and cache
 preparation, then reached corpus validation. The native
 `phanes.tests.fingerprint.critic` link failed because Ubuntu lacked `-lX11`.
-The workflow now installs `libx11-dev`; a clean rerun must verify the fix. This
-prerequisite change does not alter the separate critic hold or deployment gate.
+The workflow now installs `libx11-dev`; the subsequent run below passed that
+native link. This prerequisite change does not alter the separate critic hold
+or deployment gate.
+
+Actions run 34727812670 at `a2d73f44` passed Castle static decoding for all
+8,365 models with none quarantined, music and terrain checks, and 541,199
+groundwork assertions. It then exposed a buildings-test fixture mismatch: the
+fixture palette loader left `FCluster` at zero, while production loading defaults
+an omitted `cluster` to one and regional admission requires that value. The
+fixture now reads `cluster` with the production-equivalent default of one and
+validates its baseline before route checks. The native buildings suite passes
+308 assertions after the correction; retained before/after logs are
+`build/logs/ci-34727812670-buildings-before-fix.log` and
+`build/logs/ci-34727812670-buildings-after-fix.log`. A clean Actions rerun remains
+required.
 
 The object-catalog candidate adds twelve measured leaf models to the existing
 book/vase pair: books, artifacts, equipment and four food items. The shared
