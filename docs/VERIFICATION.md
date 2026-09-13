@@ -37,6 +37,13 @@ cache-save ordering, retaining a successful compiler installation before later
 application checks can fail. Phanes' own clean Actions build and deployment are
 still pending; the reference run does not establish them.
 
+The first Phanes Actions run, 34727283782 at source checkpoint
+`c77b5797a87228bc1c7572befe6272da1971f054`, passed compiler bootstrap and cache
+preparation, then reached corpus validation. The native
+`phanes.tests.fingerprint.critic` link failed because Ubuntu lacked `-lX11`.
+The workflow now installs `libx11-dev`; a clean rerun must verify the fix. This
+prerequisite change does not alter the separate critic hold or deployment gate.
+
 The object-catalog candidate adds twelve measured leaf models to the existing
 book/vase pair: books, artifacts, equipment and four food items. The shared
 contents catalog now contains 28 choices, including fourteen optional models.

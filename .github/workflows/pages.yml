@@ -53,7 +53,7 @@ jobs:
       - name: Install compiler bootstrap and browser test tools
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y fp-compiler fp-units-fcl fp-utils libpng-dev zlib1g-dev
+          sudo apt-get install -y fp-compiler fp-units-fcl fp-utils libpng-dev libx11-dev zlib1g-dev
           npm install --prefix "$RUNNER_TEMP/browser-qa" --no-audit --no-fund playwright@1.58.2
           "$RUNNER_TEMP/browser-qa/node_modules/.bin/playwright" install --with-deps chromium
           echo "NODE_PATH=$RUNNER_TEMP/browser-qa/node_modules" >> "$GITHUB_ENV"
