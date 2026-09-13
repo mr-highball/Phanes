@@ -82,6 +82,7 @@ uses
 function IsBuildingOperation(const AOperation: String): Boolean;
 begin
   Result := (AOperation = 'module-build') or (AOperation = 'module-extend') or
+    (AOperation = 'module-populate') or
     (AOperation = 'module-edge') or (AOperation = 'module-toggle') or
     (AOperation = 'module-lock') or (AOperation = 'module-furnish') or
     (AOperation = 'module-remove');

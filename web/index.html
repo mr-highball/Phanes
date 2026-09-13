@@ -167,6 +167,23 @@ SOFTWARE.
             <button id="module-extend" data-module-action="extend" data-glyph="reimagine" disabled>Extend into selection</button>
             <button id="module-focus" data-module-action="focus" data-glyph="orbit" disabled>Look closer</button>
           </div>
+          <fieldset id="module-population">
+            <legend>Furnish selected floors</legend>
+            <p class="muted">In Draw floors, use Box, Brush or Lasso over existing floors in this home.</p>
+            <label for="module-population-furniture">Furniture</label>
+            <select id="module-population-furniture"></select>
+            <label for="module-density">Density of empty selected floors</label>
+            <select id="module-density">
+              <option value="10">Sparse · 10%</option>
+              <option value="25" selected>Light · 25%</option>
+              <option value="50">Medium · 50%</option>
+              <option value="75">Full · 75%</option>
+              <option value="100">Every available tile · 100%</option>
+            </select>
+            <p id="module-population-hint" class="muted" aria-live="polite">Paint existing floors to furnish them.</p>
+            <button id="module-populate" data-module-action="populate" data-glyph="emergence" class="primary wide" disabled>Populate selected floors</button>
+            <p class="muted">Adds to empty tiles only. Existing furniture and locks stay unchanged. Access limits may reduce the number placed. Undo removes the whole batch.</p>
+          </fieldset>
           <button id="module-overview" data-module-action="overview" data-glyph="overhead" class="wide" disabled>Whole home</button>
           <p class="muted">Extensions keep existing parts and contents. Unlocked joining walls become passages.</p>
           <label class="module-check"><input id="module-cutaway" type="checkbox" checked /> Cut away roof &amp; obstructing walls</label>

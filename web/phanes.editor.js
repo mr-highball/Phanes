@@ -355,7 +355,7 @@ function generate(operation, imported = null, options = {}) {
           window.phanesInteriorUI?.choose(options.objectId, true);
         }
         notify(
-          operation.startsWith('land-') ? data.message : [
+          operation.startsWith('land-') || operation === 'module-populate' ? data.message : [
             'create-interior',
             'create-plan',
             'room-purpose',

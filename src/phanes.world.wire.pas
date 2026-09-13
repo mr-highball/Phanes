@@ -242,6 +242,7 @@ begin
   end;
   Result.FPrevious := ReadWorld(TJSObject(AData['previous']));
   Result.FContentCount := -1;
+  Result.FModuleDensity := 25;
   Result.FGroundworkTurn := -1;
   Result.FModulePose := isDefined(AData['moduleX']) or isDefined(AData['moduleZ']) or
     isDefined(AData['moduleTurn']);
@@ -351,6 +352,10 @@ begin
   if jsTypeOf(AData['contentCount']) <> 'undefined' then
   begin
     Result.FContentCount := Integer(ReadInteger(AData, 'contentCount', 0, 6));
+  end;
+  if jsTypeOf(AData['moduleDensity']) <> 'undefined' then
+  begin
+    Result.FModuleDensity := Integer(ReadInteger(AData, 'moduleDensity', 1, 100));
   end;
   if not isArray(AData['assets']) then
   begin

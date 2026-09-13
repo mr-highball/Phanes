@@ -199,14 +199,16 @@ begin
     end;
   end;
   AReason := 'Use building precision to draw floors or an extension.';
-  if ((ARequest.FOperation = 'module-build') or (ARequest.FOperation = 'module-extend')) and
+  if ((ARequest.FOperation = 'module-build') or (ARequest.FOperation = 'module-extend') or
+    (ARequest.FOperation = 'module-populate')) and
     (ARequest.FSelectionScale <> 8) then
   begin
     Exit;
   end;
   AReason := 'Building precision is reserved for modular floor and extension edits.';
   if (ARequest.FSelectionScale = 8) and
-    (ARequest.FOperation <> 'module-build') and (ARequest.FOperation <> 'module-extend') then
+    (ARequest.FOperation <> 'module-build') and (ARequest.FOperation <> 'module-extend') and
+    (ARequest.FOperation <> 'module-populate') then
   begin
     Exit;
   end;
@@ -231,6 +233,7 @@ begin
     (ARequest.FOperation <> 'castle') and (ARequest.FOperation <> 'modern') and
     (ARequest.FOperation <> 'scifi') and (ARequest.FOperation <> 'rocket') and
     (ARequest.FOperation <> 'module-build') and (ARequest.FOperation <> 'module-extend') and
+    (ARequest.FOperation <> 'module-populate') and
     not IsLandformOperation(ARequest.FOperation) then
   begin
     AReason := 'This operation uses its own object or plot selection.';

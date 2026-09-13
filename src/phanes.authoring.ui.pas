@@ -812,7 +812,8 @@ begin
         Result['selectionCells'] := ASelection['selectionCells'];
       end;
     end;
-    if (AOperation = 'module-build') or (AOperation = 'module-extend') then
+    if (AOperation = 'module-build') or (AOperation = 'module-extend') or
+      (AOperation = 'module-populate') then
     begin
       if (ASelection['selectionScale'] <> 8) or
         not isArray(ASelection['selectionCells']) or

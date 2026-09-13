@@ -94,6 +94,7 @@ type
     FModuleX: Integer;
     FModuleZ: Integer;
     FModuleTurn: Integer;
+    FModuleDensity: Integer;
     FGroundworkBody: String;
     FBuildingAsset: String;
     FPlanProfile: String;

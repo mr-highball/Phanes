@@ -135,6 +135,11 @@ begin
   Element('module-parts').addEventListener('change', @Click);
   Element('module-cutaway').addEventListener('change', @Click);
   Element('module-content-role').addEventListener('change', @Click);
+  Element('module-population-furniture').innerHTML :=
+    '<option value="mixed">Mix of tables, chairs, shelves and plants</option>' +
+    Element('module-furniture').innerHTML;
+  Element('module-population-furniture').querySelector('option[value="empty"]').remove;
+  Element('module-density').addEventListener('change', @Click);
   LBridge := TJSObject.new;
   LBridge['refresh'] := @Refresh;
   LBridge['onWorld'] := @OnWorld;
@@ -388,7 +393,7 @@ begin
   TJSHTMLSelectElement(Element('selection-scale')).value := '8';
   Element('selection-scale').dispatchEvent(TJSEvent.new('change'));
   TJSHTMLElement(document.querySelector('[data-authoring-tool="box"]')).click;
-  FActions.notify('Draw a footprint with Box, Brush or Lasso. Imagine or Extend applies it.', False);
+    FActions.notify('Use Box, Brush or Lasso. Draw on land to build, or over existing floors to populate them.', False);
   Refresh;
 end;
 
@@ -500,6 +505,10 @@ begin
   LOptions := TJSObject.new;
   LOptions['objectId'] := AId;
   LOptions['contentAsset'] := AContent;
+  if AOperation = 'module-populate' then
+  begin
+    LOptions['moduleDensity'] := StrToInt(TJSHTMLSelectElement(Element('module-density')).value);
+  end;
   if AOperation = 'module-furnish' then
   begin
     LPosition := TJSHTMLSelectElement(Element('module-position')).value;
@@ -620,6 +629,11 @@ begin
   begin
     Request('module-lock', FSelected, '');
   end
+  else if LAction = 'populate' then
+  begin
+    Request('module-populate', FRoot,
+      TJSHTMLSelectElement(Element('module-population-furniture')).value);
+  end
   else if LAction = 'furnish' then
   begin
     Request('module-furnish', FSelected,
@@ -727,6 +741,9 @@ var
   LReady: Boolean;
   LMask: Boolean;
   LChildren: Boolean;
+  LEligible: Integer;
+  LFloor: String;
+  LParent: Integer;
   I: Integer;
 begin
   LReady := (FState.world <> nil) and (FState.worker = nil) and FState.editing;
@@ -761,6 +778,32 @@ begin
   end;
   Enable('module-build', LReady and LMask);
   Enable('module-extend', LReady and LMask and (FRoot <> '') and not Protected(FRoot));
+  LEligible := 0;
+  if LMask and (FRoot <> '') then
+  begin
+    for I := 0 to TJSArray(FState.selection['selectionCells']).Length - 1 do
+    begin
+      LParent := Integer(TJSArray(FState.selection['selectionCells'])[I]);
+      LFloor := ModuleFloorId(FRoot, LParent mod (FWorld.FSize * 8),
+        LParent div (FWorld.FSize * 8));
+      if (FIndex.Find(LFloor) >= 0) and (FIndex.Find(LFloor + '.furnishing') < 0) and
+        not Protected(LFloor) then
+      begin
+        Inc(LEligible);
+      end;
+    end;
+  end;
+  Element('module-population').hidden := FRoot = '';
+  Enable('module-populate', LReady and (LEligible > 0));
+  Element('module-population-hint').textContent :=
+    'Paint existing empty floors in this home using Draw floors and Box, Brush or Lasso.';
+  if LEligible > 0 then
+  begin
+    Element('module-population-hint').textContent := IntToStr(LEligible) +
+      ' empty floors selected · target ' + IntToStr((LEligible *
+      StrToInt(TJSHTMLSelectElement(Element('module-density')).value) + 99) div 100) +
+      ' furnishings';
+  end;
   Enable('module-focus', (FRoot <> '') and (FState.worker = nil));
   Enable('module-overview', (FRoot <> '') and (FState.worker = nil));
   LAt := FIndex.Find(FSelected);

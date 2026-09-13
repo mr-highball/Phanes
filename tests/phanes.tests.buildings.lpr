@@ -246,6 +246,79 @@ begin
     'Chair cannot occupy intermediate door swing even when both endpoints fit');
 end;
 
+procedure PopulationChecks;
+var
+  LBase: TWorld;
+  LWorld: TWorld;
+  LRepeat: TWorld;
+  LProtected: TWorld;
+  LRequest: TWorldRequest;
+  LRoot: String;
+  LIndex: TCompositionIndex;
+  LCount: Integer;
+  LAt: Integer;
+  I: Integer;
+begin
+  LRequest := Request(Baseline, 'module-build', '');
+  SelectRect(LRequest, 12, 12, 4, 4);
+  Check(GenerateWorld(LRequest, LBase, GReason), 'Batch furnishing home generated');
+  LRoot := LBase.FComposition.FNodes[1].FId;
+  LRequest := Request(LBase, 'module-populate', LRoot);
+  SelectRect(LRequest, 12, 12, 4, 4);
+  LRequest.FModuleDensity := 25;
+  LRequest.FContentAsset := 'plants';
+  Check(GenerateWorld(LRequest, LWorld, GReason), 'Populate painted floors at 25 percent');
+  LCount := 0;
+  for I := 0 to High(LWorld.FComposition.FNodes) do
+  begin
+    if Pos('.furnishing', LWorld.FComposition.FNodes[I].FId) > 0 then
+    begin
+      Inc(LCount);
+    end;
+  end;
+  Check(LCount = 4, '25 percent of sixteen empty floor tiles places four plants');
+  Check(LWorld.FComposition.FRevision = LBase.FComposition.FRevision + 1,
+    'Batch commits exactly one composition revision');
+  Check(GenerateWorld(LRequest, LRepeat, GReason), 'Batch can be replayed');
+  Check(Length(LRepeat.FComposition.FNodes) = Length(LWorld.FComposition.FNodes),
+    'Replay has identical node count');
+  for I := 0 to High(LWorld.FComposition.FNodes) do
+  begin
+    Check(SameNode(LWorld.FComposition.FNodes[I], LRepeat.FComposition.FNodes[I]),
+      'Replay preserves exact placements and generated contents');
+  end;
+  LRequest := Request(LWorld, 'module-lock', ModuleFloorId(LRoot, 12, 12));
+  Check(GenerateWorld(LRequest, LProtected, GReason), 'Protect one batch floor');
+  LRequest := Request(LProtected, 'module-populate', LRoot);
+  SelectRect(LRequest, 12, 12, 2, 2);
+  LRequest.FModuleDensity := 100;
+  LRequest.FContentAsset := 'mixed';
+  Check(GenerateWorld(LRequest, LRepeat, GReason), 'Mixed population tolerates occupied and locked tiles');
+  LIndex := TCompositionIndex.Create(LRepeat.FComposition.FNodes);
+  try
+    for I := 0 to High(LProtected.FComposition.FNodes) do
+    begin
+      LAt := LIndex.Find(LProtected.FComposition.FNodes[I].FId);
+      Check((LAt >= 0) and SameNode(LProtected.FComposition.FNodes[I],
+        LRepeat.FComposition.FNodes[LAt]), 'All existing nodes remain exact');
+    end;
+    for I := Length(LProtected.FComposition.FNodes) to High(LRepeat.FComposition.FNodes) do
+    begin
+      Check((Pos(ModuleFloorId(LRoot, 12, 13) + '.', LRepeat.FComposition.FNodes[I].FId) = 1) or
+        (Pos(ModuleFloorId(LRoot, 13, 12) + '.', LRepeat.FComposition.FNodes[I].FId) = 1) or
+        (Pos(ModuleFloorId(LRoot, 13, 13) + '.', LRepeat.FComposition.FNodes[I].FId) = 1),
+        'Only selected unlocked floors receive new nodes');
+    end;
+  finally
+    LIndex.Free;
+  end;
+  LRequest.FModuleDensity := 101;
+  Check(not GenerateWorld(LRequest, LRepeat, GReason), 'Invalid batch density rejects');
+  LRequest.FModuleDensity := 50;
+  LRequest.FContentAsset := 'empty';
+  Check(not GenerateWorld(LRequest, LRepeat, GReason), 'Batch cannot clear furnishings');
+end;
+
 procedure Run;
 var
   LBase: TWorld;
@@ -266,6 +339,7 @@ begin
   LBase := Baseline;
   Check(ValidateWorld(LBase, GAssets, GReason), 'Baseline fixture and loaded palette admitted');
   AccessChecks;
+  PopulationChecks;
   LRequest := Request(LBase, 'module-build', '');
   SelectRect(LRequest, 12, 12, 3, 3);
   Check(ValidateSelection(LRequest, GReason), 'Operation-specific 2m selection admitted');

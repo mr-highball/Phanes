@@ -314,6 +314,7 @@ function GenerateWorldAt(const ARequest: TWorldRequest; const AHeight: TWorldHei
   const AHeightContext: TWorld; out AWorld: TWorld; out AReason: String): Boolean;
 var
   LGraph: TGraph;
+  LBuildingMessage: String;
   LOptions: TGraphSolveOptions;
   LReport: TGraphSolveReport;
   LLayer: Integer;
@@ -381,8 +382,16 @@ begin
       AReason := 'Create a world before drawing a building.';
       Exit;
     end;
-    Result := GenerateModularBuilding(ARequest, AWorld, AReason) and
-      ValidateWorld(AWorld, ARequest.FAssets, AReason);
+    Result := GenerateModularBuilding(ARequest, AWorld, AReason);
+    if Result then
+    begin
+      LBuildingMessage := AReason;
+      Result := ValidateWorld(AWorld, ARequest.FAssets, AReason);
+      if Result and (ARequest.FOperation = 'module-populate') then
+      begin
+        AReason := LBuildingMessage;
+      end;
+    end;
     Exit;
   end;
 

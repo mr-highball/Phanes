@@ -68,6 +68,26 @@ No separate interior room is entered when walking into a modular home.
 
 ## Current bounds and verification
 
+### Populate painted floors
+
+With a home selected, use Draw floors and Box, Brush or Lasso over its existing
+floor tiles. **Furnish selected floors** offers an exact furnishing, plants, or
+a mix of tables, chairs, shelves and plants, plus 10–100% density. The preview
+counts empty, unlocked selected floors belonging to that home. The target is
+that count times the chosen percentage, rounded up to a whole furnishing.
+
+Population adds one primary furnishing per chosen tile, visiting tiles in a
+seeded shuffled order. Each placement uses the existing furniture solver and
+physical access checks. Occupied and locked floors are excluded; unsuccessful
+placements are skipped, so access constraints can produce fewer furnishings
+than requested. Existing objects, other homes and unselected tiles are preserved.
+The result reports the actual count; the entire batch uses one Undo/Redo step.
+
+`tools/test-buildings.ps1` covers density, replay, scope, preservation and locks.
+`tests/phanes.tests.population.browser.lpr` exercises the controls, count feedback
+and complete Undo/Redo on desktop and phone viewports. Its arguments are browser
+path, site URL and evidence directory, using the standard Pascal browser tools.
+
 The current kit supports one storey, 2.8-metre walls, a flat roof, up to 256
 connected tiles and a maximum span of 64 metres. It admits dry footprints with
 reasonable terrain support and a clear entrance. One primary furnishing fits

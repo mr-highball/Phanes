@@ -63,6 +63,128 @@ begin
   ADocument.FNodes[I] := ANode;
 end;
 
+function PopulateFloors(const ARequest: TWorldRequest; const ARoot: String;
+  var AWorld: TWorld; out AReason: String): Boolean;
+const
+  CMixed: array[0..3] of String = ('phanes.table.oak.v1', 'phanes.chair.sage.v1',
+    'phanes.shelf.oak.v1', 'plants');
+var
+  LIndex: TCompositionIndex;
+  LFloors: TStringArray;
+  LRequest: TWorldRequest;
+  LTrial: TWorld;
+  LId: String;
+  LAt: Integer;
+  LParent: Integer;
+  LTarget: Integer;
+  LPlaced: Integer;
+  LRandom: Double;
+  I: Integer;
+  J: Integer;
+
+  function NextRandom(const ALimit: Integer): Integer;
+  begin
+    { Exact integer arithmetic below JavaScript's 53-bit limit, shared by
+      native and browser builds; never touch the application's global RNG. }
+    LRandom := LRandom * 1664525 + 1013904223;
+    LRandom := LRandom - Floor(LRandom / 4294967296.0) * 4294967296.0;
+    Result := Floor(LRandom / 4294967296.0 * ALimit);
+  end;
+
+begin
+  Result := False;
+  AReason := 'Choose a density between 1 and 100 percent.';
+  if (ARequest.FModuleDensity < 1) or (ARequest.FModuleDensity > 100) then
+  begin
+    Exit;
+  end;
+  AReason := 'Choose furniture to add; batch population never clears existing items.';
+  if (ARequest.FContentAsset = '') or (ARequest.FContentAsset = 'empty') then
+  begin
+    Exit;
+  end;
+  LIndex := TCompositionIndex.Create(AWorld.FComposition.FNodes);
+  try
+    LFloors := nil;
+    for I := 0 to High(ARequest.FSelectionCells) do
+    begin
+      LId := ModuleFloorId(ARoot, ARequest.FSelectionCells[I] mod (ARequest.FSize * 8),
+        ARequest.FSelectionCells[I] div (ARequest.FSize * 8));
+      LAt := LIndex.Find(LId);
+      if (LAt < 0) or (LIndex.Find(LId + '.furnishing') >= 0) then
+      begin
+        Continue;
+      end;
+      LParent := LAt;
+      while (LParent >= 0) and not AWorld.FComposition.FNodes[LParent].FLocked do
+      begin
+        LParent := LIndex.Find(AWorld.FComposition.FNodes[LParent].FParentId);
+      end;
+      if LParent >= 0 then
+      begin
+        Continue;
+      end;
+      SetLength(LFloors, Length(LFloors) + 1);
+      LFloors[High(LFloors)] := LId;
+    end;
+  finally
+    LIndex.Free;
+  end;
+  AReason := 'Paint empty, unlocked floors in the selected home first.';
+  if Length(LFloors) = 0 then
+  begin
+    Exit;
+  end;
+  LTarget := (Length(LFloors) * ARequest.FModuleDensity + 99) div 100;
+  LRandom := ARequest.FSeed;
+  for I := High(LFloors) downto 1 do
+  begin
+    J := NextRandom(I + 1);
+    LId := LFloors[I];
+    LFloors[I] := LFloors[J];
+    LFloors[J] := LId;
+  end;
+  LPlaced := 0;
+  LRequest := ARequest;
+  LRequest.FOperation := 'module-furnish';
+  LRequest.FSelectionScale := 0;
+  LRequest.FSelectionCells := nil;
+  LRequest.FModulePose := True;
+  LRequest.FModuleX := 0;
+  LRequest.FModuleZ := 0;
+  for I := 0 to High(LFloors) do
+  begin
+    LRequest.FPrevious := AWorld;
+    LRequest.FObjectId := LFloors[I];
+    LRequest.FContentAsset := ARequest.FContentAsset;
+    if ARequest.FContentAsset = 'mixed' then
+    begin
+      LRequest.FContentAsset := CMixed[NextRandom(Length(CMixed))];
+    end;
+    LRequest.FModuleTurn := NextRandom(4);
+    { Each candidate uses the existing furniture WFC solve and physical access
+      validator. Incompatible tiles are skipped, not allowed to reject the
+      whole batch. Only the final world is published, as one undo operation. }
+    if GenerateModularBuilding(LRequest, LTrial, AReason) then
+    begin
+      AWorld := LTrial;
+      AWorld.FComposition.FRevision := ARequest.FPrevious.FComposition.FRevision;
+      Inc(LPlaced);
+      if LPlaced = LTarget then
+      begin
+        Break;
+      end;
+    end;
+  end;
+  Result := LPlaced > 0;
+  AReason := 'No selected empty floor can fit this furniture while keeping access clear.';
+  if Result then
+  begin
+    AReason := 'Added ' + IntToStr(LPlaced) + ' of ' + IntToStr(LTarget) +
+      ' targeted furnishings. Existing items and walking access were preserved.';
+  end;
+end;
+
 function GenerateModularBuilding(const ARequest: TWorldRequest; out AWorld: TWorld;
   out AReason: String): Boolean;
 var
@@ -76,6 +198,7 @@ var
   LCells: TSelectionCells;
   LId: String;
   LScope: String;
+  LPopulationMessage: String;
   LToken: String;
   LMinX: Integer;
   LMinZ: Integer;
@@ -202,7 +325,15 @@ begin
       end;
       LRoot := LBefore.FRoot;
       LScope := LRoot.FId;
-      if ARequest.FOperation = 'module-furnish' then
+      if ARequest.FOperation = 'module-populate' then
+      begin
+        if not PopulateFloors(ARequest, LRoot.FId, LCandidate, AReason) then
+        begin
+          Exit;
+        end;
+        LPopulationMessage := AReason;
+      end
+      else if ARequest.FOperation = 'module-furnish' then
       begin
         if not BuildingFloorRequest(LCandidate.FComposition, ARequest.FObjectId, LContents, AReason) then
         begin
@@ -563,6 +694,10 @@ begin
     LCandidate.FSeed := ARequest.FSeed;
     AWorld := LCandidate;
     Result := True;
+    if ARequest.FOperation = 'module-populate' then
+    begin
+      AReason := LPopulationMessage;
+    end;
   finally
     LIndex.Free;
   end;
