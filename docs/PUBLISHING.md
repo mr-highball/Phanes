@@ -73,9 +73,11 @@ These checks certify publication integrity, not playable catalog admission.
 Generator contract checks and the established browser interaction checks run at
 `/` and `/Phanes/`, with desktop and phone viewports, against the staged site.
 The workflow also discovers the installed Chromium, native FPC and pas2js paths
-explicitly, then runs the current Pascal startup suite at `/` followed by the
-style, catalog-object and named-room recovery suites at `/Phanes/`. Running the
-style suite first compiles the shared browser probe used by the later suites.
+explicitly, then runs the current Pascal startup suite at `/`. The full retained
+interior journey runs next at both paths, so import/editing failures are diagnosed
+before the longer visual suites. Import failures retain application state and a
+screenshot. The style, catalog-object and named-room recovery suites then run at
+`/Phanes/`; the style suite compiles the shared probe used by those later suites.
 Build logs and flat PNG, JSON and text browser evidence are retained even on
 failure; transient browser profiles are excluded. These build checks can pass
 while the separate critic gate remains on its expected review hold, and that

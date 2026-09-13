@@ -339,10 +339,34 @@ const path = require('node:path');
             world,
           })),
         });
-        await view.waitForFunction(
-          (prior) => !phanesEditor.worker && phanesSceneVersion > prior,
-          priorVersion,
-        );
+        try {
+          await view.waitForFunction(
+            (prior) => !phanesEditor.worker && phanesSceneVersion > prior,
+            priorVersion,
+          );
+        } catch (error) {
+          const state = await view.evaluate(() => ({
+            sceneVersion: phanesSceneVersion,
+            renderedRevision: document.body.dataset.renderedRevision,
+            lastSolve: document.body.dataset.lastSolve,
+            status: document.getElementById('status')?.textContent,
+            toast: document.getElementById('toast')?.textContent,
+            workerActive: !!phanesEditor.worker,
+            catalogLoading: window.phanesCatalogLoading,
+            catalogStageError: window.phanesCatalogStageError,
+            interiorRoom: phanesEditor.interiorRoom,
+            selection: phanesEditor.selection,
+          }));
+          const failure = { base, viewport, priorVersion,
+            importedFormat: world.formatVersion, state, errors };
+          fs.writeFileSync(path.join(root, 'build',
+            'interior-import-failure-' + viewport.width + '-evidence.json'),
+          JSON.stringify(failure, null, 2));
+          await view.screenshot({ path: path.join(root, 'build',
+            'interior-import-failure-' + viewport.width + '.png') });
+          console.error('Interior import failure:', JSON.stringify(failure));
+          throw error;
+        }
         assert.equal(await view.evaluate(() => document.body.dataset.lastSolve), 'passed');
       };
       await importWorld(unfurnished);

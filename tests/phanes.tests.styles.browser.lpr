@@ -62,6 +62,13 @@ const
     'panelRenderedRevision:panel?panel.getAttribute("data-rendered-revision"):null,' +
     'current:document.getElementById("style-current")?.textContent||null,' +
     'status:document.getElementById("style-status")?.textContent||null},' +
+    'status:document.getElementById("status")?.textContent||null,' +
+    'toast:document.getElementById("toast")?.textContent||null,' +
+    'workerActive:Boolean(window.phanesEditor?.worker),' +
+    'interiorRoom:window.phanesEditor?.interiorRoom||null,' +
+    'renderedInterior:document.body?.dataset.renderedInterior||null,' +
+    'catalogLoading:Boolean(window.phanesCatalogLoading),' +
+    'catalogStageError:window.phanesCatalogStageError||null,' +
     'rendererState:document.body?.dataset.rendererState||null,' +
     'recovering:Boolean(window.phanesRecovering),sceneVersion:window.phanesSceneVersion,' +
     'renderedSceneRevision:document.body?.dataset.renderedRevision||null};})()';

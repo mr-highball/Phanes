@@ -170,6 +170,10 @@ jobs:
             -TestUrl http://127.0.0.1:4186/ -EvidenceDirectory build/ci-browser \
             -NativeCompiler "$native_compiler" -Compiler "$compiler" \
             -RuntimeJs "$PAS2JS_RUNTIME"
+          # Diagnose import/editing failures before the longer visual suites.
+          for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
+            TEST_URL="$url" node tools/test-interiors.cjs
+          done
           pwsh -File tools/test-styles.ps1 -Browser "$browser_path" \
             -TestUrl http://127.0.0.1:4187/Phanes/ \
             -EvidenceDirectory build/ci-browser/pages-styles \
@@ -184,7 +188,6 @@ jobs:
             -EvidenceDirectory build/ci-browser/pages-rooms \
             -NativeCompiler "$native_compiler"
           for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
-            TEST_URL="$url" node tools/test-interiors.cjs
             TEST_URL="$url" node tools/test-room-journeys.cjs
             TEST_URL="$url" node tools/test-structures.cjs
             TEST_URL="$url" node tools/test-groundworks-view.cjs
