@@ -65,6 +65,16 @@ const
     'rendererState:document.body?.dataset.rendererState||null,' +
     'recovering:Boolean(window.phanesRecovering),sceneVersion:window.phanesSceneVersion,' +
     'renderedSceneRevision:document.body?.dataset.renderedRevision||null};})()';
+  RegionalPickState = '(()=>({pickVersion:window.phanesPickVersion,' +
+    'pickAction:window.phanesPickAction,pickX:window.phanesPickX,pickY:window.phanesPickY,' +
+    'pickSceneVersion:window.phanesPickSceneVersion,' +
+    'pickCameraVersion:window.phanesPickCameraVersion,' +
+    'selectionVersion:window.phanesSelectionVersion,' +
+    'authoringBusy:Boolean(window.phanesAuthoringBusy),' +
+    'selection:phanesEditor.selection,sceneVersion:window.phanesSceneVersion,' +
+    'renderedSceneVersion:Number(document.body?.dataset.renderedRevision),' +
+    'cameraVersion:window.phanesCameraVersion,' +
+    'renderedCameraVersion:window.phanesRenderedCameraVersion}))()';
 
 var
   GPage: TBrowserProbe;
@@ -72,6 +82,7 @@ var
   GChecks: TJSONArray;
   GImages: TJSONArray;
   GTimings: TJSONArray;
+  GRegionalPicks: TJSONArray;
   GOutput: String;
 
 procedure Save;
@@ -104,6 +115,33 @@ begin
   WriteText(GOutput + '/' + AName + '.json', LDiagnostics.FormatJSON);
   GEvidence.Add(AName, LDiagnostics);
   Save;
+end;
+
+procedure AwaitRegionalClick(const AName: String; const AX, AY: Double);
+var
+  LBefore: TJSONObject;
+  LEntry: TJSONObject;
+  LSelectionVersion: Integer;
+begin
+  LBefore := TJSONObject(GPage.Evaluate(RegionalPickState));
+  LSelectionVersion := LBefore.Integers['selectionVersion'];
+  LEntry := TJSONObject.Create(['name', AName]);
+  LEntry.Add('before', LBefore);
+  GRegionalPicks.Add(LEntry);
+  Save;
+  try
+    GPage.ClickAt(AX, AY);
+    GPage.WaitFor('(window.phanesSelectionVersion>' + IntToStr(LSelectionVersion) +
+      ') && !window.phanesAuthoringBusy');
+    LEntry.Add('completed', True);
+    LEntry.Add('after', GPage.Evaluate(RegionalPickState));
+    Save;
+  except
+    LEntry.Add('completed', False);
+    LEntry.Add('after', GPage.Evaluate(RegionalPickState));
+    Save;
+    raise;
+  end;
 end;
 
 procedure OpenStyles;
@@ -293,9 +331,11 @@ begin
   GChecks := TJSONArray.Create;
   GImages := TJSONArray.Create;
   GTimings := TJSONArray.Create;
+  GRegionalPicks := TJSONArray.Create;
   GEvidence.Add('checks', GChecks);
   GEvidence.Add('captures', GImages);
   GEvidence.Add('timings', GTimings);
+  GEvidence.Add('regionalPicks', GRegionalPicks);
   GPage := TBrowserProbe.Create(ParamStr(1), LProfile);
   try
     LProbe := ReadText('build/phanes.tests.styles.probe.js');
@@ -392,8 +432,9 @@ begin
     finally
       LBox.Free;
     end;
-    GPage.ClickAt(LX, LY);
-    GPage.WaitFor('phanesEditor.selection.width===1 && phanesEditor.selection.depth===1');
+    AwaitRegionalClick('baseline', LX, LY);
+    Check(GPage.Text('phanesEditor.selection.width===1 && ' +
+      'phanesEditor.selection.depth===1') = 'true', 'Regional ray pick selects one cell');
     LSelection := GPage.Text('JSON.stringify(phanesEditor.selection)');
     for I := 0 to VisualStyleCount - 1 do
     begin
@@ -401,8 +442,7 @@ begin
       begin
         Choose(I);
         CloseStyles;
-        GPage.ClickAt(LX, LY);
-        Sleep(500);
+        AwaitRegionalClick(VisualStyles[I].FId, LX, LY);
         Check(GPage.Text('JSON.stringify(phanesEditor.selection)') = LSelection,
           VisualStyles[I].FId + ' preserves the regional ray pick');
         Snapshot('selection-' + VisualStyles[I].FId, True);
