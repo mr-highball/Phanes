@@ -64,6 +64,26 @@ Browser diagnostics expose `phanesCatalogReadyIds` and
 `phanesCatalogResidentStats` as JSON strings. These help bind browser evidence to
 actual Castle residency; they are not product controls or total-memory telemetry.
 
+The source bundle also supports an explicitly supplied `TCatalogSharedFiles`
+store. A shared store retains one immutable byte sequence per live exact-case
+path, rejects different bytes and case aliases, and releases a file after its
+last bundle reference. Each bundle still counts its entire closure, including
+notices. Read streams own their copies. The caller must keep the store alive
+until every scene and bundle using it has been destroyed; scene leases destroy
+their scene before releasing their source bundle.
+
+Browser staging still uses the isolated constructor, and residency accounting
+and limits remain unchanged. Production sharing needs namespaces bound to exact
+kit manifests, a source budget spanning those namespaces, and renderer/context
+recovery evidence before shared texture accounting is enabled. Native decoded
+image identity alone does not establish GPU texture sharing.
+
+`tools/test-catalog-files.ps1` exercises storage failures and scene ownership,
+including eight pinned furniture closures with their notices. Its shared and
+isolated controls compare complete transformed geometry, release four scenes,
+reload the surviving textures, and require zero retained files after final
+release. These fixtures do not admit the furniture to the playable catalog.
+
 The current admissions are leaf contents with known transforms. The interior
 picker filters compatible choices by category, subgroup and name. Additional
 composition roles, prefab dependencies and larger model

@@ -45,6 +45,7 @@ $serverProcess = $null
 $previousEngine = $env:CASTLE_ENGINE_PATH
 $sourcePaths = @(
   'cge/code/phanes.catalog.files.pas', 'cge/code/phanes.catalog.scene.pas',
+  'cge/code/phanes.catalog.paths.pas', 'cge/code/phanes.catalog.shared.files.pas',
   'src/phanes.catalog.fetch.pas', 'src/phanes.catalog.admission.pas',
   'tests/phanes.tests.catalog.fetch.probe.lpr',
   'tests/catalog-runtime/CastleEngineManifest.xml',

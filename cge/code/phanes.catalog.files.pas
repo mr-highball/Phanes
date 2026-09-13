@@ -29,7 +29,7 @@ unit phanes.catalog.files;
 interface
 
 uses
-  Classes, SysUtils, CastleUriUtils
+  Classes, SysUtils, phanes.catalog.shared.files
   {$ifdef WASI}, JOB.JS{$endif};
 
 type
@@ -39,9 +39,9 @@ type
     Hash verification and request cancellation belong to the browser fetcher. }
   TCatalogFileBundle = class
   private
-    FFileSystem: TCastleMemoryFileSystem;
+    FSharedFiles: TCatalogSharedFiles;
+    FOwnsSharedFiles: Boolean;
     FPaths: TStringList;
-    FProtocol: String;
     FModelUrl: String;
     FByteLimit: Int64;
     FByteCount: Int64;
@@ -49,7 +49,9 @@ type
     FFailed: Boolean;
     procedure RequireWritable;
   public
-    constructor Create(const AByteLimit: Int64);
+    constructor Create(const AByteLimit: Int64); overload;
+    constructor Create(const AByteLimit: Int64;
+      const ASharedFiles: TCatalogSharedFiles); overload;
     destructor Destroy; override;
     procedure AddFile(const APath: String; const AContents: TStream);
     procedure Seal(const AModelPath: String);
@@ -68,45 +70,11 @@ function CatalogBundleFromBrowser(const AValue: IJSObject;
 implementation
 
 uses
-  CastleDownload;
-
-var
-  GNextBundle: QWord;
+  phanes.catalog.paths;
 
 function CatalogFilePathValid(const APath: String): Boolean;
-var
-  I: Integer;
-  LStart: Integer;
-  LPart: String;
 begin
-  Result := False;
-  if (APath = '') or (Length(APath) > 1024) then
-  begin
-    Exit;
-  end;
-  LStart := 1;
-  for I := 1 to Length(APath) + 1 do
-  begin
-    if I <= Length(APath) then
-    begin
-      if (Ord(APath[I]) < 32) or (Ord(APath[I]) = 127) or
-        (APath[I] in ['\', ':', '%', '?', '#']) then
-      begin
-        Exit;
-      end;
-    end;
-    if (I > Length(APath)) or (APath[I] = '/') then
-    begin
-      LPart := Copy(APath, LStart, I - LStart);
-      if (LPart = '') or (LPart = '.') or (LPart = '..') or
-        (Trim(LPart) <> LPart) then
-      begin
-        Exit;
-      end;
-      LStart := I + 1;
-    end;
-  end;
-  Result := True;
+  Result := phanes.catalog.paths.CatalogFilePathValid(APath);
 end;
 
 constructor TCatalogFileBundle.Create(const AByteLimit: Int64);
@@ -117,24 +85,49 @@ begin
     raise Exception.Create('Catalog source budget must be between 1 byte and 64 MiB');
   end;
   FByteLimit := AByteLimit;
+  FSharedFiles := TCatalogSharedFiles.Create(AByteLimit);
+  FOwnsSharedFiles := True;
   FPaths := TStringList.Create;
   FPaths.CaseSensitive := False;
-  { Reject case aliases because the pinned memory filesystem does not set its
-    internal TStringList case mode despite its documented case-sensitive API. }
-  if GNextBundle = High(QWord) then
+  { A bundle rejects duplicate and case-only paths before acquiring them from
+    its store. The shared store independently enforces exact-case identity. }
+end;
+
+constructor TCatalogFileBundle.Create(const AByteLimit: Int64;
+  const ASharedFiles: TCatalogSharedFiles);
+begin
+  inherited Create;
+  if (AByteLimit <= 0) or (AByteLimit > 64 * 1024 * 1024) then
   begin
-    raise Exception.Create('Catalog bundle identifiers exhausted');
+    raise Exception.Create(
+      'Catalog source budget must be between 1 byte and 64 MiB');
   end;
-  Inc(GNextBundle);
-  FProtocol := 'phanes-catalog-' + UIntToStr(GNextBundle);
-  FFileSystem := TCastleMemoryFileSystem.Create;
-  FFileSystem.RegisterUrlProtocol(FProtocol);
+  if ASharedFiles = nil then
+  begin
+    raise Exception.Create('Catalog shared source store is missing');
+  end;
+  FByteLimit := AByteLimit;
+  FSharedFiles := ASharedFiles;
+  FPaths := TStringList.Create;
+  FPaths.CaseSensitive := False;
 end;
 
 destructor TCatalogFileBundle.Destroy;
+var
+  I: Integer;
 begin
-  FFileSystem.Free;
+  if (FSharedFiles <> nil) and (FPaths <> nil) then
+  begin
+    for I := FPaths.Count - 1 downto 0 do
+    begin
+      FSharedFiles.ReleaseFile(FPaths[I]);
+    end;
+  end;
   FPaths.Free;
+  if FOwnsSharedFiles then
+  begin
+    FSharedFiles.Free;
+  end;
   inherited Destroy;
 end;
 
@@ -148,9 +141,7 @@ end;
 
 procedure TCatalogFileBundle.AddFile(const APath: String; const AContents: TStream);
 var
-  LOutput: TStream;
   LSize: Int64;
-  LPosition: Int64;
 begin
   RequireWritable;
   if not CatalogFilePathValid(APath) or (FPaths.IndexOf(APath) >= 0) or
@@ -167,28 +158,18 @@ begin
   begin
     raise Exception.Create('Catalog file exceeds the remaining source budget');
   end;
-  LPosition := AContents.Position;
   try
+    FSharedFiles.AcquireFile(APath, AContents);
     try
-      AContents.Position := 0;
-      LOutput := UrlSaveStream(FProtocol + ':/' + UrlEncode(APath));
-      try
-        if LOutput.CopyFrom(AContents, LSize) <> LSize then
-        begin
-          raise Exception.Create('Catalog file copy was incomplete');
-        end;
-      finally
-        { Castle commits this file when the writable stream is destroyed. }
-        LOutput.Free;
-      end;
       FPaths.Add(APath);
-      Inc(FByteCount, LSize);
     except
-      FFailed := True;
+      FSharedFiles.ReleaseFile(APath);
       raise;
     end;
-  finally
-    AContents.Position := LPosition;
+    Inc(FByteCount, LSize);
+  except
+    FFailed := True;
+    raise;
   end;
 end;
 
@@ -209,7 +190,7 @@ begin
   begin
     raise Exception.Create('Catalog model path has incorrect case or format');
   end;
-  FModelUrl := FProtocol + ':/' + UrlEncode(AModelPath);
+  FModelUrl := FSharedFiles.Url(AModelPath);
   FSealed := True;
 end;
 
