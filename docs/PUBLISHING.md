@@ -1,6 +1,6 @@
 # Browser build and GitHub Pages
 
-`.github/workflows/pages.yml` builds pushes to `main` and `codex/**`, pull requests
+`.github/workflows/pages.yml` builds pushes to `main` and `hello-phanes`, pull requests
 to `main`, and manual runs. Only successful `main` runs outside pull requests
 deploy the verified static Pages stage to the `github-pages` environment.
 

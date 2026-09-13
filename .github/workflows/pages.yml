@@ -24,7 +24,7 @@ name: Build and publish Phanes
 
 on:
   push:
-    branches: [main, 'codex/**']
+    branches: [main, hello-phanes]
   pull_request:
     branches: [main]
   workflow_dispatch:
