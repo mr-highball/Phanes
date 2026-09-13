@@ -38,7 +38,7 @@ and range; the amount selector adapts to that step.
 
 Local edits pin every vertex contributing to an unselected cell, including holes
 in nonrectangular masks. They also retain sea-facing boundary strips, existing
-water/shore influence, regional buildings, complete plot landings and modular
+water cells, regional buildings, complete plot landings and modular
 foundation aprons. Rooms and nested furnishings remain exact composition nodes.
 Plant clusters keep their existing identity and cannot lose dry support. A
 one-cell-wide fine selection may contain no editable interior vertex; the tool
@@ -50,6 +50,13 @@ roughness. In an older analytic world it softens height edits, preserving the
 original hills. A successful no-op retains the original world, seed, counters
 and Undo/Redo history. Failed searches and incompatible protected regions retain
 the current world. Search is bounded at 4096 backtracks.
+
+The playable usability fix permits the dry side of the shoreline blend to follow
+edited heights instead of freezing an extra eight-metre strip. Water-cell
+vertices remain fixed. Soften chooses bounded neighbor averages sequentially
+before the terrain solve, avoiding random choices that could increase roughness.
+The native regression exercises real Raise, Hills and Soften changes on a 4×4
+island with seed 731 while retaining water and selection-boundary heights.
 
 ## Elevation contract
 

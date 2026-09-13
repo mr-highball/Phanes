@@ -304,7 +304,7 @@ begin
       LRadius := 0;
       if AWorld.FLayers[0][J] = 'water' then
       begin
-        LRadius := 11;
+        LRadius := 8;
       end
       else if AWorld.FLayers[3][J] <> 'empty' then
       begin

@@ -181,7 +181,10 @@ begin
     begin
       LX := (I mod AWorld.FSize + 0.5 - AWorld.FSize / 2) * 16;
       LZ := (I div AWorld.FSize + 0.5 - AWorld.FSize / 2) * 16;
-      ProtectBox(ARequest, LX - 11, LZ - 11, LX + 11, LZ + 11);
+      { Preserve the water cell itself. Its three-metre blend into dry land
+        already smooths the shoreline; pinning that blend rounds out to an
+        extra eight-metre row of land vertices on this grid. }
+      ProtectBox(ARequest, LX - 8, LZ - 8, LX + 8, LZ + 8);
     end;
     if AWorld.FLayers[3][I] <> 'empty' then
     begin
@@ -531,6 +534,61 @@ begin
   Result := True;
 end;
 
+procedure ConstrainSoften(var ARequest: TTerrainRequest);
+var
+  LLevels: TTerrainLevels;
+  LSide: Integer;
+  LMinimum: Integer;
+  LMaximum: Integer;
+  LMean: Integer;
+  LNeighbor: Integer;
+  I: Integer;
+  J: Integer;
+begin
+  LLevels := Copy(ARequest.FPrevious.FLevels, 0, Length(ARequest.FPrevious.FLevels));
+  LSide := ARequest.FSpec.FColumns;
+  for I := 0 to High(LLevels) do
+  begin
+    if ARequest.FProtected[I] then
+    begin
+      Continue;
+    end;
+    LMinimum := ARequest.FDomains[I].FMinimum;
+    LMaximum := ARequest.FDomains[I].FMaximum;
+    LMean := 0;
+    for J := 0 to 3 do
+    begin
+      case J of
+        0:
+        begin
+          LNeighbor := I - 1;
+        end;
+        1:
+        begin
+          LNeighbor := I + 1;
+        end;
+        2:
+        begin
+          LNeighbor := I - LSide;
+        end;
+        3:
+        begin
+          LNeighbor := I + LSide;
+        end;
+      end;
+      Inc(LMean, LLevels[LNeighbor]);
+      LMinimum := Max(LMinimum, LLevels[LNeighbor] - ARequest.FSpec.FMaximumRise);
+      LMaximum := Min(LMaximum, LLevels[LNeighbor] + ARequest.FSpec.FMaximumRise);
+    end;
+    { Coordinate descent toward the current neighbor mean cannot increase
+      squared edge roughness. Original intent bounds still cap the amount and
+      prevent overshooting the previous mean; fixed neighbors cap the slope. }
+    LLevels[I] := EnsureRange(Round(LMean / 4), LMinimum, LMaximum);
+    ARequest.FDomains[I].FMinimum := LLevels[I];
+    ARequest.FDomains[I].FMaximum := LLevels[I];
+  end;
+end;
+
 function GenerateLandform(const ARequest: TWorldRequest; var ACommitted: TWorld;
   out AReason: String): Boolean;
 var
@@ -545,6 +603,10 @@ begin
     Exit;
   end;
   LField := Default(TTerrainField);
+  if ARequest.FOperation = 'land-soften' then
+  begin
+    ConstrainSoften(LTerrain);
+  end;
   if not GenerateTerrain(LTerrain, LField, AReason) then
   begin
     Exit;

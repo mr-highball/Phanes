@@ -246,15 +246,16 @@ begin
           LNZ := -LNZ;
         end;
         LRoute := True;
-        { Three parallel centre-lines leave a useful approach width in addition
-          to the player's collision radius. The slope limit is geometric, with
-          one explicit 16cm slab threshold; tiny frame steps cannot bypass it. }
+        { Check the doorway and a two-metre landing. Players can turn after
+          leaving a house; demanding a six-metre straight corridor rejects
+          usable entrances beside other buildings or on concave footprints.
+          Retain collision, slope and the explicit slab threshold checks. }
         for K := -1 to 1 do
         begin
           LOffset := K * 0.10;
           LPreviousX := LEdge.FNode.FX / 1000 - LNX + LNZ * LOffset;
           LPreviousZ := LEdge.FNode.FZ / 1000 - LNZ - LNX * LOffset;
-          for LSample := 0 to 70 do
+          for LSample := 0 to 30 do
           begin
             LDistance := -1 + LSample * 0.1;
             LX := LEdge.FNode.FX / 1000 + LNX * LDistance + LNZ * LOffset;

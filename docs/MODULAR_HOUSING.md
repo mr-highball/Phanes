@@ -39,6 +39,10 @@ floor datum is chosen above the highest underlying terrain point. A six-metre
 graded apron blends the surrounding land to the slab, with shared rendered
 triangles and standing heights. Original regional arrays remain exact;
 overlapping vegetation is suppressed at rendering and collision time.
+Entrance admission checks the doorway and a two-metre landing with the existing
+collision, slope and slab-step limits. It permits players to turn beyond that
+landing, rather than requiring six metres of unobstructed straight travel.
+The regression includes a neighboring wall beyond the clear landing.
 
 `phanes.buildings.generate` runs bounded WFC in the existing world worker.
 Its interleaved graph has floor cells, shared-edge cells, and inert junctions.

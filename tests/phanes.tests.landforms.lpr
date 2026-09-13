@@ -69,6 +69,8 @@ var
   LRestored: TWorld;
   LSize: Integer;
   LSeed: Integer;
+  LOperation: String;
+  LChanged: Boolean;
   I: Integer;
 begin
   for LSize := 4 to 6 do
@@ -114,6 +116,30 @@ begin
   Check(GenerateWorld(LRequest, LRestored, GReason), 'absolute generated world restores');
   Check(SameTerrainField(LWorld.FElevation, LRestored.FElevation) and
     (LWorld.FSeed = LRestored.FSeed), 'restore does not regenerate elevations');
+  LRequest.FEditLayer := 'terrain';
+  LRequest.FLandformAmount := 1000;
+  LRequest.FX := 1;
+  LRequest.FZ := 1;
+  LRequest.FWidth := 2;
+  LRequest.FDepth := 2;
+  for LOperation in ['land-raise', 'land-hills', 'land-soften'] do
+  begin
+    LRequest.FOperation := LOperation;
+    Check(GenerateWorld(LRequest, LRestored, GReason),
+      LOperation + ' works on the four-cell island');
+    LChanged := False;
+    for I := 0 to High(LWorld.FElevation.FLevels) do
+    begin
+      LChanged := LChanged or
+        (LWorld.FElevation.FLevels[I] <> LRestored.FElevation.FLevels[I]);
+      if (I mod 9 <= 2) or (I mod 9 >= 6) or (I div 9 <= 2) or (I div 9 >= 6) then
+      begin
+        Check(LWorld.FElevation.FLevels[I] = LRestored.FElevation.FLevels[I],
+          'Water and the selection boundary retain their saved heights');
+      end;
+    end;
+    Check(LChanged, LOperation + ' changes actual heights, not just metadata');
+  end;
   LRepeat := CopyTerrainField(LField);
   Check(not GenerateInitialLandform(49, 731, LRepeat, GReason), 'unsupported fresh size refused');
   Check(SameTerrainField(LRepeat, LField), 'fresh failure retains output');

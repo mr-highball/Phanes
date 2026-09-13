@@ -203,6 +203,13 @@ var
   LAt: Integer;
 begin
   LRequest := Request(Baseline, 'module-build', '');
+  SelectRect(LRequest, 12, 8, 3, 1);
+  Check(GenerateWorld(LRequest, LWorld, GReason), 'Neighboring home fixture generated');
+  LRequest := Request(LWorld, 'module-build', '');
+  SelectRect(LRequest, 12, 12, 3, 3);
+  Check(GenerateWorld(LRequest, LOther, GReason),
+    'Entrance with a clear landing permits turning before a neighboring wall');
+  LRequest := Request(Baseline, 'module-build', '');
   SelectRect(LRequest, 12, 12, 1, 4);
   Check(GenerateWorld(LRequest, LWorld, GReason), 'Narrow home has an initial walking route');
   LRoot := LWorld.FComposition.FNodes[1].FId;
