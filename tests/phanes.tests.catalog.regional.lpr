@@ -302,7 +302,10 @@ var
   J: Integer;
 begin
   LIds := RegionalAssetIds;
-  Check(Length(LIds) = 18, 'regional batch has exactly 18 models');
+  Check(Length(LIds) >= 18, 'Original regional profiles remain available');
+  { This expensive CGE suite qualifies the original eighteen measured profiles.
+    Generated nature batches have their own lightweight placement suite. }
+  SetLength(LIds, 18);
   for I := 0 to High(LIds) do
   begin
     for J := I + 1 to High(LIds) do
@@ -335,6 +338,7 @@ begin
   end;
   try
     LIds := RegionalAssetIds;
+    SetLength(LIds, 18);
     for I := 0 to High(LIds) do
     begin
       Check(RegionalAssetAdmission(LIds[I], LAdmission), LIds[I] + ' resolves');

@@ -40,6 +40,7 @@ var
   GPassed: Integer;
   GFailed: Integer;
   GExistingCount: Integer;
+  GNature: Boolean;
 
 function Quoted(const AText: String): String;
 begin
@@ -157,6 +158,7 @@ var
   LCategory: String;
   LScale: Double;
   LTarget: Double;
+  LHorizontalLimit: Integer;
   LSize: array[0..2] of Double;
   LDimensions: array[0..2] of Integer;
   LPixels: Integer;
@@ -178,40 +180,91 @@ begin
   end;
   try
     LName := LowerCase(AModel.Get('name', ''));
-    Require(not Matches(LName, ['wall', 'door', 'window', 'floor', 'roof', 'stair',
-      'ceiling', 'column', 'pillar', 'banner', 'curtain', 'mirror', 'picture',
-      'carpet', 'rug', 'fence', 'gate', 'bridge', 'mast', 'flag', 'boat', 'ship',
-      'cannon', 'palm', 'grass', 'patch', 'extractor', 'shower', 'bathtub']),
-      'requires structural, wall, terrain or special placement');
-    Require(not Matches(LName, ['table', 'desk', 'shelf', 'shelves', 'bookcase',
-      'cabinet', 'counter', 'bed', 'couch', 'sofa', 'sink']),
-      'requires measured furniture supports or multi-floor footprint');
-    LCategory := 'Objects';
-    LRole := 'ornament';
-    LTarget := 0.45;
-    if Matches(AKit.Get('id', ''), ['food']) or Matches(LName, ['food_', 'ingredient']) then
+    if GNature then
     begin
-      LCategory := 'Food';
-      LTarget := 0.22;
-    end;
-    if Matches(LName, ['chair', 'stool', 'armchair']) then
-    begin
-      LCategory := 'Seating';
-      LRole := 'chair';
-      LTarget := 0.9;
-    end else if Matches(LName, ['barrel', 'crate', 'chest', 'basket', 'trash', 'bin']) then
-    begin
-      LCategory := 'Storage props';
-      LTarget := 0.65;
-    end else if Matches(LName, ['cactus', 'plant', 'flowerpot']) then
-    begin
-      LCategory := 'Plants';
-      LRole := 'plant';
-      LTarget := 0.6;
-    end else if Matches(LName, ['lamp_standing', 'lamp-floor', 'floorlamp']) then
-    begin
-      LCategory := 'Lighting props';
+      Require(not Matches(LName, ['bridge', 'building', 'character', 'fence',
+        'flag', 'ladder', 'platform', 'patch-', 'petal', 'rockpath', 'laetiporus',
+        'trunk', 'log', 'stump', 'branch', 'leaf', 'leaves']),
+        'requires structural, attached-part or terrain-patch placement');
+      LRole := '';
+      if Pos('crops-pack', AKit.Get('id', '')) > 0 then
+      begin
+        Require(Pos('_crop', LName) = 0, 'harvested produce belongs in the props catalog');
+        LRole := 'wheat';
+      end else if Matches(LName, ['tree', 'pine', 'birch', 'palm', 'willow', 'oak', 'spruce']) then
+      begin
+        LRole := 'tree';
+      end else if Matches(LName, ['corn', 'wheat', 'rice']) then
+      begin
+        LRole := 'wheat';
+      end else if Matches(LName, ['rock', 'stone', 'pebble']) then
+      begin
+        LRole := 'rock';
+      end else if Matches(LName, ['flower', 'mushroom', 'clover']) then
+      begin
+        LRole := 'flowers';
+      end else if Matches(LName, ['bush', 'grass', 'fern', 'plant', 'cactus']) then
+      begin
+        LRole := 'shrub';
+      end;
+      Require(LRole <> '', 'no supported outdoor nature role');
+      LCategory := 'Nature';
       LTarget := 1.5;
+      LHorizontalLimit := 2000;
+      if LRole = 'tree' then
+      begin
+        LTarget := 6;
+        LHorizontalLimit := 3600;
+      end else if LRole = 'rock' then
+      begin
+        LTarget := 2.2;
+        LHorizontalLimit := 2400;
+      end else if LRole = 'flowers' then
+      begin
+        LTarget := 0.55;
+        LHorizontalLimit := 700;
+      end else if LRole = 'wheat' then
+      begin
+        LTarget := 1.2;
+        LHorizontalLimit := 1200;
+      end;
+    end else
+    begin
+      Require(not Matches(LName, ['wall', 'door', 'window', 'floor', 'roof', 'stair',
+        'ceiling', 'column', 'pillar', 'banner', 'curtain', 'mirror', 'picture',
+        'carpet', 'rug', 'fence', 'gate', 'bridge', 'mast', 'flag', 'boat', 'ship',
+        'cannon', 'palm', 'grass', 'patch', 'extractor', 'shower', 'bathtub']),
+        'requires structural, wall, terrain or special placement');
+      Require(not Matches(LName, ['table', 'desk', 'shelf', 'shelves', 'bookcase',
+        'cabinet', 'counter', 'bed', 'couch', 'sofa', 'sink']),
+        'requires measured furniture supports or multi-floor footprint');
+      LCategory := 'Objects';
+      LRole := 'ornament';
+      LTarget := 0.45;
+      if Matches(AKit.Get('id', ''), ['food']) or Matches(LName, ['food_', 'ingredient']) then
+      begin
+        LCategory := 'Food';
+        LTarget := 0.22;
+      end;
+      if Matches(LName, ['chair', 'stool', 'armchair']) then
+      begin
+        LCategory := 'Seating';
+        LRole := 'chair';
+        LTarget := 0.9;
+      end else if Matches(LName, ['barrel', 'crate', 'chest', 'basket', 'trash', 'bin']) then
+      begin
+        LCategory := 'Storage props';
+        LTarget := 0.65;
+      end else if Matches(LName, ['cactus', 'plant', 'flowerpot']) then
+      begin
+        LCategory := 'Plants';
+        LRole := 'plant';
+        LTarget := 0.6;
+      end else if Matches(LName, ['lamp_standing', 'lamp-floor', 'floorlamp']) then
+      begin
+        LCategory := 'Lighting props';
+        LTarget := 1.5;
+      end;
     end;
     LAt := GGeometryIndex.IndexOf(AModel.Get('id', ''));
     Require(LAt >= 0, 'no cached geometry');
@@ -227,12 +280,25 @@ begin
         'degenerate or nonfinite bounds');
     end;
     LScale := LTarget / Max(LSize[0], Max(LSize[1], LSize[2]));
+    if GNature then
+    begin
+      LScale := Min(LScale, (LHorizontalLimit - 2) /
+        (1000 * Max(LSize[0], LSize[2])));
+    end;
     for I := 0 to 2 do
     begin
       LDimensions[I] := Ceil(LSize[I] * LScale * 1000) + 1;
     end;
-    Require((LDimensions[0] <= 1800) and (LDimensions[2] <= 1800) and
-      (LDimensions[1] <= 2000), 'does not fit a single floor');
+    if GNature then
+    begin
+      Require((LDimensions[0] <= LHorizontalLimit) and
+        (LDimensions[2] <= LHorizontalLimit) and (LDimensions[1] <= 6010),
+        'does not fit the outdoor role envelope');
+    end else
+    begin
+      Require((LDimensions[0] <= 1800) and (LDimensions[2] <= 1800) and
+        (LDimensions[1] <= 2000), 'does not fit a single floor');
+    end;
     Require(AModel.Get('downloadBytes', Int64(0)) <= 4 * 1024 * 1024,
       'source closure exceeds four MiB batch budget');
     LBytes := nil;
@@ -254,15 +320,33 @@ begin
         'animation requires separate integration');
       Require((LJSON.Find('skins') = nil) or (LJSON.Arrays['skins'].Count = 0),
         'skinned mesh requires separate integration');
+      if GNature and (LJSON.Find('materials') <> nil) then
+      begin
+        for I := 0 to LJSON.Arrays['materials'].Count - 1 do
+        begin
+          Require(LJSON.Arrays['materials'].Objects[I].Get('alphaMode', 'OPAQUE') = 'OPAQUE',
+            'masked or blended foliage needs material review');
+        end;
+      end;
       LPixels := MeasureTextures(AModel, LJSON, LBytes);
     finally
       LJSON.Free;
     end;
     LId := 'phanes.catalog.batch.' + Copy(HashBytes(BytesOf(AModel.Get('id', ''))), 1, 16) + '.v1';
+    if GNature then
+    begin
+      LId := StringReplace(LId, '.batch.', '.nature.', []);
+    end;
     Require(GProfiles.IndexOf(LId) < 0, 'asset id collision');
     GProfiles.AddObject(LId, LRow);
     LRow.Add('status', 'pass');
-    LRow.Add('reason', 'static geometry, published closure, texture budget and single-floor bounds pass');
+    if GNature then
+    begin
+      LRow.Add('reason', 'static geometry, published closure, texture budget and outdoor role bounds pass');
+    end else
+    begin
+      LRow.Add('reason', 'static geometry, published closure, texture budget and single-floor bounds pass');
+    end;
     LRow.Add('validation', 'mechanical; not individually visually reviewed');
     LRow.Add('assetId', LId);
     LRow.Add('name', StringReplace(StringReplace(AModel.Get('name', ''), '_', ' ',
@@ -299,9 +383,27 @@ var
   LIds: TOptionalAssetIds;
   LCode: TStringList;
   LLicense: String;
+  LPrefix: String;
+  LType: String;
+  LIncludePath: String;
+  LReportPath: String;
   I: Integer;
   J: Integer;
 begin
+  Require((ParamCount <= 2) and ((ParamStr(2) = '') or (ParamStr(2) = '--nature')),
+    'Usage: catalog-batch [published-root] [--nature]');
+  GNature := ParamStr(2) = '--nature';
+  LPrefix := 'phanes.catalog.batch.';
+  LType := 'TObjectAssetAdmission';
+  LIncludePath := 'src/phanes.catalog.batch.inc';
+  LReportPath := 'data/catalog-integration.json';
+  if GNature then
+  begin
+    LPrefix := 'phanes.catalog.nature.';
+    LType := 'TRegionalAssetAdmission';
+    LIncludePath := 'src/phanes.catalog.nature.inc';
+    LReportPath := 'data/catalog-integration-nature.json';
+  end;
   GSite := ParamStr(1);
   if GSite = '' then
   begin
@@ -327,7 +429,7 @@ begin
   LIds := OptionalAssetIds;
   for I := 0 to High(LIds) do
   begin
-    if (Pos('phanes.catalog.batch.', LIds[I]) <> 1) and
+    if (Pos(LPrefix, LIds[I]) <> 1) and
       OptionalAssetAdmission(LIds[I], LAdmission) then
     begin
       GExisting.Add(LAdmission.FModelId);
@@ -337,7 +439,14 @@ begin
   for I := 0 to LIndex.Arrays['kits'].Count - 1 do
   begin
     LKit := LIndex.Arrays['kits'].Objects[I];
-    if not Matches(LKit.Get('id', ''), ['food-kit', 'low-poly-food-pack',
+    if GNature then
+    begin
+      if not Matches(LKit.Get('id', ''), ['mini-forest', 'nature-pack',
+        'nature-megakit', 'trees-and-bushes', 'textured-trees', 'crops-pack']) then
+      begin
+        Continue;
+      end;
+    end else if not Matches(LKit.Get('id', ''), ['food-kit', 'low-poly-food-pack',
       'restaurant-bits', 'furniture-bits', 'house-interior', 'furniture-low-poly',
       'low-poly-furniture-1', 'pirate-kit', 'dungeon-remastered']) then
     begin
@@ -375,7 +484,7 @@ begin
       LCode.Add('    ' + Quoted(GProfiles[I]) + ');');
     end;
   end;
-  LCode.Add('function BatchAdmission(const AId: String; out AAdmission: TObjectAssetAdmission): Boolean;');
+  LCode.Add('function BatchAdmission(const AId: String; out AAdmission: ' + LType + '): Boolean;');
   LCode.Add('var LLow, LHigh, LMiddle: Integer;');
   LCode.Add('begin');
   LCode.Add('  LLow := 0;');
@@ -396,9 +505,16 @@ begin
       Quoted(LRow.Get('kit', '')) + ', ' + Quoted(LRow.Get('sourceId', '')) + ',');
     LCode.Add('          ' + Quoted(LRow.Get('sourceSha256', '')) + ', ' +
       Quoted(LRow.Get('manifestSha256', '')) + ',');
-    LCode.Add('          ' + Quoted(LRow.Get('category', '')) + ', ' +
+    if GNature then
+    begin
+      LCode.Add('          ' + Quoted(LRow.Get('role', '')) + ', ''nature'', ' +
+        Quoted(LRow.Get('name', '')) + ', ' + LRow.Find('uniformScale').AsJSON + ',');
+    end else
+    begin
+      LCode.Add('          ' + Quoted(LRow.Get('category', '')) + ', ' +
       Quoted(LRow.Get('kit', '')) + ', ' + Quoted(LRow.Get('role', '')) + ', ' +
       Quoted(LRow.Get('name', '')) + ', ' + LRow.Find('uniformScale').AsJSON + ',');
+    end;
     LCode.Add('          ' + LRow.Find('width').AsJSON + ', ' + LRow.Find('depth').AsJSON + ', ' +
       LRow.Find('height').AsJSON + ', ' + LRow.Find('triangles').AsJSON + ', ' +
       LRow.Find('vertices').AsJSON + ', ' + LRow.Find('texturePixels').AsJSON + ');');
@@ -409,10 +525,16 @@ begin
   LCode.Add('  end;');
   LCode.Add('end;');
   Require(GPassed > 0, 'batch admitted no models');
-  WriteText('src/phanes.catalog.batch.inc', LCode.Text);
+  WriteText(LIncludePath, LCode.Text);
   LReport := TJSONObject.Create;
   LReport.Add('version', 1);
-  LReport.Add('policy', 'static single-floor props v1; automatic uniform longest-axis normalization; no repairs');
+  if GNature then
+  begin
+    LReport.Add('policy', 'static outdoor nature v1; uniform role-bounded normalization; no repairs');
+  end else
+  begin
+    LReport.Add('policy', 'static single-floor props v1; automatic uniform longest-axis normalization; no repairs');
+  end;
   LReport.Add('inventorySha256', GGeometry.Get('inventorySha256', ''));
   LReport.Add('geometrySha256', HashFile('data/catalog-geometry.json'));
   LReport.Add('inventoryModels', GGeometry.Arrays['assets'].Count);
@@ -422,7 +544,7 @@ begin
   LReport.Add('alreadyIntegrated', GExistingCount);
   LReport.Add('outsideBatch', GGeometry.Arrays['assets'].Count - GRows.Count);
   LReport.Add('models', GRows);
-  WriteText('data/catalog-integration.json', LReport.FormatJSON);
+  WriteText(LReportPath, LReport.FormatJSON);
   WriteLn('Screened ', GRows.Count, '; new pass ', GPassed, '; fail ', GFailed,
     '; existing ', GExistingCount);
 end;

@@ -96,6 +96,8 @@ begin
   AAdmission.FTexturePixels := ATexturePixels;
 end;
 
+{$I phanes.catalog.nature.inc}
+
 function RegionalAssetAdmission(const AId: String;
   out AAdmission: TRegionalAssetAdmission): Boolean;
 const
@@ -247,13 +249,15 @@ begin
       2351, 2216, 1181, 236, 414, 262144);
   end else
   begin
-    Result := False;
+    Result := BatchAdmission(AId, AAdmission);
   end;
 end;
 
 function RegionalAssetIds: TRegionalAssetIds;
+var
+  I: Integer;
 begin
-  SetLength(Result, 18);
+  SetLength(Result, 18 + Length(BatchIds));
   Result[0] := 'phanes.catalog.tree.forest-canopy.v1';
   Result[1] := 'phanes.catalog.tree.autumn.v1';
   Result[2] := 'phanes.catalog.tree.birch.v1';
@@ -272,6 +276,10 @@ begin
   Result[15] := 'phanes.catalog.rock.granite.v1';
   Result[16] := 'phanes.catalog.rock.mossy.v1';
   Result[17] := 'phanes.catalog.rock.forest-stones.v1';
+  for I := 0 to High(BatchIds) do
+  begin
+    Result[18 + I] := BatchIds[I];
+  end;
 end;
 
 end.

@@ -24,6 +24,7 @@ SOFTWARE.
 [CmdletBinding()]
 param(
   [switch]$Regenerate,
+  [ValidateSet('props', 'nature')][string]$Category = 'props',
   [string]$PublishedRoot = 'build/web',
   [string]$NativeCompiler = $(if ($env:FPC_NATIVE) { $env:FPC_NATIVE } else { 'fpc' })
 )
@@ -40,12 +41,18 @@ try {
   if ($Regenerate) {
     & $NativeCompiler @arguments tools/phanes.tools.catalog.batch.lpr *> "$outputRoot/generator-build.log"
     if ($LASTEXITCODE -ne 0) { throw "Batch importer compile failed: $outputRoot/generator-build.log" }
-    & "$outputRoot/phanes.tools.catalog.batch$suffix" $PublishedRoot
+    $importArguments = @($PublishedRoot)
+    if ($Category -eq 'nature') { $importArguments += '--nature' }
+    & "$outputRoot/phanes.tools.catalog.batch$suffix" @importArguments
     if ($LASTEXITCODE -ne 0) { throw 'Batch importer failed' }
+    if ($Category -eq 'nature') {
+      & "$PSScriptRoot/assets.ps1" -Action prepare-regional-palette -NativeCompiler $NativeCompiler
+    }
   }
-  & $NativeCompiler @arguments tests/phanes.tests.buildings.lpr *> "$outputRoot/placement-build.log"
+  $testProgram = if ($Category -eq 'nature') { 'phanes.tests.catalog.nature' } else { 'phanes.tests.buildings' }
+  & $NativeCompiler @arguments "tests/$testProgram.lpr" *> "$outputRoot/placement-build.log"
   if ($LASTEXITCODE -ne 0) { throw "Placement checks compile failed: $outputRoot/placement-build.log" }
-  & "$outputRoot/phanes.tests.buildings$suffix" --catalog-batch
+  & "$outputRoot/$testProgram$suffix" --catalog-batch
   if ($LASTEXITCODE -ne 0) { throw 'Batch placement checks failed' }
 } finally {
   Pop-Location
