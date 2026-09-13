@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "feature": "granular-interiors",
+  "scope": "Cabin interior creation using local WFC furniture and contents graphs, measured four-tier shelves, individually editable books and ornaments, tabletop props, safe snapshot import/undo and usable desktop/phone inspection.",
+  "criticAgent": "/root/feature_critic",
+  "builderAgent": "/root",
+  "reviewedAt": "2026-09-08",
+  "decision": "pass",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The bounded studio journey works on desktop and touch phone: select the cabin, enter, drill through furniture and named shelf tiers, frame the selection, choose counts or an individual appearance, undo/redo, export and return. Prior independent checks established inherited parent/support lock explanations and disabled actions. Final phone checks again preserve all other records during snail-to-book replacement, restore exact undo/redo states, export the exact version-2 composition, and move keyboard focus to the politely announced Shelf 2 heading. All 20 center/off-center geometry picks now select the visible snail in both default and previously failing oblique views; a genuinely visible post still selects its bookcase. No recorded page/resource errors or phone horizontal overflow. Entry/exit focus and finer visual refinements are minor within this scope."
+    },
+    "accuracy": {
+      "grade": "B+",
+      "evidence": "Generation, admission, document transactions, snapshot transport and the new interior controller are Pascal. Independent worker counterexamples and retests establish fixed support poses, eight physically admitted furniture layouts, individual counts, cross-role neighbor preservation, Unicode labels, exact restoration and protected regional pruning. The measured bookcase, table and chair wrappers agree with the original GLB geometry and millimetre catalog; the local interior does not inherit the exterior scale multiplier. Final face-aware picking respects the near plane, skips culled faces and retains visibly double-sided geometry in an independent routed-archive fixture. Registered inputs cover the implementation, shared world/input/style contracts, actual GLBs, catalog provenance and composition tests. The documentation accurately limits this to one fixed studio profile and identifies approximate contact shading and the unfinished full-world requirements."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "Independent room, shelf, ceramic close-up and first-person captures at 1440x960 and 390x844 show a coherent stylized interior with readable wood/plaster/cloth detail, glazed ceramic highlights, shaped plates, individually separated books and metre-scale furniture. The continuous floor replaces the distracting dashed geometric cracks with restrained filtered board/end joints; furniture and wall contact attenuation gives the arrangement visible grounding. Shared sage/mineral controls and progressive framing carry the same visual language from room to tiny ornament. These revisions close the earlier material-detail and floor-polish findings for the bounded cabin studio. This grade does not claim realistic full-scene dynamic shadows, a furnished whole world, seamless exterior access or completed cross-theme world quality."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "Persistent containment and support identities connect regional WFC placement to local furniture and individual contents. Exact shelf quotas, per-object appearance or book/ornament replacement, lock-aware preservation, local frame validation and reversible dependent cabin removal make that hierarchy practically useful. The player can reach a tiny supported object by either hierarchy or actual visible geometry while keeping neighboring items unchanged. The solution uses the pinned WFC capabilities without requiring an upstream library modification and retains the broader terrain-to-object specification as unfinished work."
+    }
+  },
+  "blockingFindings": [],
+  "verification": "Retained failed review history and concrete corrections in reviews/granular-interiors-00-history.md; earlier bounded reports and adversarial evidence remain under build/critic/. Independent initial worker audits included 32 failing/successful seed rechecks, 18 invalid admission mutations, 88 pose/rotation mutations, 21 malformed message cases, all eight revised furniture layouts, diverse seeds including zero and 4294967295, Unicode/default-name checks, exact single-item preservation, protected removal and a two-cabin outside-record comparison. See interior-correctness-01.md, interior-correctness-evidence-03.json and interior-ui-closure-evidence-04.json. For the final renderer, used fresh Chromium contexts with cache disabled at http://127.0.0.1:4196/ and http://127.0.0.1:4197/Phanes/, at desktop 1440x960 and actual touch-emulated phone 390x844. The admitted adversarial fixture places the snail in the left reserved slot, x=-270 mm. Twenty center/four-offset picks passed across frontal and prior-oblique poses; a visible post remained selectable. A separately compiled Pascal triangle oracle identified the previously culled exit at 0.129789306 m, retained in interior-07-bookcase-ray-oracle.txt. A Pascal-only copied-GLB fixture enabled double-sided materials; substituting its copied data archive for one browser request made the backface visibly opaque and correctly selectable as the bookcase. No product source or original assets were altered by the critic. Final phone replacement, exact neighbor preservation, exact undo/redo/export and keyboard context recovery passed. Final independent evidence: build/critic/interior-final-evidence-08.json, interior-08-*-picking.png and interior-08-double-sided-*.png. Visual inspection: interior-07-{desktop,phone}-{room,shelf,walk}.png and interior-07-desktop-snail.png, generated after the floor correction; subsequent changes only corrected picking and its diagnostics. Additional builder-run evidence was inspected rather than represented as independent execution: successful release build in build/logs/interiors-face-picking-build.log; root/project full worker and desktop/phone journeys in interiors-face-picking-root.log and interiors-face-picking-project.log; 63 document + 252 contents + 68 wire checks in native composition-tests.log and executed browser interiors-composition-browser.log; root/project general browser startup logs. All 44 registered file fingerprints were obtained with build/tools/phanes.reviews.exe hash <input> and checked again before delivery. Inspected pinned dependency revisions: Castle 050f07edde6652d6657b4fe0d299822b9f502afa and WFC 47fa3d8cb8f0f72bf53943eb5eb79758c8f22ce4; any relevant dependency change needs review. This passes only the exact registered granular-interiors scope at these inputs. Arbitrary room programs, named bays, nested food assemblies, editable locks/names, exterior doorway integration, foundations/routes, room streaming and the complete granular world remain unapproved; longform musical development remains on hold separately.",
+  "reviewedFiles": {
+    "src/phanes.interiors.catalog.pas": "9c5728973614d988cf380f83d91d5bf4b6ddf80f1f01dc75fe8a91e648eb3a6f",
+    "src/phanes.interiors.generate.pas": "73ce5e205ed985af5014233297fcce43d3f1d79aa8ce6084b5822b28e50b505c",
+    "src/phanes.interiors.ui.pas": "44423b2a5b174e220296cc52f55b1862473cd82237b6418506c96124b79c65cc",
+    "src/phanes.interiors.browser.lpr": "55ffc70985d2ab63d13e71392b920c7117c5137fe1342ba2b738cc18cc340aaf",
+    "src/phanes.composition.types.pas": "a4d586dce6b385e4f072979e3fe261d77b35a2f604a27a6667a62cf9c983a459",
+    "src/phanes.composition.document.pas": "41958d19f2f1c9c2e1fcb2cafc1e59eed0f9f81d80d062f78552ed0e3dda55c6",
+    "src/phanes.composition.contents.types.pas": "06dbab8eaee9b24954f4f00579d33cb6a03f65dd4553114455aa3cd60a93ef3b",
+    "src/phanes.composition.contents.generate.pas": "b0a08ac1b6ba6025b70b73e3cea5b8a1b5c4994be0d47798c84a45f0410e5dc2",
+    "src/phanes.composition.contents.validate.pas": "8739e8a987f34838c5305d6e0c861b96f61015dd5337069c6e48835577d4e699",
+    "src/phanes.composition.wire.pas": "bec2e65a71263bb96c534147f85e7a7eca59249448019f12ad1ec19685f91f4f",
+    "src/phanes.world.types.pas": "848e9ab27abb2900fcb22a7c9fea57b769be7ba108f6d9704353e4a85da88b39",
+    "src/phanes.world.generate.pas": "6ba494786527dc0ed37c9663936895d9348fd3d47e86e3e0f2cc01e742d0074c",
+    "src/phanes.world.validate.pas": "da1bd88bace6eba6e8c9a5b8c1123551854d598c9bcc27fa313fdcd116d4ef5b",
+    "src/phanes.world.wire.pas": "7084b9610cb424e67959187210601cfcd3cd2868eed1e4cbbf381dadc7560927",
+    "src/phanes.worker.lpr": "8f566a5ea647ed0de64e902efaa1f636e4deb74ba3f13154038007bd89786952",
+    "cge/code/phanes.app.view.pas": "34902b5e2eaf28417e0e86f97b3f57e4ea45229a128cf9d9379a581228bb6799",
+    "cge/code/phanes.interiors.scene.pas": "dca5e3103c0171399352f652a70f2d206f19e7b7dbfc6a7b0efdb267555f3f41",
+    "cge/code/phanes.interiors.materials.pas": "1e6aed774f288649a47fa8fe9bc2525e868f3694518597fd3f4693b3f4d7e926",
+    "cge/code/phanes.world.surfaces.pas": "717bf8c9f9792fef37a2a27187313002772a06488320cdc7670fb5dbf824f999",
+    "web/index.html": "1006de88570b5de36055fd3e009b41cb17665f16445b7bca4f2b27116dfd0c77",
+    "web/phanes.editor.js": "c26d46864bcd98d993e30ac933fef4cd388fea28c08065843e40ecec78b33688",
+    "web/phanes.interior.css": "d9d17b5e832030832bbb9676a5f39c1b946462e7044a180fe54d20262550c3fd",
+    "build-web.ps1": "12a94498fa11d1e1476ac078482e2eaa46197bb0f303bce0edebfc714bf7a24b",
+    "tools/test-interiors.cjs": "a1f2d6aa07c9e38fd28c0544e97977d4c6dc877d740f597a797193f5210952a4",
+    "docs/INTERIORS.md": "154756f6c21ac4d596f3817b5cd6932b7e73e6e154ac4da50764c93ae4e8793d",
+    "docs/COMPOSITION_FORMAT.md": "24ebe22c6c39bac4d48fd69c57ccb1110558609dec64cb1193d6af7342bd6cc3",
+    "docs/PRODUCT.md": "aac8c7eb4db14fab338cbafa6d88166c6def20db0d34d621f4e6b6a039e57f53",
+    "docs/GRANULAR_COMPOSITION.md": "94d29495d1373ed8c69a579c9eca74fa89ef4bdbcd2624f47a2b1923861b04ce",
+    "src/phanes.world.landscape.pas": "a12414f2498743d7228326cadfb57ce2b668cd4a1ffcda243e04de5f6d16a60c",
+    "src/phanes.world.appearance.pas": "ffa1c3a0f2d77e330b51b76f449ebffcee63097a363225b92e51497c668a291c",
+    "web/phanes.host.js": "ba3bf0ce0d43fc9a3f19b667df3a969744d9eb971d06c6e6d06f84b797d8fd2f",
+    "web/phanes.css": "18edc4c82bd2fb3356ee06423352a2bdccd70c9326d32d8881885b6e223e6497",
+    "web/phanes.identity.css": "eed6e1df77a5a78c52cad07303f0c15301621340334c2328b9d6c616a8b90489",
+    "data/palette.json": "0bcf2e1af7c6bc09b61b00d9733a68add0db1efd5dc53b2b392ff287acaecfd7",
+    "data/kits.lock.json": "808ed8ee0729d38419f12e71f28d6eda20d1d3099598a661483ed8e9cd8d265f",
+    "data/asset-inventory.json": "1369c979b80ad957500944b560f63727eb11ac59095f85a6a665cc21b8585f0d",
+    "cge/data/kits/furniture-kit/bookcaseOpen.glb": "750702218d68c062b15dfef6ab06a4014d1cfa8bd05f02e57c53b7e13bec157c",
+    "cge/data/kits/furniture-kit/table.glb": "ff1a94498d023957f4bc3ff6f55a7a82977d336dbf01a573b3364f03afe5ff61",
+    "cge/data/kits/furniture-kit/chair.glb": "c8a11eec93e89e31250ba91afc1b8d56c3bec7ae86640fd1239f595ff4180883",
+    "tests/phanes.tests.composition.lpr": "f82569d0a22bfec8b87ac0dcc78566fef4d35859f20b4ef4c8366c92639b2714",
+    "tests/phanes.tests.contents.pas": "037dc0ccfcddc4f2ef489de2629091fd0addd822888531957ed0e35eedf45619",
+    "tests/phanes.tests.composition.wire.pas": "8f90e4a36c91e4580dc259b0e72fed76059243136eb3fd6a01a6f6461a54d51f",
+    "tools/test-composition.ps1": "ed6f079d6fb0733d0c6575d9ce62eeffe3d2b46075345b9894e49effe2b25afd",
+    "tools/test-composition.cjs": "39f46a39debc433f1959ac5e93cd1fe679f3ac5d10521b2141e3213c5625988b"
+  }
+}

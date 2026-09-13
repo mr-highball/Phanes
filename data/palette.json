@@ -1,0 +1,432 @@
+{
+  "version" : 1,
+  "ruleOrigin" : "Authored placement corpus; asset geometry is not training data.",
+  "assets" : [
+    {
+      "id" : "cabin",
+      "kind" : "cabin",
+      "theme" : "fantasy",
+      "name" : "Timber cabin",
+      "width" : 5,
+      "generator" : "phanes.cabin.shell.v1"
+    },
+    {
+      "id" : "keep",
+      "kind" : "castle",
+      "theme" : "medieval",
+      "name" : "Castle keep",
+      "prefab" : "keep",
+      "width" : 7
+    },
+    {
+      "id" : "city-kit-suburban/building-type-a",
+      "kind" : "modern",
+      "theme" : "modern",
+      "name" : "Gabled house",
+      "width" : 6
+    },
+    {
+      "id" : "city-kit-suburban/building-type-f",
+      "kind" : "modern",
+      "theme" : "modern",
+      "name" : "Courtyard house",
+      "width" : 6
+    },
+    {
+      "id" : "space-kit/hangar_roundA",
+      "kind" : "scifi",
+      "theme" : "sci-fi",
+      "name" : "Orbital habitat",
+      "width" : 6
+    },
+    {
+      "id" : "space-kit/hangar_smallA",
+      "kind" : "scifi",
+      "theme" : "sci-fi",
+      "name" : "Survey station",
+      "width" : 6
+    },
+    {
+      "id" : "rocket",
+      "kind" : "scifi",
+      "theme" : "sci-fi",
+      "name" : "Survey rocket",
+      "prefab" : "rocket",
+      "width" : 3.6000000000000001E+000
+    },
+    {
+      "id" : "nature-kit/tree_oak",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Oak",
+      "width" : 2.7999999999999998E+000
+    },
+    {
+      "id" : "nature-kit/tree_pineRoundA",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Pine",
+      "width" : 2.3999999999999999E+000
+    },
+    {
+      "id" : "nature-kit/tree_default_fall",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Autumn tree",
+      "width" : 2.5000000000000000E+000
+    },
+    {
+      "id" : "fantasy-town-kit/tree",
+      "kind" : "tree",
+      "theme" : "fantasy",
+      "name" : "Fantasy tree",
+      "width" : 2.7000000000000002E+000
+    },
+    {
+      "id" : "nature-kit/plant_bush",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Bush",
+      "width" : 1.5000000000000000E+000
+    },
+    {
+      "id" : "nature-kit/plant_bushLarge",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Large shrub",
+      "width" : 2
+    },
+    {
+      "id" : "nature-kit/flower_redA",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Red flowers",
+      "width" : 5.0000000000000000E-001,
+      "cluster" : 7
+    },
+    {
+      "id" : "nature-kit/flower_purpleA",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Purple flowers",
+      "width" : 5.0000000000000000E-001,
+      "cluster" : 7
+    },
+    {
+      "id" : "nature-kit/flower_yellowA",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Yellow flowers",
+      "width" : 5.0000000000000000E-001,
+      "cluster" : 7
+    },
+    {
+      "id" : "nature-kit/crops_wheatStageB",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Wheat",
+      "width" : 8.0000000000000004E-001,
+      "cluster" : 9
+    },
+    {
+      "id" : "nature-kit/rock_largeA",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Boulder",
+      "width" : 1.8000000000000000E+000
+    },
+    {
+      "id" : "space-kit/rock_crystals",
+      "kind" : "rock",
+      "theme" : "sci-fi",
+      "name" : "Crystal outcrop",
+      "width" : 1.6000000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.tree.forest-canopy.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Forest canopy tree",
+      "width" : 1.6230000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.tree.autumn.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Autumn tree",
+      "width" : 1.3825000000000001E+000
+    },
+    {
+      "id" : "phanes.catalog.tree.birch.v1",
+      "kind" : "tree",
+      "theme" : "nature",
+      "name" : "Birch tree",
+      "width" : 1.7360000000000000E+000
+    },
+    {
+      "id" : "phanes.catalog.tree.island-palm.v1",
+      "kind" : "tree",
+      "theme" : "fantasy",
+      "name" : "Island palm",
+      "width" : 1.7424999999999999E+000
+    },
+    {
+      "id" : "phanes.catalog.shrub.leafy-bush.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Leafy bush",
+      "width" : 8.4550000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.shrub.broadleaf.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Broadleaf plant",
+      "width" : 8.1750000000000000E-001
+    },
+    {
+      "id" : "phanes.catalog.shrub.berry-bush.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Berry bush",
+      "width" : 5.9250000000000003E-001
+    },
+    {
+      "id" : "phanes.catalog.shrub.forest-plant.v1",
+      "kind" : "shrub",
+      "theme" : "nature",
+      "name" : "Forest plant",
+      "width" : 8.6099999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.flowers.cactus-bloom.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Flowering cactus",
+      "width" : 3.3550000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.flowers.cactus-cluster.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Flowering cactus cluster",
+      "width" : 3.3050000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.flowers.wildflowers.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Wildflower cluster",
+      "width" : 3.3800000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.flowers.flower-patch.v1",
+      "kind" : "flowers",
+      "theme" : "nature",
+      "name" : "Low flower patch",
+      "width" : 3.3700000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.wheat.corn.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mature corn",
+      "width" : 3.2050000000000001E-001
+    },
+    {
+      "id" : "phanes.catalog.wheat.rice.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mature rice",
+      "width" : 4.0250000000000002E-001
+    },
+    {
+      "id" : "phanes.catalog.wheat.grain.v1",
+      "kind" : "wheat",
+      "theme" : "nature",
+      "name" : "Mature grain",
+      "width" : 2.0699999999999999E-001
+    },
+    {
+      "id" : "phanes.catalog.rock.granite.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Angular rock",
+      "width" : 1.1879999999999999E+000
+    },
+    {
+      "id" : "phanes.catalog.rock.mossy.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Mossy rock",
+      "width" : 1.1879999999999999E+000
+    },
+    {
+      "id" : "phanes.catalog.rock.forest-stones.v1",
+      "kind" : "rock",
+      "theme" : "nature",
+      "name" : "Forest stones",
+      "width" : 1.1755000000000000E+000
+    }
+  ],
+  "prefabs" : {
+    "rocket" : [
+      {
+        "asset" : "space-kit/rocket_baseA",
+        "scale" : [
+          2,
+          2,
+          2
+        ],
+        "position" : [
+          0,
+          0,
+          0
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "space-kit/rocket_fuelA",
+        "scale" : [
+          2,
+          2,
+          2
+        ],
+        "position" : [
+          0,
+          3.2000000000000002E+000,
+          0
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "space-kit/rocket_topA",
+        "scale" : [
+          2,
+          2,
+          2
+        ],
+        "position" : [
+          0,
+          4.2000000000000002E+000,
+          0
+        ],
+        "yaw" : 0
+      }
+    ],
+    "keep" : [
+      {
+        "asset" : "castle-kit/tower-square",
+        "scale" : [
+          2,
+          3,
+          2
+        ],
+        "position" : [
+          -2.5000000000000000E+000,
+          0,
+          -2.5000000000000000E+000
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "castle-kit/tower-square",
+        "scale" : [
+          2,
+          3,
+          2
+        ],
+        "position" : [
+          2.5000000000000000E+000,
+          0,
+          -2.5000000000000000E+000
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "castle-kit/tower-square",
+        "scale" : [
+          2,
+          3,
+          2
+        ],
+        "position" : [
+          -2.5000000000000000E+000,
+          0,
+          2.5000000000000000E+000
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "castle-kit/tower-square",
+        "scale" : [
+          2,
+          3,
+          2
+        ],
+        "position" : [
+          2.5000000000000000E+000,
+          0,
+          2.5000000000000000E+000
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "castle-kit/wall",
+        "scale" : [
+          4,
+          1.8000000000000000E+000,
+          6.9999999999999996E-001
+        ],
+        "position" : [
+          0,
+          0,
+          -2.5000000000000000E+000
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "castle-kit/wall",
+        "scale" : [
+          4,
+          1.8000000000000000E+000,
+          6.9999999999999996E-001
+        ],
+        "position" : [
+          0,
+          0,
+          2.5000000000000000E+000
+        ],
+        "yaw" : 0
+      },
+      {
+        "asset" : "castle-kit/wall",
+        "scale" : [
+          4,
+          1.8000000000000000E+000,
+          6.9999999999999996E-001
+        ],
+        "position" : [
+          -2.5000000000000000E+000,
+          0,
+          0
+        ],
+        "yaw" : 90
+      },
+      {
+        "asset" : "castle-kit/wall-doorway",
+        "scale" : [
+          4,
+          1.8000000000000000E+000,
+          6.9999999999999996E-001
+        ],
+        "position" : [
+          2.5000000000000000E+000,
+          0,
+          0
+        ],
+        "yaw" : 90
+      }
+    ]
+  }
+}

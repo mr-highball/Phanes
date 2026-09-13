@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "feature": "engine-webgl-bulk-transfer-candidate",
+  "scope": "Isolated Castle Game Engine WebGL matrix and numeric-list conversion candidate: contiguous-layout checks, signed-byte bounds, owned bulk copies, reproducible baseline/candidate Pascal transfer tests and correctly bound candidate application staging. Application dependency adoption and existing buffer-upload helpers are outside this development-candidate scope.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "pass",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The retained harness exposes explicit baseline and candidate commands, a required signed-range switch, useful failure diagnostics and source/WASM metadata. The final application comparison also records the exact fixture, run order and hash-bound sites."
+    },
+    "accuracy": {
+      "grade": "A-",
+      "evidence": "The candidate wrapper passes 9506 checks: 9493 legacy plus 13 signed-boundary checks, with no browser errors. Verification binds the candidate engine source SHA-256 c4da0f1642a8ae3470f802a93ee647a362907d9fa18e82f0a209453e8984d081 to probe WASM a90a5d98a77aeb5cf5e2cfb5ad846dcc1ed4ba313eefadad2e0d95e0e7e8fa95. The updated pinned baseline passes all 9493 legacy checks with the candidate guard explicitly skipped. The size-12 paired application fixture has identical draw counts per frame, exact world recovery, zero renderer errors and zero differing pixels in desktop, phone-layout and recovered captures."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "The candidate delivers a measured roughly 50 percent frame-rate increase on the paired development fixture: 9.84 to 14.74 fps desktop Orbit, 10.08 to 15.56 phone-layout Orbit, 25.55 to 38.81 phone walking and 25.72 to 38.93 after recovery. The comparison reports byte-identical and pixel-identical screenshots for all three pairs."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "A-",
+      "evidence": "The design combines compile-time layout contracts, owned raw copies, signed-byte overflow rejection, synthetic logical counts that avoid a 2 GiB allocation, and paired application hashes while preserving the public API and dependency pin."
+    }
+  },
+  "blockingFindings": [],
+  "verification": "build/engine-transfer-guard-final-browser-05/result.json: passed=true, checks=9506, legacyChecks=9493, boundaryChecks=13, signedRangeGuard=passed, errors=[], elapsedMs=11.\nbuild/engine-transfer-guard-final-browser-05/verification.json binds the candidate source, probe WASM, transfer test, browser driver and wrapper fingerprints.\nbuild/engine-transfer-baseline-final-browser-url-01/result.json: passed=true, checks=9493, boundaryChecks=0, signedRangeGuard=skipped, errors=[] .\nbuild/engine-final-comparison-01.json records the isolated seed-732 size-12 fixture, nine resident chunks, exact recovery, zero renderer errors and zero pixel differences across desktop, phone-layout and recovered pairs. Orbit remains below a generally comfortable frame rate, but full performance and physical-phone claims are outside this feature scope.\nbuild/engine-transfer-guard-final-browser-05/build.log records the complete candidate build; docs/dependencies/CGE_WEBGL_TRANSFER.md records the final limitations and provenance.",
+  "reviewedFiles": {
+    "docs/dependencies/CGE_WEBGL_TRANSFER.md": "598463134514815a2b7ebfbfe1ab4f5754ea866d2852d431452c7d69c198012b",
+    "docs/dependencies/cge-webgl-bulk-transfer.patch": "0ee6ed8ab70aa84430bdc73b7748746c3bf273d41afe4913b3cabbb0fe371c27",
+    "tests/webgl-transfer/README.md": "b8bf4d52cea74f0c355a8bab1cef91620c2755af4d8563e79303613f99a02402",
+    "tests/webgl-transfer/CastleEngineManifest.xml": "06a1c6f4ad682fd630adfe2c87adb8bf2e05744fab07eea1088454bff1f7c3fa",
+    "tests/webgl-transfer/probe.html": "0cd1612863f881f1d040dd9f5d331b028b82ddc5625288f78f3684e606f85061",
+    "tests/webgl-transfer/code/phanes.tests.webgl.transfer.pas": "fd1606050d76c158af4de82b5050227f1626d9969cf766940cfe2503e29542c4",
+    "tests/phanes.tests.webgl.transfer.browser.lpr": "c0c5f671a7a95ecd23cbd7297c4a5671a64a57ff92f9adec1804940d7a6be287",
+    "tools/test-webgl-transfer.ps1": "0eb35e9e54a975ba404f1ca24dee35d52f73626a66b1186a323d991eeb721372",
+    "tools/build-host.ps1": "e2772a1c59659fe9392ed47902eb0764ec46fb26c6c5fa671ca09fd357ae2d0b",
+    "tools/phanes.tools.webparts.lpr": "43810844606206507b625a319df09cb1611add3c02bb1a1e0e238107eef102f9",
+    "tools/phanes.tools.browser.pas": "c075b492dd08b0f8407cc2c8ea8d87fc7e4f210947b7236c3f4d371dd58d433c",
+    "tools/phanes.tools.files.pas": "12e07c9fb9d48c04596c9ad019924e9db2477ff30f0c08c2d946a2c62dde89c7",
+    "src/phanes.startup.parts.pas": "29e086fc9da867a9936ef09d43848ee22814df2abd59f1fa26de8637bf59749a",
+    "src/phanes.startup.browser.lpr": "f238164474e8ed335b9a0e5eb4dca3eaf6a88bda12a6e48aab3d82f6c4d2ded9",
+    "src/phanes.host.engine.lpr": "55c6c5c64229d996dfe5da83777b5952f6f4a2e695fd50013b416c45b250fdb9",
+    "tools/serve.ps1": "2e4608425172b10ca2a764814f7ac0ca6bb79e3e8688a76a50abf1a3e6f0f16b",
+    ".gitmodules": "cbdabb12e738683a7c0c7b01a64bd3722e849feeb8144ab2d8d64e6dfe28faae"
+  }
+}

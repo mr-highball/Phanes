@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "feature": "mobile-navigation",
+  "scope": "Complete touch flight and first-person movement, simultaneous axes and interruption recovery, independently collapsible and reopenable creation tools, clear Create/Explore boundaries, usable keyboard focus and phone portrait/landscape controls with consistent custom styling.",
+  "criticAgent": "/root/feature_critic",
+  "builderAgent": "/root",
+  "reviewedAt": "2026-09-09",
+  "decision": "changes_requested",
+  "grades": {
+    "intuitiveness": {
+      "grade": "C",
+      "evidence": "The corrected movement pad, explicit Rise/Descend controls, independently reopened Tools drawer and Create/Explore labels are legible in the inspected 360 px portrait and 640 x 360 landscape captures. The actual 07 journey supports keyboard focus, Escape recovery, touch release and mode separation. However, the user's physical phone reaches 100% download while Preparing your workspace never resolves and Create this World stays disabled. That entry journey gives neither a usable canvas nor an actionable explanation, so the complete mobile experience remains substantially incomplete."
+    },
+    "accuracy": {
+      "grade": "C",
+      "evidence": "Source inspection and the 48 successful builder Pascal/CDP checks provide meaningful coverage of actual Fly/Walk movement, simultaneous axes, cancellation, released pointer deletion, keyboard input, camera changes, responsive hit tests and drawer behavior. The Walk fixture clears real terrain through the authoring UI before measuring real player displacement. These are emulated touch viewports on a desktop GTX 1080, not evidence that the affected physical phone can initialize. The user-reported failure takes precedence over those successes. Its root cause is not established. The generated host's progress covers the data ZIP only; subsequent WASM failures may be caught and logged without a user-visible failure. Browser feasibility cannot receive B+ until that path is diagnosed and the affected startup is demonstrated working."
+    },
+    "wowFactor": {
+      "grade": "B",
+      "evidence": "The inspected controls preserve the custom Phanes ivory, sage and dark surface treatment, with clear directional marks and a practical increase in visible world space when Tools collapses. The new short-landscape arrangement avoids the prior Tools/Rise overlap, and the narrow portrait action grid restores Clear/Undo/Redo visibility. Those are convincing improvements once initialized, but a phone that stops before creation cannot deliver the complete demonstration. This grade does not assess general world rendering, all visual styles or physical-phone frame rate."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "A shared Pascal input controller joins touch and keyboard axes with explicit held-input ownership, normalized flight and collision-aware walking. A drawer that reopens without changing Explore into Create makes inspection and movement coexist with authoring, and camera-specific vertical controls plus cancellation on covering panels address practical mobile constraints. These are useful combinations with visible and behavioral evidence, though they do not remove the separate startup blocker."
+    }
+  },
+  "blockingFindings": [
+    "MN-01: Diagnose and correct the physical-phone startup failure reported during this review. Preserve the affected URL/build, browser/device and startup-stage/error evidence. Verify the affected phone reaches the first rendered-ready acknowledgement, enables Create this World and completes creation followed by Fly and First person input. Repeating the current desktop Chromium emulation alone does not close this observed failure. Keep the complete registered mobile scope unchanged.",
+    "MN-02: Make post-download startup progress and failure actionable. The served generated host reports 100% for phanes_data.zip before fetching/instantiating phanes.wasm; ready is published only by TMainView.RenderOverChildren. Its WASI environment catches run exceptions and console.error's them, while load/instantiate failures can invoke unset callbacks and resolve false. Connect supported lifecycle/error callbacks or inspect the actual host failure descriptor, covering caught failures as well as window errors/rejections. Keep creation disabled until genuine readiness; do not manufacture readiness or hide a failed runtime. Add bounded failure evidence and a visible recovery path, then re-review the actual successful phone startup.",
+    "MN-03: Register the authored startup implementation and its relevant build/runtime contracts in the existing feature inputs when that correction lands. Retain the current failed report and request a new numbered review with current fingerprints; do not promote this report using only the existing emulation evidence."
+  ],
+  "verification": "This is an independent changes-requested review of the exact full mobile-navigation scope, not a narrowed controls-only approval. The critic independently inspected current navigation, keyboard/host routing, editor readiness and control gating, authoring/catalog interruption and mode boundaries, responsive CSS, the mobile Pascal test and generated WASI startup path; it examined builder-produced rendered results without launching a concurrent GPU browser. Current inspected images: build/mobile-controls-07/narrow-phone-create.png, short-landscape-create.png and walk-explore.png; earlier 04/07 drawer/flight imagery and source findings are retained in build/critic/mobile-controls-review-01.md, mobile-controls-review-02.md and mobile-controls-review-03.md. build/logs/mobile-controls-07.log records 48 PASS checks, including actual W/S/A/D touch displacement, diagonal touch, release/blur, Space/WASD, camera interruption, active pointer cleanup, Explore G preservation, independently reopened Tools, short landscape Rise hit tests and 360 px movement/authoring control reachability. Source confirms pointer deletion and focused Space/Enter handling close the two prior controller findings. The 07 suite also samples rendering density, covered-world draw suppression and a short rapid-tempo trace; those do not approve general performance or audio. build/mobile-controls-07/4-top.json has errors[] but is a desktop GPU trace, not physical-phone performance. Parent reports the full build04 succeeded and the later navigation controller was recompiled with pas2js for 07. While this assessment was active, the parent relayed the user's physical-phone 100%-download startup failure and explicitly withdrew readiness for a passing decision. That report is the basis for MN-01; the critic has not independently reproduced or diagnosed the device fault. Source-level supporting details: web/phanes.editor.js updateControls and phanes-ready listener; web/phanes.host.js load/rtl.run; cge/code/phanes.app.view.pas RenderOverChildren; served build/web/phanes.js TMyApplication.DataLoaded and WASI RunWebAssemblyInstance/CreateWebAssembly. The current shader renderer defers creation of its screen-effect shader until an actual non-None effect is requested, so this review does not guess that a visual-style shader caused the initial stall. The 24 reviewedFiles hashes were captured with build/tools/phanes.reviews.exe hash at this review checkpoint. Castle 050f07edde6652d6657b4fe0d299822b9f502afa and WFC 47fa3d8cb8f0f72bf53943eb5eb79758c8f22ce4 remain pinned. Startup fixes now in progress will require new fingerprints. No production files, prior reports, registry pointers or other grades are changed by this review. Full world, general performance, audio, visual-styles and expanded playable catalog acceptance remain held.",
+  "gateVerification": "The existing Pascal checker was run against an isolated registry copy pointing to this unchanged report: build/critic/mobile-navigation-gate-01/gate.log records HOLD mobile-navigation: Critic decision is changes_requested, expected exit 1. Four category entries and all 24 declared input fingerprints were structurally verified. The real registry pointer and every other feature were left unchanged.",
+  "reviewedFiles": {
+    "web/phanes.host.js": "129c4c146a4f995c9ad5ef71316363f5374eb79ce8d680e54fa0f10e2ef08deb",
+    "src/phanes.world.landscape.pas": "8d9c5896c1fe87acd8047f263d144a755c826ad665943aa6331d15fd463f5def",
+    "src/phanes.styles.ui.pas": "8b81a9b832ab028c79e7346176944027239e71483fe5a9785543fab33b4e80b4",
+    "src/phanes.groundworks.ui.pas": "0e4f240724b2be4392626f1db28bceadfe5581e4801fa7d291aa2d5118e88bed",
+    "web/phanes.groundworks.css": "8175d1d29a8ee8731e657215a95e045dd5cfc68a2f2d4e50c1ef6bccce2edaed",
+    "src/phanes.authoring.ui.pas": "4687974df34c51cc78e98ccd8baf6f290fd03deace328d8a4d25aa42d199e579",
+    "src/phanes.selection.grid.pas": "a94b200c439fa12208d384dd3de4f93bb4464b18613324adc773a229a521f9b1",
+    "src/phanes.catalog.ui.pas": "990de2aebe77c59cb5a88256ddaf25eeaa5a28d8762596b3a33faae607383242",
+    "src/phanes.audio.player.pas": "3b2cf805d3ba34d7ca1c94e892e0af89f21041ff6133afe930c1e32b209f0684",
+    "src/phanes.navigation.ui.pas": "e22719e208cf066f4ff6601fbc83c65d41da0e04172d233178819234e273fa40",
+    "src/phanes.interiors.browser.lpr": "43183505a4ca6c6b9ac510f6a7775b1c3a7930fc981da707838918fea0bc144c",
+    "web/index.html": "4459cecf7aa4813aed56ecda4da54361a416d7f7f747c48e62701c5fe9f36465",
+    "web/phanes.authoring.css": "f6cf735bd02f698a85cdd05f6e68b090631ff4123ca1ebb0906c611505eaa90d",
+    "web/phanes.editor.js": "6b27c2c46c9603379aab97268314118cd8a011c81461919a36673e4b92ea3e9a",
+    "web/phanes.css": "1ffb67a90231b448bac65d196ae0a24c3836860e1153970b10304c59054cfe34",
+    "web/phanes.identity.css": "eed6e1df77a5a78c52cad07303f0c15301621340334c2328b9d6c616a8b90489",
+    "tests/phanes.tests.mobile.browser.lpr": "1f42329a1be84cd1261698facc8f23e541b8b625c3e72f8446cde08f708a7bfd",
+    "tests/phanes.tests.styles.probe.lpr": "aff224056ede8b61d324ca753e4eaaac3f3e519ba24a06a8072be0f9c12d40f1",
+    "tools/phanes.tools.browser.pas": "08dcf4c6b92cd4fe699ff6b6bdcc6281ef9bc66aa7f4081fd455effc3a53d24e",
+    "tools/test-mobile.ps1": "903009625759860c8a51a91fdf647633b9c3f12ef35fbd587a1a11bd266f6dac",
+    "docs/MOBILE_INTERACTION.md": "3bcce8ba0d17ab1aa8729fca0b879e70ef0155ff4b5a1f6308307fb257d2eb0d",
+    "cge/code/phanes.app.view.pas": "cbc25f5ec1bc80ad2db11e6c0c01f575c0eb2d6cf8274776b186a6629b1ebc51",
+    "build-web.ps1": "6fb5a382ada8cf904f4241510edc4eb046f2dcaf323246fab49fa2c6d7bfe356",
+    ".gitmodules": "cbdabb12e738683a7c0c7b01a64bd3722e849feeb8144ab2d8d64e6dfe28faae"
+  }
+}

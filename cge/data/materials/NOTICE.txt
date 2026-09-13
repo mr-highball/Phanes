@@ -1,0 +1,8 @@
+Leafy Grass — Poly Haven
+https://polyhaven.com/a/leafy_grass
+License: CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+https://polyhaven.com/license
+
+Unmodified 1K diffuse and OpenGL normal JPEGs. File hashes and source URLs
+are recorded in data/materials.lock.json. Powered by Poly Haven (source API).

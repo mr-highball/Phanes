@@ -1,0 +1,83 @@
+<#
+MIT License
+
+Copyright (c) 2026 mr-highball
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+#>
+[CmdletBinding()]
+param(
+  [string]$NativeCompiler = $(if ($env:FPC_NATIVE) { $env:FPC_NATIVE } else { 'fpc' }),
+  [string]$Compiler = $(if ($env:PAS2JS) { $env:PAS2JS } else { 'pas2js' }),
+  [string]$EvidenceDirectory = ''
+)
+
+$ErrorActionPreference = 'Stop'
+$repositoryRoot = Split-Path $PSScriptRoot -Parent
+$packageRoot = Join-Path $repositoryRoot 'vendor/castle-engine/packages/lazarus'
+[xml]$package = Get-Content -LiteralPath (Join-Path $packageRoot 'castle_engine_base.lpk') -Raw
+$searchPaths = $package.CONFIG.Package.CompilerOptions.SearchPaths
+$binaryRoot = Join-Path $repositoryRoot 'build/tools'
+$nativeUnits = Join-Path $repositoryRoot 'build/catalog-admission-units'
+$webUnits = Join-Path $repositoryRoot 'build/catalog-admission-pas2js-units'
+if (-not $EvidenceDirectory) {
+  $EvidenceDirectory = Join-Path $repositoryRoot ('build/catalog-admission-' +
+    [Guid]::NewGuid().ToString('N'))
+}
+$evidenceRoot = [IO.Path]::GetFullPath($EvidenceDirectory)
+New-Item -ItemType Directory -Force $binaryRoot, $nativeUnits, $webUnits, $evidenceRoot | Out-Null
+$arguments = @('-Mobjfpc', '-Sh', '-O2', '-Sc', "-Fu$PSScriptRoot",
+  "-Fu$repositoryRoot/src", "-Fu$repositoryRoot/cge/code")
+foreach ($path in $searchPaths.OtherUnitFiles.Value.Split(';')) {
+  $arguments += "-Fu$([IO.Path]::GetFullPath((Join-Path $packageRoot $path)))"
+}
+foreach ($path in $searchPaths.IncludeFiles.Value.Split(';')) {
+  $arguments += "-Fi$([IO.Path]::GetFullPath((Join-Path $packageRoot $path)))"
+}
+$nativeLog = Join-Path $evidenceRoot 'native-build.log'
+& $NativeCompiler @arguments "-FU$nativeUnits" "-FE$binaryRoot" `
+  (Join-Path $repositoryRoot 'tests/phanes.tests.catalog.admission.lpr') *> $nativeLog
+if ($LASTEXITCODE -ne 0) {
+  Get-Content -LiteralPath $nativeLog -Tail 30
+  throw 'Catalog admission native compilation failed.'
+}
+$suffix = if ($IsWindows) { '.exe' } else { '' }
+& (Join-Path $binaryRoot "phanes.tests.catalog.admission$suffix") $repositoryRoot |
+  Tee-Object -FilePath (Join-Path $evidenceRoot 'native-test.log')
+if ($LASTEXITCODE -ne 0) { throw 'Catalog admission native checks failed.' }
+
+$webLog = Join-Path $evidenceRoot 'pas2js-build.log'
+& $Compiler -B -Tbrowser -Mdelphi -Jc '-Jirtl.js' "-Fu$repositoryRoot/src" `
+  "-FU$webUnits" (Join-Path $repositoryRoot 'src/phanes.catalog.admission.pas') *> $webLog
+if ($LASTEXITCODE -ne 0) {
+  Get-Content -LiteralPath $webLog -Tail 30
+  throw 'Catalog admission pas2js compilation failed.'
+}
+Write-Output 'PASS optional catalog admission unit compiles with pas2js'
+$report = [ordered]@{
+  passed = $true
+  optionalModels = 32
+  interiorModels = 14
+  addedObjectModels = 12
+  nativeBuildLog = 'native-build.log'
+  nativeTestLog = 'native-test.log'
+  pas2jsBuildLog = 'pas2js-build.log'
+}
+[IO.File]::WriteAllText((Join-Path $evidenceRoot 'report.json'),
+  ($report | ConvertTo-Json) + [Environment]::NewLine)

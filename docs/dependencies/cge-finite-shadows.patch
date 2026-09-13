@@ -1,0 +1,413 @@
+diff --git a/src/scene/castlescene.pas b/src/scene/castlescene.pas
+index 6915a69..8b617a3 100644
+--- a/src/scene/castlescene.pas
++++ b/src/scene/castlescene.pas
+@@ -1413,7 +1413,8 @@ begin
+             SVRenderer.ZFailAndLightCap,
+             SVRenderer.ZFail,
+             ForceOpaque,
+-            EffectiveWholeSceneManifold);
++            EffectiveWholeSceneManifold,
++            SVRenderer.DirectionalShadowDistance);
+         end;
+       end;
+     end;
+diff --git a/src/scene/castleshapeinternalrendershadowvolumes.pas b/src/scene/castleshapeinternalrendershadowvolumes.pas
+index e23b7cc..ccc66e9 100644
+--- a/src/scene/castleshapeinternalrendershadowvolumes.pas
++++ b/src/scene/castleshapeinternalrendershadowvolumes.pas
+@@ -53,7 +53,10 @@ type
+       This is needed by z-fail method, you should set them both to @true.
+       To be more optimal, you can request LightCap only if z-fail @italic(and
+       the caster is inside camera frustum). For directional lights, DarkCap is
+-      ignored, since the volume is always closed by a single point in infinity.
++      ignored when DirectionalShadowDistance is zero (the default). A positive
++      distance extrudes finite world-space sides along the normalized light and
++      always closes their endpoint using normal depth testing. The caller must
++      enclose this endpoint in the far clip plane and put it beyond all receivers.
+     }
+     procedure RenderSilhouetteShadowVolume(
+       const Params: TRenderParams;
+@@ -61,12 +64,13 @@ type
+       const LightPos: TVector4;
+       const Transform: TMatrix4;
+       const LightCap, DarkCap: boolean;
+-      const ForceOpaque, WholeSceneManifold: Boolean);
++      const ForceOpaque, WholeSceneManifold: Boolean;
++      const DirectionalShadowDistance: Single = 0);
+   end;
+ 
+ implementation
+ 
+-uses SysUtils,
++uses SysUtils, Math,
+   {$ifdef OpenGLES} CastleGLES, {$else} CastleGL, {$endif}
+   CastleGLUtils, CastleUtils, CastleShapes, CastleImages, CastleRenderContext,
+   CastleTimeUtils;
+@@ -111,7 +115,8 @@ procedure TRenderShapeShadowVolumes.RenderSilhouetteShadowVolume(
+   const LightPos: TVector4;
+   const Transform: TMatrix4;
+   const LightCap, DarkCap: boolean;
+-  const ForceOpaque, WholeSceneManifold: boolean);
++  const ForceOpaque, WholeSceneManifold: boolean;
++  const DirectionalShadowDistance: Single);
+ 
+ { Is it worth preparing ManifoldEdges list: yes.
+ 
+@@ -143,6 +148,10 @@ procedure TRenderShapeShadowVolumes.RenderSilhouetteShadowVolume(
+ var
+   Triangles: TTrianglesShadowCastersList;
+   Vertexes: TVector4List;
++  FiniteEndCaps: TVector4List;
++  FiniteExtrusion: TVector3;
++  FiniteLight: TVector3Double;
++  UseFinite: Boolean;
+ 
+   { Render shadow quad from edge given by 2 points. }
+   procedure RenderShadowQuad_Edge(const EdgeV0, EdgeV1: TVector3);
+@@ -170,7 +179,29 @@ var
+       Vertexes.Add(V2);
+       Vertexes.Add(V3);
+     end else
+-      { finish triangle }
++    if UseFinite then
++    begin
++      V2 := Vector4(V1_3D + FiniteExtrusion, 1);
++      V3 := Vector4(V0_3D + FiniteExtrusion, 1);
++      { Opposite border edges of adjacent shapes must use the same diagonal.
++        Rounded finite endpoints can make the quad slightly nonplanar, so
++        opposite windings with different diagonals do not cancel in stencil. }
++      if (V0_3D.X < V1_3D.X) or
++         ((V0_3D.X = V1_3D.X) and (V0_3D.Y < V1_3D.Y)) or
++         ((V0_3D.X = V1_3D.X) and (V0_3D.Y = V1_3D.Y) and (V0_3D.Z <= V1_3D.Z)) then
++      begin
++        Vertexes.Add(V2);
++        Vertexes.Add(V0);
++        Vertexes.Add(V2);
++        Vertexes.Add(V3);
++      end else
++      begin
++        Vertexes.Add(V3);
++        Vertexes.Add(V1);
++        Vertexes.Add(V2);
++        Vertexes.Add(V3);
++      end;
++    end else
+       Vertexes.Add(LightPos);
+   end;
+ 
+@@ -209,6 +240,14 @@ var
+ 
+     procedure RenderCaps(const T: TTriangle3);
+     begin
++      if UseFinite then
++      begin
++        { Close the finite endpoint separately from source caps:
++          dfNever is invalid for finite geometry behind/before receivers. }
++        FiniteEndCaps.Add(Vector4(T.Data[2] + FiniteExtrusion, 1));
++        FiniteEndCaps.Add(Vector4(T.Data[1] + FiniteExtrusion, 1));
++        FiniteEndCaps.Add(Vector4(T.Data[0] + FiniteExtrusion, 1));
++      end;
+       if LightCap then
+       begin
+         Vertexes.Add(Vector4(T.Data[0], 1));
+@@ -400,6 +439,19 @@ var
+   EdgePtr: PEdge;
+ begin
+   Assert(ManifoldEdges <> nil);
++  if IsNan(DirectionalShadowDistance) or IsInfinite(DirectionalShadowDistance) or
++     (DirectionalShadowDistance < 0) then
++    raise EArgumentException.Create('Directional shadow distance must be finite and nonnegative');
++  UseFinite := (LightPos.W = 0) and (DirectionalShadowDistance > 0);
++  if UseFinite then
++  begin
++    FiniteLight := Vector3Double(LightPos.XYZ);
++    if IsNan(FiniteLight.X) or IsNan(FiniteLight.Y) or IsNan(FiniteLight.Z) or
++       IsInfinite(FiniteLight.X) or IsInfinite(FiniteLight.Y) or
++       IsInfinite(FiniteLight.Z) or (FiniteLight.Length = 0) then
++      raise EArgumentException.Create('Finite shadows require a finite nonzero light direction');
++    FiniteExtrusion := Vector3(FiniteLight * (DirectionalShadowDistance / FiniteLight.Length));
++  end;
+ 
+   { If the model is not perfect 2-manifold, do not render it's shadow volumes.
+     This is good default behavior, as shadow volumes on non-manifolds
+@@ -418,14 +470,26 @@ begin
+   { Nil local variables, to later free by one finally clause. }
+   TrianglesPlaneSide := nil;
+   Vertexes := nil;
++  FiniteEndCaps := nil;
+ 
+   try
+     TrianglesPlaneSide := TBooleanList.Create;
+     Vertexes := TVector4List.Create;
++    if UseFinite then
++      FiniteEndCaps := TVector4List.Create;
+ 
+     InitializeTrianglesPlaneSideAndRenderCaps(TrianglesPlaneSide,
+       LightCap, DarkCap);
+ 
++    { Source-cap depth mode has been restored. Draw finite end caps with normal
++      depth testing for both z-pass and z-fail. }
++    if UseFinite and (FiniteEndCaps.Count <> 0) then
++    begin
++      Mesh.SetVertexes(FiniteEndCaps, true);
++      Mesh.Render(pmTriangles);
++      FiniteEndCaps.Clear;
++    end;
++
+     { for each 2-manifold edge, possibly render it's shadow quad }
+     EdgesNow := ManifoldEdges;
+     EdgePtr := PEdge(EdgesNow.L);
+@@ -517,6 +581,7 @@ begin
+   finally
+     FreeAndNil(TrianglesPlaneSide);
+     FreeAndNil(Vertexes);
++    FreeAndNil(FiniteEndCaps);
+   end;
+ end;
+ 
+diff --git a/src/scene/castleviewport.pas b/src/scene/castleviewport.pas
+index c352bc3..a44ffca 100644
+--- a/src/scene/castleviewport.pas
++++ b/src/scene/castleviewport.pas
+@@ -112,6 +112,7 @@ type
+       FAutoCamera: Boolean;
+ 
+       FShadowVolumes: boolean;
++      FDirectionalShadowDistance: Single;
+       FShadowVolumesRender: boolean;
+ 
+       FScreenSpaceAmbientOcclusion: boolean;
+@@ -344,11 +345,6 @@ type
+       so you can do shadow volumes culling. }
+     procedure RenderShadowVolume(const Params: TRenderParams);
+ 
+-    { Detect position/direction of the main light that produces shadow volumes.
+-      Looks at MainScene.InternalMainLightForShadowVolumes.
+-      Returns light position (or direction, if W = 0) in world space. }
+-    function MainLightForShadowVolumes(out AMainLightPosition: TVector4): boolean;
+-
+     { Pass pointing device (mouse or touch) press event
+       to TCastleTransform instances in @link(Items).
+       Depends that MouseRayHit, MouseRayOrigin, MouseRayDirection are already updated. }
+@@ -364,6 +360,12 @@ type
+       Depends that MouseRayHit, MouseRayOrigin, MouseRayDirection are already updated. }
+     function PointingDeviceMove: boolean;
+   protected
++    { Detect the main light that produces shadow volumes, for rendering and
++      projection overrides that need the same light. Returns its position
++      (or unnormalized direction, if W = 0) in world space, resolving current
++      parent transforms on demand. The output is undefined when false. }
++    function MainLightForShadowVolumes(out AMainLightPosition: TVector4): boolean;
++
+     { @exclude }
+     function InternalOverride2DProjectionSizing: TCastleUserInterface; virtual;
+ 
+@@ -1140,6 +1142,14 @@ type
+       as yellow blended polygons. }
+     property ShadowVolumesRender: boolean read FShadowVolumesRender write FShadowVolumesRender default false;
+ 
++    { Optional finite directional shadow extrusion, in world units along the
++      normalized light direction. Zero preserves infinite volumes. The caller
++      must choose a distance beyond every receiver, and a ProjectionFar that
++      encloses every finite endpoint. Positional lights retain infinite volumes.
++      The same value is exposed by the renderer to custom shadow caches. }
++    property DirectionalShadowDistance: Single
++      read FDirectionalShadowDistance write FDirectionalShadowDistance default 0;
++
+     { Background (like a skybox) to display behind the @link(Items).
+       Displayed only when not @link(Transparent).
+       See https://castle-engine.io/background }
+@@ -2761,7 +2771,9 @@ procedure TCastleViewport.RenderFromView3D(const Params: TRenderParams);
+ 
+   procedure RenderWithShadowVolumes(const MainLightPosition: TVector4);
+   begin
+-    if (FProjection.ProjectionFar <> ZFarInfinity) and (not FWarningZFarInfinityDone) then
++    if (FProjection.ProjectionFar <> ZFarInfinity) and
++       ((MainLightPosition.W <> 0) or (DirectionalShadowDistance <= 0)) and
++       (not FWarningZFarInfinityDone) then
+     begin
+       FWarningZFarInfinityDone := true;
+       WritelnWarning('Rendering with Shadow Volumes, but ProjectionFar is not ZFarInfinity. Shadow volumes require ProjectionFar = ZFarInfinity. Leave TCastleCamera.ProjectionFar = 0.');
+@@ -2774,6 +2786,7 @@ procedure TCastleViewport.RenderFromView3D(const Params: TRenderParams);
+       FShadowVolumeRenderer := TGLShadowVolumeRenderer.Create;
+       FShadowVolumeRenderer.PrepareRenderingResources;
+     end;
++    FShadowVolumeRenderer.DirectionalShadowDistance := DirectionalShadowDistance;
+     FShadowVolumeRenderer.DebugRender := ShadowVolumesRender;
+     FShadowVolumeRenderer.InitFrustumAndLight(Params.RenderingCamera.Frustum, MainLightPosition);
+     FShadowVolumeRenderer.Render(Params,
+diff --git a/src/transform/castlefrustum.pas b/src/transform/castlefrustum.pas
+index 0745678..314c52e 100644
+--- a/src/transform/castlefrustum.pas
++++ b/src/transform/castlefrustum.pas
+@@ -227,9 +227,103 @@ type
+   end;
+   PFrustum = ^TFrustum;
+ 
++{ Conservative overlap with the prism formed by extruding the first four
++  (near) frustum points in both directions along LightDirection.
++  False proves that a directional shadow cannot cross the near rectangle.
++  Degenerate or numerically ambiguous planes return possible overlap.
++  This helper does not depend on a graphics context. }
++function Box3DIntersectsDirectionalNearPrism(const Box: TBox3D;
++  const NearPoints: TFrustumPoints; const LightDirection: TVector3): Boolean;
++
+ implementation
+ 
+-{$ifndef FPC}uses CastleUtils;{$endif}
++uses Math {$ifndef FPC}, CastleUtils {$endif};
++
++function Box3DIntersectsDirectionalNearPrism(const Box: TBox3D;
++  const NearPoints: TFrustumPoints; const LightDirection: TVector3): Boolean;
++const
++  ParallelTolerance = 1.0E-5;
++  { Eight Single ulps at the input coordinate scale cover represented near
++    corners and caster bounds. Ambiguity may cost z-fail, never a lost shadow. }
++  InputTolerance = 8 * 1.1920928955078125E-7;
++var
++  Points: array [0..3] of TVector3Double;
++  Light, NearNormal, Center, Edge, Normal, Support: TVector3Double;
++  LightLength, NearLength, NormalLength, Scale, Margin, CenterSide: Double;
++  I, J: Integer;
++  PlaneUsable: Boolean;
++begin
++  Scale := 1;
++  for I := 0 to 2 do
++  begin
++    if IsNan(LightDirection[I]) or IsInfinite(LightDirection[I]) or
++       IsNan(Box.Data[0][I]) or IsInfinite(Box.Data[0][I]) or
++       IsNan(Box.Data[1][I]) or IsInfinite(Box.Data[1][I]) then
++      Exit(true);
++    Scale := Max(Scale, Max(Abs(Box.Data[0][I]), Abs(Box.Data[1][I])));
++  end;
++  if Box.IsEmpty then
++    Exit(false);
++  Center := TVector3Double.Zero;
++  for I := 0 to 3 do
++  begin
++    for J := 0 to 2 do
++    begin
++      if IsNan(NearPoints[I][J]) or IsInfinite(NearPoints[I][J]) then
++        Exit(true);
++      Points[I].Data[J] := NearPoints[I][J];
++      Scale := Max(Scale, Abs(Points[I][J]));
++    end;
++    Center := Center + Points[I] * 0.25;
++  end;
++  Light := Vector3Double(LightDirection);
++  LightLength := Light.Length;
++  if LightLength = 0 then
++    Exit(true);
++  Light := Light / LightLength;
++  NearNormal := TVector3Double.CrossProduct(Points[0] - Points[1],
++    Points[2] - Points[1]);
++  NearLength := NearNormal.Length;
++  if NearLength = 0 then
++    Exit(true);
++  if Abs(TVector3Double.DotProduct(NearNormal, Light)) <=
++     ParallelTolerance * NearLength then
++    Exit(true);
++
++  for I := 0 to 3 do
++  begin
++    Edge := Points[(I + 1) mod 4] - Points[I];
++    { Cross differences directly: adding a unit light to a large coordinate
++      can round away the light before TrianglePlane even sees it. }
++    Normal := TVector3Double.CrossProduct(Edge, Light);
++    NormalLength := Normal.Length;
++    if NormalLength <= 1.0E-14 * Edge.Length then
++      Continue;
++    Margin := InputTolerance * Scale * NormalLength;
++    CenterSide := TVector3Double.DotProduct(Normal, Center - Points[I]);
++    if Abs(CenterSide) <= Margin then
++      Continue;
++    if CenterSide > 0 then
++      Normal := -Normal;
++
++    { Rounding can make a near rectangle slightly nonplanar. Only retain a
++      separating plane that encloses every represented near corner. }
++    PlaneUsable := true;
++    for J := 0 to 3 do
++      if TVector3Double.DotProduct(Normal, Points[J] - Points[I]) > Margin then
++        PlaneUsable := false;
++    if not PlaneUsable then
++      Continue;
++    for J := 0 to 2 do
++      if Normal[J] >= 0 then
++        Support.Data[J] := Box.Data[0][J]
++      else
++        Support.Data[J] := Box.Data[1][J];
++    if TVector3Double.DotProduct(Normal, Support - Points[I]) > Margin then
++      Exit(false);
++  end;
++  Result := true;
++end;
+ 
+ constructor TFrustum.Init(const Matrix: TMatrix4);
+ begin
+diff --git a/src/transform/castleinternalglshadowvolumes.pas b/src/transform/castleinternalglshadowvolumes.pas
+index 5019fab..396a25e 100644
+--- a/src/transform/castleinternalglshadowvolumes.pas
++++ b/src/transform/castleinternalglshadowvolumes.pas
+@@ -52,6 +52,7 @@ type
+     FZFailAndLightCap: boolean;
+ 
+     FLightPosition: TVector4;
++    FDirectionalShadowDistance: Single;
+ 
+     StencilConfigurationKnown: boolean;
+     StencilConfigurationKnownZFail: boolean;
+@@ -90,6 +91,12 @@ type
+     { Light casting shadows position, initialized by InitFrustumAndLight. }
+     property LightPosition: TVector4 read FLightPosition;
+ 
++    { World-space distance along the normalized directional light. Zero keeps
++      infinite volumes. The viewport must enclose finite endpoints in its far
++      plane and place them beyond all shadow receivers. Positional lights ignore it. }
++    property DirectionalShadowDistance: Single
++      read FDirectionalShadowDistance write FDirectionalShadowDistance;
++
+     { Call this when the bounding box of shadow caster is known.
+ 
+       This calculates various things related to shadow volumes rendering
+@@ -383,37 +390,8 @@ procedure TGLShadowVolumeRenderer.InitCaster(const CasterBox: TBox3D);
+         end;
+       end else
+       begin
+-        { For directional light, this is somewhat similar to positional lights,
+-          except that you have 4 planes (each one from a segment of near rectangle,
+-          extruded to infinity in both directions).
+-
+-          The corner cases may occur when light direction is the same as direction
+-          of one of the segments. This will make at most 2 such planes invalid
+-          (as 2 pairs of segments have different direction than other 2 pairs
+-          of near rectangle segments). So we simply ignore such invald planes,
+-          so again we can use InsidePlane function. }
+-
+-        { Although NearPlane for directional lights is not a plane that delimits
+-          the pyramid, we still calculate NearPlane to decide in which direction
+-          our 4 planes should be calculated, so that they point CCW outside. }
+-        NearPlane := TrianglePlane(
+-          FrustumNearPoints[2].XYZ, FrustumNearPoints[1].XYZ, FrustumNearPoints[0].XYZ);
+-
+-        if TVector3.DotProduct(NearPlane.XYZ, LightPosition.XYZ) > 0 then
+-        begin
+-          Result :=
+-            InsidePlane(TrianglePlane(FrustumNearPoints[0].XYZ, FrustumNearPoints[1].XYZ, (FrustumNearPoints[0].XYZ + LightPosition.XYZ))) and
+-            InsidePlane(TrianglePlane(FrustumNearPoints[1].XYZ, FrustumNearPoints[2].XYZ, (FrustumNearPoints[1].XYZ + LightPosition.XYZ))) and
+-            InsidePlane(TrianglePlane(FrustumNearPoints[2].XYZ, FrustumNearPoints[3].XYZ, (FrustumNearPoints[2].XYZ + LightPosition.XYZ))) and
+-            InsidePlane(TrianglePlane(FrustumNearPoints[3].XYZ, FrustumNearPoints[0].XYZ, (FrustumNearPoints[3].XYZ + LightPosition.XYZ)));
+-        end else
+-        begin
+-          Result :=
+-            InsidePlane(TrianglePlane(FrustumNearPoints[1].XYZ, FrustumNearPoints[0].XYZ, (FrustumNearPoints[1].XYZ + LightPosition.XYZ))) and
+-            InsidePlane(TrianglePlane(FrustumNearPoints[2].XYZ, FrustumNearPoints[1].XYZ, (FrustumNearPoints[2].XYZ + LightPosition.XYZ))) and
+-            InsidePlane(TrianglePlane(FrustumNearPoints[3].XYZ, FrustumNearPoints[2].XYZ, (FrustumNearPoints[3].XYZ + LightPosition.XYZ))) and
+-            InsidePlane(TrianglePlane(FrustumNearPoints[0].XYZ, FrustumNearPoints[3].XYZ, (FrustumNearPoints[0].XYZ + LightPosition.XYZ)));
+-        end;
++        Result := Box3DIntersectsDirectionalNearPrism(CasterBox,
++          FrustumNearPoints, LightPosition.XYZ);
+       end;
+     end;
+ 

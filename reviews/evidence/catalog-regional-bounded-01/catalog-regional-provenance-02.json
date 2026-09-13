@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-09-12T21:05:45.9320268Z",
+  "buildLog": "build/logs/catalog-regional-main-build-02.log",
+  "engine": "050f07edde6652d6657b4fe0d299822b9f502afa",
+  "source": {
+    "src/phanes.catalog.admission.pas": "88abc966f6b0505623a87a2fdf408bc54ce4e90326b5b6a193f614e516ed7e58",
+    "src/phanes.catalog.regional.pas": "267da0acdab8a8df53ed1ceec9db79f1d6912a13e439112cf100449ae65d34ec",
+    "src/phanes.catalog.runtime.pas": "c11c589d3f8d42ebdce33524c409831e2dc0c9cd7852d1fb28b65e30461183cc",
+    "src/phanes.world.placement.pas": "fa2656015e359dbf2ebc3a47301ee7f9b311bb806bc76c83e9d15bbec382bdc1",
+    "src/phanes.world.generate.pas": "6e0d30c2ce0aafbfa4c9b2c8e8c93939bbc66806a0d8f77f5d5343f8ed7cdbe6",
+    "src/phanes.world.validate.pas": "dcd70a88c0e40d04cd6014fa78b1fce661e6e476056d76919cacbe86f57fc8e6",
+    "src/phanes.interiors.catalog.pas": "c3f059f4a8fc7041f0671b9cc26db560770d719eb55c7822588c9854667e2a71",
+    "cge/code/phanes.app.view.pas": "8e5018f5617b398f2cdbd43b3871ef57d76495765c9d070c6b0a5e5f85e46520",
+    "cge/code/phanes.catalog.residency.pas": "61b15d40279d73892cc8bb3d33e3d4e1f9021d6e0ed80a3676a6a7a125a0cf53",
+    "data/palette.json": "b8f4a4035b0d1b74ef08e7f06d98a185adace656c112f3dd0cf08a0ba8a400c6"
+  },
+  "artifacts": {
+    "build/web/phanes.wasm": "5c0648c4900b0c5b0b89b7c9f0366279ffbd699dd113b1e938a38244a8991daa",
+    "build/web/phanes.worker.js": "1fd0f9e8a7d9d5b3e2ace9e7b7f7d1b1f5665cf2dfadd75c9ec33d178cfddb1d",
+    "build/web/phanes.interiors.browser.js": "6560638bc943fdccb7abb95c49512f45b005bbf34feae2c30be9fc805dd18bc6",
+    "build/web/phanes.editor.js": "e17355b20c2114dc472015a422939ba10ec553c93871d69a96ccba2d3e18c899",
+    "build/web/data/palette.json": "b8f4a4035b0d1b74ef08e7f06d98a185adace656c112f3dd0cf08a0ba8a400c6",
+    "build/web/phanes_data.zip": "a61df0320b1372e99fb35c1a5cc536e0183e3d971f3ae5d05472c652bce5b289"
+  }
+}

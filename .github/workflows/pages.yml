@@ -1,0 +1,287 @@
+# MIT License
+#
+# Copyright (c) 2026 mr-highball
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+name: Build and publish Phanes
+
+on:
+  push:
+    branches: [main, hello-phanes]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      full_validation:
+        description: Run the extended corpus and feature verification suites
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phanes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      pages: write
+    outputs:
+      critic-result: ${{ steps.critic.outcome }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '22'
+      - name: Install compiler bootstrap and browser test tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y fp-compiler fp-units-fcl fp-utils libpng-dev libx11-dev zlib1g-dev
+          npm install --prefix "$RUNNER_TEMP/browser-qa" --no-audit --no-fund playwright@1.58.2
+          "$RUNNER_TEMP/browser-qa/node_modules/.bin/playwright" install --with-deps chromium
+          echo "NODE_PATH=$RUNNER_TEMP/browser-qa/node_modules" >> "$GITHUB_ENV"
+      - name: Permit the test Chromium sandbox on Ubuntu
+        run: |
+          browser_path="$(find "$HOME/.cache/ms-playwright" -type f \( -path '*/chrome-linux/chrome' -o -path '*/chrome-linux64/chrome' \) -print -quit)"
+          test -n "$browser_path"
+          test -x "$browser_path"
+          # Ubuntu restricts user namespaces for downloaded Chromium binaries.
+          # Permit this executable while retaining Chromium's own sandbox.
+          sudo tee /etc/apparmor.d/phanes-ci-chromium > /dev/null <<EOF
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile phanes-ci-chromium "$browser_path" flags=(unconfined) {
+            userns,
+          }
+          EOF
+          sudo apparmor_parser -r /etc/apparmor.d/phanes-ci-chromium
+          "$browser_path" --headless=new --no-first-run --dump-dom about:blank > "$RUNNER_TEMP/phanes-browser-smoke.html"
+      - uses: actions/cache/restore@v6.1.0
+        id: toolchain-cache
+        with:
+          path: build/ci-toolchain
+          key: wasm-toolchain-ubuntu24-v1-${{ hashFiles('tools/ci-toolchain.sh') }}
+      - name: Build pinned FPC and pas2js toolchain
+        run: bash tools/ci-toolchain.sh
+      - name: Cache verified compiler installation
+        if: steps.toolchain-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: build/ci-toolchain
+          key: ${{ steps.toolchain-cache.outputs.cache-primary-key }}
+      - name: Verify imported asset and music corpora with Pascal
+        if: inputs.full_validation == true
+        shell: pwsh
+        run: |
+          ./tools/assets.ps1 -Action verify-kits
+          ./tools/test-kits.ps1
+          ./tools/catalog-inspect.ps1 -WithTests
+          Copy-Item data/catalog-geometry.json build/catalog-geometry-evidence.json
+          ./tools/assets.ps1 -Action verify-music
+          Copy-Item data/music/references.json build/music-references-evidence.json
+          ./tools/test-music.ps1
+          ./tools/assets.ps1 -Action verify-materials
+          ./tools/test-landscape.ps1
+          ./tools/test-terrain.ps1
+          ./tools/test-landforms.ps1
+          ./tools/test-terrain-wasm.ps1
+          ./tools/test-composition.ps1
+          ./tools/test-groundworks.ps1
+          ./tools/test-buildings.ps1
+          ./tools/test-floor.ps1
+          ./tools/test-spaces.ps1
+          ./tools/test-spaces-integration.ps1
+      - name: Build Castle Game Engine command line tool
+        working-directory: vendor/castle-engine
+        run: bash tools/build-tool/castle-engine_compile.sh > "$GITHUB_WORKSPACE/build/logs/cge-tool.log" 2>&1
+      - name: Compile web starter and dependency checks
+        shell: pwsh
+        run: |
+          ./build-web.ps1 -Mode release -WithTests:('${{ inputs.full_validation }}' -eq 'true') *> build/logs/phanes.log
+          @{
+            commit = $env:GITHUB_SHA
+            run = $env:GITHUB_RUN_ID
+          } | ConvertTo-Json | Set-Content build/web/build-info.json
+      - name: Stage current site within the Pages budget
+        id: pages
+        shell: pwsh
+        run: |
+          ./tools/assets.ps1 -Action stage-pages
+          $sitePath = (Get-Content -LiteralPath build/pages-site-path.txt -Raw).Trim()
+          "path=$sitePath" >> $env:GITHUB_OUTPUT
+      - name: Verify browser startup and project-path hosting
+        if: inputs.full_validation == true
+        env:
+          SITE_ROOT: ${{ steps.pages.outputs.path }}
+          PHANES_SOFTWARE_GPU: '1'
+        run: |
+          node tools/test-composition.cjs
+          node tools/test-groundworks.cjs
+          node tools/test-floor.cjs
+          node tools/test-spaces.cjs
+          node tools/test-spaces-integration.cjs
+          node tools/test-terrain.cjs
+          browser_path="$(find "$HOME/.cache/ms-playwright" -type f \( -path '*/chrome-linux/chrome' -o -path '*/chrome-linux64/chrome' \) -print -quit)"
+          native_compiler="$(command -v fpc)"
+          compiler="$(command -v pas2js)"
+          test -n "$browser_path"
+          test -x "$browser_path"
+          test -n "$native_compiler"
+          test -x "$native_compiler"
+          test -n "$compiler"
+          test -x "$compiler"
+          test -f "$PAS2JS_RUNTIME"
+          server_path="$(pwsh -File tools/serve.ps1 -BuildOnly -NativeCompiler "$native_compiler" | tail -n 1)"
+          mkdir -p build/pages-host build/ci-browser
+          cp -R "$SITE_ROOT" build/pages-host/Phanes
+          "$server_path" --root "$SITE_ROOT" --bind 127.0.0.1 --port 4186 > build/logs/server.log 2>&1 &
+          server_pid=$!
+          "$server_path" --root build/pages-host --bind 127.0.0.1 --port 4187 > build/logs/pages-server.log 2>&1 &
+          pages_pid=$!
+          trap 'kill "$server_pid" "$pages_pid"' EXIT
+          for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
+            for attempt in {1..30}; do
+              if curl --fail --silent "$url" > /dev/null; then
+                break
+              fi
+              sleep 1
+            done
+            curl --fail --silent "$url" > /dev/null
+            # Check worker contracts before the longer rendered journeys.
+            TEST_URL="$url" node tools/test-world.cjs
+            TEST_WORKER_ONLY=1 TEST_URL="$url" node tools/test-interiors.cjs
+          done
+          pwsh -File tools/test-startup.ps1 -Browser "$browser_path" \
+            -TestUrl http://127.0.0.1:4186/ -EvidenceDirectory build/ci-browser \
+            -NativeCompiler "$native_compiler" -Compiler "$compiler" \
+            -RuntimeJs "$PAS2JS_RUNTIME"
+          # Diagnose import/editing failures before the longer visual suites.
+          world_file_case=0
+          for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
+            world_file_case=$((world_file_case + 1))
+            pwsh -File tools/test-world-file.ps1 -Browser "$browser_path" \
+              -TestUrl "$url" -EvidenceDirectory "build/ci-browser/world-file-$world_file_case" \
+              -NativeCompiler "$native_compiler" -Compiler "$compiler" \
+              -RuntimeJs "$PAS2JS_RUNTIME"
+          done
+          pwsh -File tools/test-interior-frame.ps1 -Browser "$browser_path" \
+            -TestUrl http://127.0.0.1:4187/Phanes/ \
+            -EvidenceDirectory build/ci-browser/pages-interior-frame \
+            -NativeCompiler "$native_compiler"
+          for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
+            TEST_URL="$url" node tools/test-interiors.cjs
+          done
+          pwsh -File tools/test-styles.ps1 -Browser "$browser_path" \
+            -TestUrl http://127.0.0.1:4187/Phanes/ \
+            -EvidenceDirectory build/ci-browser/pages-styles \
+            -NativeCompiler "$native_compiler" -Compiler "$compiler" \
+            -RuntimeJs "$PAS2JS_RUNTIME"
+          pwsh -File tools/test-catalog-objects.ps1 -Browser "$browser_path" \
+            -TestUrl http://127.0.0.1:4187/Phanes/ \
+            -EvidenceDirectory build/ci-browser/pages-objects \
+            -NativeCompiler "$native_compiler"
+          pwsh -File tools/test-recovery-rooms.ps1 -Browser "$browser_path" \
+            -TestUrl http://127.0.0.1:4187/Phanes/ \
+            -EvidenceDirectory build/ci-browser/pages-rooms \
+            -NativeCompiler "$native_compiler"
+          for url in http://127.0.0.1:4186/ http://127.0.0.1:4187/Phanes/; do
+            TEST_URL="$url" node tools/test-room-journeys.cjs
+            TEST_URL="$url" node tools/test-structures.cjs
+            TEST_URL="$url" node tools/test-groundworks-view.cjs
+            TEST_URL="$url" node tools/test-supported-buildings.cjs
+            TEST_URL="$url" node tools/test-groundwork-picking.cjs
+            TEST_URL="$url" node tools/test-web.cjs
+          done
+      - name: Smoke-test the playable Pages build
+        if: inputs.full_validation != true
+        env:
+          SITE_ROOT: ${{ steps.pages.outputs.path }}
+          PHANES_SOFTWARE_GPU: '1'
+        run: |
+          browser_path="$(find "$HOME/.cache/ms-playwright" -type f \( -path '*/chrome-linux/chrome' -o -path '*/chrome-linux64/chrome' \) -print -quit)"
+          native_compiler="$(command -v fpc)"
+          test -x "$browser_path"
+          server_path="$(pwsh -File tools/serve.ps1 -BuildOnly -NativeCompiler "$native_compiler" | tail -n 1)"
+          mkdir -p build/pages-host build/ci-browser
+          cp -R "$SITE_ROOT" build/pages-host/Phanes
+          "$server_path" --root build/pages-host --bind 127.0.0.1 --port 4187 > build/logs/pages-server.log 2>&1 &
+          pages_pid=$!
+          trap 'kill "$pages_pid"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4187/Phanes/ > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4187/Phanes/ > /dev/null
+          pwsh -File tools/test-interior-frame.ps1 -Browser "$browser_path" \
+            -TestUrl http://127.0.0.1:4187/Phanes/ \
+            -EvidenceDirectory build/ci-browser/pages-interior-frame \
+            -NativeCompiler "$native_compiler"
+      - name: Record independent critic acceptance
+        if: inputs.full_validation == true
+        id: critic
+        continue-on-error: true
+        shell: pwsh
+        run: ./tools/reviews.ps1 -WithTests
+      - name: Retain build logs and browser evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: verification
+          path: |
+            build/logs/
+            build/*evidence.json
+            build/*.png
+            build/ci-browser/*/*.png
+            build/ci-browser/*/*.json
+            build/ci-browser/*/*.txt
+      - name: Configure Pages
+        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/hello-phanes') && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v6.0.0
+      - name: Upload static site
+        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/hello-phanes') && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: ${{ steps.pages.outputs.path }}
+
+  deploy:
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/hello-phanes') && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish Phanes
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1

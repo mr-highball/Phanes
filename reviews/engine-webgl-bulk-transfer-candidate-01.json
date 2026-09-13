@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "feature": "engine-webgl-bulk-transfer-candidate",
+  "scope": "Isolated Castle Game Engine WebGL matrix and numeric-list conversion candidate: contiguous-layout checks, signed-byte bounds, owned bulk copies, reproducible baseline/candidate Pascal transfer tests and correctly bound candidate application staging. Application dependency adoption and existing buffer-upload helpers are outside this development-candidate scope.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "pending",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The bounded README gives one baseline/candidate command, records diagnostics and hashes, and states the explicit signed-range switch. The scope and exclusion of buffer helpers are now clear. Current browser execution of the revised harness is still outstanding."
+    },
+    "accuracy": {
+      "grade": "B",
+      "evidence": "The candidate has compile-time record-size checks, QWord byte arithmetic, a High(LongInt) guard, and owned CopyFromMemory results. The retained probe exercises exact matrix/list bit patterns, empty lists, capacity, mutation/free and memory growth. Final application staging binds the candidate WASM hash 3994c8a515573e3329bd862b71f3a132687b6c2e815885e2ed192004e12cf8bc. Current candidate browser result and signed-boundary output are not yet retained, so this category remains held."
+    },
+    "wowFactor": {
+      "grade": "B",
+      "evidence": "This is developer tooling, so useful diagnostics and reproducibility are the relevant quality evidence. Earlier archived candidate pixel parity was exact, but it predates the final staging binding and cannot establish the current result."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "The candidate combines layout assertions, owned bulk copies and synthetic logical-count boundary tests so the 2 GiB rejection path is exercised without allocating an enormous list. The approach preserves the public conversion API and leaves the application dependency pin untouched."
+    }
+  },
+  "blockingFindings": [
+    "Retain a fresh baseline and candidate browser harness result, including all legacy assertions and the 13 signed-range assertions, from the exact current candidate source and final toolchain.",
+    "Bind the browser result to the current staged WASM, data archive, manifest, host and runtime parts; the final staging evidence exists, but the harness result is not yet present.",
+    "Keep this feature pending until the independent runtime evidence is reviewed. Do not treat this report as Castle dependency adoption or as approval of terrain, rendering, or recovery features."
+  ],
+  "verification": "build/tools/phanes.reviews.exe hash was run for every declared input; hashes below are the resulting CI-compatible fingerprints.\nRetained source inspection confirms the candidate diff only changes matrix and numeric-list conversions and that the repository patch applies to Castle Engine commit 050f07edde6652d6657b4fe0d299822b9f502afa.\nRetained geometry and application logs were inspected but are not used as current transfer acceptance evidence because earlier served WASM differed from the final candidate.\nbuild/web-engine-bulk-final-evidence.json records candidate WASM 3994c8a515573e3329bd862b71f3a132687b6c2e815885e2ed192004e12cf8bc, data 45e47cd0b26551cf4e82b0cd92a6a1df9ae89e852d2afafdad933c5401b19434, bound manifest cc1fe20fcf1933ac588dcec72dcffcb4a50ec115d5db37de7eda66e6eb2a7d57, bound host a634dca5df8ae7e887714649e5efcc5fe21255428d0cfcdcf434cdffce773e70 and runtimePartCount 124.",
+  "reviewedFiles": {
+    "docs/dependencies/CGE_WEBGL_TRANSFER.md": "d0795370246e3dc981e86e25f3c3495da8f54ff3a7d653991930aa9475df333d",
+    "docs/dependencies/cge-webgl-bulk-transfer.patch": "0ee6ed8ab70aa84430bdc73b7748746c3bf273d41afe4913b3cabbb0fe371c27",
+    "tests/webgl-transfer/README.md": "b8bf4d52cea74f0c355a8bab1cef91620c2755af4d8563e79303613f99a02402",
+    "tests/webgl-transfer/CastleEngineManifest.xml": "06a1c6f4ad682fd630adfe2c87adb8bf2e05744fab07eea1088454bff1f7c3fa",
+    "tests/webgl-transfer/probe.html": "0cd1612863f881f1d040dd9f5d331b028b82ddc5625288f78f3684e606f85061",
+    "tests/webgl-transfer/code/phanes.tests.webgl.transfer.pas": "fd1606050d76c158af4de82b5050227f1626d9969cf766940cfe2503e29542c4",
+    "tests/phanes.tests.webgl.transfer.browser.lpr": "c0c5f671a7a95ecd23cbd7297c4a5671a64a57ff92f9adec1804940d7a6be287",
+    "tools/test-webgl-transfer.ps1": "a817b96e53d4a35d9da7de57ba0685207cb661a5db3fd162a1e06cb91668b990",
+    "tools/build-host.ps1": "e2772a1c59659fe9392ed47902eb0764ec46fb26c6c5fa671ca09fd357ae2d0b",
+    "tools/phanes.tools.webparts.lpr": "43810844606206507b625a319df09cb1611add3c02bb1a1e0e238107eef102f9",
+    "tools/phanes.tools.browser.pas": "c075b492dd08b0f8407cc2c8ea8d87fc7e4f210947b7236c3f4d371dd58d433c",
+    "tools/phanes.tools.files.pas": "12e07c9fb9d48c04596c9ad019924e9db2477ff30f0c08c2d946a2c62dde89c7",
+    "src/phanes.startup.parts.pas": "29e086fc9da867a9936ef09d43848ee22814df2abd59f1fa26de8637bf59749a",
+    "src/phanes.startup.browser.lpr": "f238164474e8ed335b9a0e5eb4dca3eaf6a88bda12a6e48aab3d82f6c4d2ded9",
+    "src/phanes.host.engine.lpr": "55c6c5c64229d996dfe5da83777b5952f6f4a2e695fd50013b416c45b250fdb9",
+    "tools/serve.ps1": "2e4608425172b10ca2a764814f7ac0ca6bb79e3e8688a76a50abf1a3e6f0f16b",
+    ".gitmodules": "cbdabb12e738683a7c0c7b01a64bd3722e849feeb8144ab2d8d64e6dfe28faae"
+  }
+}

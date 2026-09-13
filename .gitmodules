@@ -1,0 +1,6 @@
+[submodule "vendor/wfc"]
+	path = vendor/wfc
+	url = https://github.com/mr-highball/wfc.git
+[submodule "vendor/castle-engine"]
+	path = vendor/castle-engine
+	url = https://github.com/mr-highball/castle-engine.git

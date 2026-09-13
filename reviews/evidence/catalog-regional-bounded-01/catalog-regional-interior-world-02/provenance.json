@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-09-12T21:15:33.3587501Z",
+  "application": "build/catalog-regional-provenance-02.json",
+  "applicationSha256": "00afd6fa1857c452d5a4bd7eafc1768bcb788634eeeec7f83959ffe1fe8f5a62",
+  "source": {
+    "tests/phanes.tests.catalog.world.browser.lpr": "d8c05da6d96b4e14151645fa6f7ffbf24b93fb7960699e0c168a0de57dc63f93",
+    "tests/phanes.tests.catalog.world.probe.lpr": "babbf30fb67486e5755f7d4d2af93c4347ae9612ac905207048ca1e26763156c",
+    "tools/test-catalog-world.ps1": "a37d815bc458d53694eef47348de82e956f045401b50e572880b54313b838628",
+    "tools/phanes.tools.browser.pas": "c075b492dd08b0f8407cc2c8ea8d87fc7e4f210947b7236c3f4d371dd58d433c",
+    "tools/phanes.tools.files.pas": "9d6f84a90d77da8272863c0974c99559889176e599017a4aa5418454eba6dd23"
+  },
+  "artifacts": {
+    "build/tools/phanes.tests.catalog.world.browser.exe": "8f28f56b7a12be7facf7fc7f4737565170a0457d347bcad2cbf18599769d4d37",
+    "build/catalog-world-probe/phanes.tests.catalog.world.probe.js": "e06e58a4f04a280131eb29ded8763e2fb195a53f5ddd59efa381ca0cdd02e310",
+    "build/catalog-regional-interior-world-02/checks.log": "83834181c1d00b42e3643e75b42fd6e447e34ccd329d06340513ea9323ee5c3d",
+    "build/catalog-regional-interior-world-02/focused-vase-desktop.png": "c78f7b6454ee9c525dea9c3b07e0daf2511786f4aba8218207fc7940d150626e",
+    "build/catalog-regional-interior-world-02/focused-vase-phone.png": "e8b3a629be082730905d11f2f95942f3ff3bba33d5f674a66fb1e261235bd84e",
+    "build/catalog-regional-interior-world-02/modular-book-desktop.png": "61f9d2db6226b0c12b1bd8d1379d4ecad41e87e22c4ce887dd26bd67b27b8488",
+    "build/catalog-regional-interior-world-02/reacquired-phone.png": "d2c0e1cc5e03c753d36df5ff816f7a4d5be4c564e1f2ef833a330a7945c8473e",
+    "build/catalog-regional-interior-world-02/resident-both.json": "b8c0c3433674de6fed2e578ad4d949748efdc77bc74f872547b006fd0dee78c7",
+    "build/catalog-regional-interior-world-02/resident-reacquired.json": "efca65def553a876841160da542c0271114287640c41232747c26235055090ee",
+    "build/catalog-regional-interior-world-02/result.txt": "1d652156051e543a4b944634af96211a9ae3fa656ae243bd9d64246e65e0fa1e",
+    "build/catalog-regional-interior-world-02/retired-phone.png": "41235398e15b3097ed1629402f8367bfc14f85b9f645320a4dfa800bd631bb1b"
+  }
+}

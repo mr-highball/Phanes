@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "feature": "terrain-shadow-cache-bounded",
+  "scope": "Bounded independent audit of Phanes static foliage shadow-cache geometry, admission limits, invalidation and CGE fallback behavior. This report does not review or pass the registered terrain-landforms feature, its WFC/editing requirements, or its complete desktop/phone journey.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "pending",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The implementation keeps unsupported modes on the ordinary CGE path, stages all entries before drawing, and documents invalidation and recovery behavior. This is an internal renderer feature, so discoverability is expressed through predictable fallback rather than new user controls. A current final populated-world journey has not yet been independently inspected."
+    },
+    "accuracy": {
+      "grade": "B",
+      "evidence": "The retained independent probe passes 138394 checks with zero failures across 1120 shape cases, including synthetic reversed-edge cancellation, pinned CGE welded adjacency, exact cap ordering, transforms, directional lights and point-light rejection. The source performs wide preflight arithmetic, separate temporary/resident limits, explicit invalidation and all-entry fallback. Current final served shadow output and recovery evidence remain outstanding."
+    },
+    "wowFactor": {
+      "grade": "B",
+      "evidence": "Earlier retained desktop and phone captures show visible foliage shadows and the cache improves the populated scene metrics, but those captures predate the final frozen staging evidence. No fresh shadow visual was run in this review because browser/GPU execution is serialized to Sol."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "B+",
+      "evidence": "The cache reuses GPU silhouette and cap geometry while retaining CGE per-frame visibility, stencil setup and cap selection. It preserves the normal renderer for unsupported or exhausted scenes and frees CPU geometry after upload, giving the optimization a practical bounded design."
+    }
+  },
+  "blockingFindings": [
+    "Inspect a current final staged populated-world render with visible shadows and graphics recovery, bound to the frozen WASM/data/host hashes; archived shadow captures cannot close this hold.",
+    "Keep terrain-landforms review null. This report is deliberately bounded and cannot establish the full WFC, editing, preservation, persistence or desktop/phone acceptance scope.",
+    "Do not claim physical-phone responsiveness from desktop phone emulation; that evidence remains open."
+  ],
+  "verification": "build/critic/shadowcache-run-02.log: checks=138394 failures=0 shapeCases=1120 sideVertices=58290 capVertices=56190.\nbuild/critic/phanes.probe.shadowcache.lpr was inspected as the independent oracle; it separates synthetic reversed-edge cancellation from the pinned engine welded-adjacency contract and tests five transforms and seven directional lights.\nbuild/critic/shadowcache-compile-02.log records successful native compilation of the retained critic probe.\ndocs/TERRAIN.md and docs/ARCHITECTURE.md were checked for scope, fallback, memory bounds, invalidation and retained evidence. No browser/GPU test was run in this review.",
+  "reviewedFiles": {
+    "cge/code/phanes.world.shadowcache.pas": "c81fdc99284e7750656523a23841881c561bfea7677869cfc81d6953e79e7cb0",
+    "cge/code/phanes.world.batching.pas": "131a0f9eb94cd99ca022baaed6a25d5f65629a58eb5465115bc4a47051e34cba",
+    "docs/TERRAIN.md": "38ddb149b91c08f673408901190bf904b1fce2ec5c668e84c0a6bd88bd41a51c",
+    "docs/ARCHITECTURE.md": "4dbf80f18357ba3f6a57179a80f0de1d9ba44cdf0aeb4f4c5237473ed65a7c18",
+    "tests/phanes.tests.batching.lpr": "a4ba44aded3d82e2436737408db2aecd0017d7cb92bed7689fa216b7f2da4bf3",
+    "tools/test-batching.ps1": "483a010b825828f54e8cf756f2f7cd3f0625bc44156055a6de238259c1f7ac9a",
+    "build/critic/phanes.probe.shadowcache.lpr": "ba1b7b67ca464a2c2987409c0a5c1a3cf67500e1453b369c4c3f32eaaf451e83"
+  }
+}

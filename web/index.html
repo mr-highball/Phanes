@@ -1,0 +1,822 @@
+<!--
+MIT License
+
+Copyright (c) 2026 mr-highball
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Phanes · World creator</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="phanes.css" />
+    <link rel="stylesheet" href="phanes.identity.css" />
+    <link rel="stylesheet" href="phanes.interior.css" />
+    <link rel="stylesheet" href="phanes.groundworks.css" />
+    <link rel="stylesheet" href="phanes.styles.css" />
+    <link rel="stylesheet" href="phanes.authoring.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./"
+        ><span class="brand-mark" data-glyph="emergence" aria-hidden="true"></span> PHANES
+        <small>WORLD CREATOR</small></a
+      >
+      <span class="world-name" id="world-name">Untitled world</span>
+      <div class="header-actions">
+        <button id="open-styles" aria-label="Choose visual style" aria-expanded="false"
+          aria-controls="style-panel"><span class="style-mark" aria-hidden="true"></span>Style</button>
+        <button
+          id="open-audio"
+          data-glyph="music"
+          aria-label="Enter music dimension"
+          aria-expanded="false"
+          aria-controls="audio-panel"
+        >
+          Music
+        </button>
+        <button id="save-world" data-glyph="export" disabled>Export</button>
+        <button id="import-world" data-glyph="open">Open</button>
+        <input id="world-file" type="file" accept="application/json,.json" hidden />
+        <button id="edit-toggle" data-glyph="explore" class="primary" disabled>
+          Explore <kbd>Tab</kbd>
+        </button>
+      </div>
+    </header>
+    <section id="style-panel" hidden role="dialog" aria-modal="false" aria-labelledby="style-title">
+      <div class="style-panel-heading">
+        <div><span class="eyebrow">WORLD APPEARANCE</span><h2 id="style-title">Ways of seeing.</h2></div>
+        <button id="close-styles" aria-label="Close visual styles">Close</button>
+      </div>
+      <p class="style-intro">One world. A different way to see it.</p>
+      <div class="style-current-row"><strong id="style-current">None</strong>
+        <button id="style-reset">Restore original</button></div>
+      <div class="style-filters">
+        <label class="style-search-label"><span class="visually-hidden">Find a visual style</span>
+          <input id="style-search" type="search" placeholder="Find a style..." autocomplete="off" /></label>
+        <label><span class="visually-hidden">Style group</span><select id="style-group">
+          <option>All</option><option>Drawn</option><option>Print &amp; pixel</option>
+          <option>Atmosphere</option><option>Spectral</option><option>Original</option>
+        </select></label>
+      </div>
+      <div class="style-results"><div id="style-choices" aria-label="Visual styles"></div>
+        <p id="style-empty" hidden>No matching styles. Try a different name or group.</p></div>
+      <div class="style-adjustments">
+        <label for="style-strength">Intensity <output id="style-strength-value">100%</output></label>
+        <input id="style-strength" type="range" min="0" max="100" step="1" value="100" />
+        <label for="style-detail"><span id="style-detail-label">Detail</span>
+          <output id="style-detail-value">50%</output></label>
+        <input id="style-detail" type="range" min="0" max="100" step="1" value="50" />
+        <button id="style-compare" aria-pressed="false">Compare original</button>
+        <p id="style-status" role="status" aria-live="polite">Original rendered view</p>
+      </div>
+    </section>
+    <main>
+      <aside id="tools-panel">
+        <button id="mobile-save-world" data-glyph="export" disabled>Export world</button>
+        <div class="panel-heading">
+          <span class="eyebrow">CREATE</span>
+          <h1>Shape your world.</h1>
+          <p>Choose a region. Give it a new possibility.</p>
+        </div>
+        <section id="selection-settings">
+          <div class="section-title">AUTHOR YOUR SELECTION</div>
+          <label>Cell size <select id="selection-scale">
+            <option value="1">16 m · regional</option>
+            <option value="2">8 m · detail</option>
+            <option value="8">2 m · modular floors</option>
+          </select></label>
+          <label>Change <select id="selection-layer">
+            <option value="">Landscape & objects</option>
+            <option value="terrain">Terrain only</option>
+            <option value="foliage">Foliage only</option>
+            <option value="buildings">Buildings & their clearance</option>
+          </select></label>
+          <label>Selection <select id="selection-combine">
+            <option value="replace">Replace</option>
+            <option value="add">Add to selection</option>
+            <option value="subtract">Subtract from selection</option>
+          </select></label>
+          <label id="selection-radius-label" hidden>Brush diameter <select id="selection-radius">
+            <option value="1.5">Small · 1–2 cells</option>
+            <option value="3">Medium · 3 cells</option>
+            <option value="7">Large · 7 cells</option>
+          </select></label>
+          <button id="selection-clear" data-glyph="clear">Deselect</button>
+        </section>
+        <button id="open-modules" data-module-action="open" data-glyph="cabin" class="wide" disabled>
+          Build a space
+        </button>
+        <button id="open-landforms" data-landform="open" data-glyph="field" class="wide" disabled>Shape the land</button>
+        <section id="landform-tools" hidden aria-label="Terrain shaping tools">
+          <button data-landform="leave" data-glyph="undo" class="wide">Return to world tools</button>
+          <h2>Lift the land. Carve a valley.</h2>
+          <p>Paint with Box, Brush or Lasso in any view, then shape your selection.</p>
+          <button data-landform="draw" data-glyph="forest" class="wide">Draw a region</button>
+          <label for="landform-amount">Change by up to</label>
+          <select id="landform-amount">
+            <option value="250">0.25 m</option><option value="500">0.5 m</option>
+            <option value="1000" selected>1 m</option><option value="2000">2 m</option>
+            <option value="4000">4 m</option><option value="8000">8 m</option>
+          </select>
+          <div class="module-actions">
+            <button data-landform="land-raise" data-glyph="fly">Raise</button>
+            <button data-landform="land-lower" data-glyph="water">Lower</button>
+            <button data-landform="land-hills" data-glyph="field">Imagine hills</button>
+            <button data-landform="land-soften" data-glyph="orbit">Soften height edits</button>
+          </div>
+          <p>Edges, water and land supporting construction stay in place. Draw a broad area of dry land for a stronger change.</p>
+          <div class="module-actions">
+            <button id="landform-undo" data-landform="undo" data-glyph="undo">Undo</button>
+            <button id="landform-redo" data-landform="redo" data-glyph="redo">Redo</button>
+          </div>
+        </section>
+        <section id="module-tools" hidden aria-label="Modular building tools">
+          <button data-module-action="leave" data-glyph="undo" class="wide">Return to world tools</button>
+          <h2>Will a space into being.</h2>
+          <p>Draw its footprint. Shape its edges. Walk straight inside.</p>
+          <div class="module-actions">
+            <button id="module-paint" data-module-action="paint" data-glyph="arrange" aria-pressed="true">Draw floors</button>
+            <button id="module-select" data-module-action="select" data-glyph="select" aria-pressed="false">Select parts</button>
+          </div>
+          <button id="module-build" data-module-action="build" data-glyph="emergence" class="primary wide" disabled>Imagine home here</button>
+          <p class="muted">Paint connected 2 m tiles on dry land. Up to 256 tiles make one home.</p>
+          <label for="module-homes">Your homes</label>
+          <select id="module-homes"><option value="">Choose a home</option></select>
+          <div class="module-actions">
+            <button id="module-extend" data-module-action="extend" data-glyph="reimagine" disabled>Extend into selection</button>
+            <button id="module-focus" data-module-action="focus" data-glyph="orbit" disabled>Look closer</button>
+          </div>
+          <fieldset id="module-population">
+            <legend>Furnish selected floors</legend>
+            <p class="muted">In Draw floors, use Box, Brush or Lasso over existing floors in this home.</p>
+            <label for="module-population-furniture">Furniture</label>
+            <select id="module-population-furniture"></select>
+            <label for="module-density">Density of empty selected floors</label>
+            <select id="module-density">
+              <option value="10">Sparse · 10%</option>
+              <option value="25" selected>Light · 25%</option>
+              <option value="50">Medium · 50%</option>
+              <option value="75">Full · 75%</option>
+              <option value="100">Every available tile · 100%</option>
+            </select>
+            <p id="module-population-hint" class="muted" aria-live="polite">Paint existing floors to furnish them.</p>
+            <button id="module-populate" data-module-action="populate" data-glyph="emergence" class="primary wide" disabled>Populate selected floors</button>
+            <p class="muted">Adds to empty tiles only. Existing furniture and locks stay unchanged. Access limits may reduce the number placed. Undo removes the whole batch.</p>
+          </fieldset>
+          <button id="module-overview" data-module-action="overview" data-glyph="overhead" class="wide" disabled>Whole home</button>
+          <p class="muted">Extensions keep existing parts and contents. Unlocked joining walls become passages.</p>
+          <label class="module-check"><input id="module-cutaway" type="checkbox" checked /> Cut away roof &amp; obstructing walls</label>
+          <label for="module-parts">Selected part</label>
+          <select id="module-parts"><option value="">Tap a wall or floor in the view</option></select>
+          <p id="module-choice" role="status" aria-live="polite">Choose a part to shape it.</p>
+          <div class="module-actions">
+            <button id="module-up" data-module-action="up" data-glyph="undo" disabled>Up one level</button>
+            <button id="module-closer" data-module-action="closer" data-glyph="select" disabled>Its contents</button>
+          </div>
+          <div id="module-furnish-controls" hidden>
+            <label for="module-furniture">Imagine on this floor</label>
+            <select id="module-furniture">
+              <optgroup label="Plants"><option value="plants">A plant · let it emerge</option>
+                <option value="phanes.plant.fern.v1">Potted fern</option>
+                <option value="phanes.plant.moon.v1">Moonleaf plant</option></optgroup>
+              <optgroup label="Living spaces"><option value="phanes.table.oak.v1">Oak table</option>
+                <option value="phanes.shelf.oak.v1">Four-tier bookcase</option>
+                <option value="phanes.chair.sage.v1">Oak chair</option></optgroup>
+              <optgroup label="Laboratory"><option value="phanes.table.lab.v1">Work bench</option>
+                <option value="phanes.fixture.console.v1">Console</option></optgroup>
+              <optgroup label="Bathroom"><option value="phanes.fixture.sink.v1">Basin</option>
+                <option value="phanes.fixture.toilet.v1">Toilet</option>
+                <option value="phanes.fixture.shower.v1">Shower</option></optgroup>
+              <option value="empty">Clear this floor's furnishing</option>
+            </select>
+            <button id="module-furnish" data-module-action="furnish" data-glyph="emergence" class="primary wide" disabled>Imagine here</button>
+            <label for="module-position">Position on this tile</label>
+            <select id="module-position">
+              <option value="0,0">Centre</option>
+              <option value="-500,-500">Northwest corner</option>
+              <option value="0,-500">North edge</option>
+              <option value="500,-500">Northeast corner</option>
+              <option value="-500,0">West edge</option>
+              <option value="500,0">East edge</option>
+              <option value="-500,500">Southwest corner</option>
+              <option value="0,500">South edge</option>
+              <option value="500,500">Southeast corner</option>
+            </select>
+            <label for="module-turn">Facing</label>
+            <select id="module-turn">
+              <option value="0">South</option><option value="1">East</option>
+              <option value="2">North</option><option value="3">West</option>
+            </select>
+            <p class="muted">Only this floor tile changes. Walls, entrances and locked contents stay protected.</p>
+          </div>
+          <div id="module-contents" hidden>
+            <label for="module-content-role">On this surface</label>
+            <select id="module-content-role"></select>
+            <label for="module-content-count">How many? <span class="muted">0 removes this kind</span></label>
+            <input id="module-content-count" type="number" min="0" max="6" step="1" value="0" inputmode="numeric" />
+            <div class="module-actions">
+              <button id="module-count-apply" data-module-action="count" data-glyph="arrange">Arrange</button>
+              <button id="module-contents-imagine" data-module-action="contents" data-glyph="reimagine">Reimagine</button>
+            </div>
+          </div>
+          <div id="module-edge-controls" class="module-actions">
+            <button id="module-wall" data-module-action="wall" data-glyph="modern" disabled>Wall</button>
+            <button id="module-window" data-module-action="window" data-glyph="style" disabled>Window</button>
+            <button id="module-door" data-module-action="door" data-glyph="explore" disabled>Door</button>
+            <button id="module-opening" data-module-action="opening" data-glyph="open" disabled>Passage</button>
+          </div>
+          <div class="module-actions">
+            <button id="module-toggle" data-module-action="toggle" data-glyph="open" disabled>Open door</button>
+            <button id="module-lock" data-module-action="lock" data-glyph="select" disabled>Lock this part</button>
+          </div>
+          <div class="module-actions">
+            <button id="module-undo" data-module-action="undo" data-glyph="undo" disabled>Undo</button>
+            <button id="module-redo" data-module-action="redo" data-glyph="redo" disabled>Redo</button>
+          </div>
+        </section>
+        <section id="catalog-browser" hidden aria-label="Choose what to create">
+          <button id="catalog-back" data-glyph="undo">Categories</button>
+          <nav id="catalog-path" aria-label="Catalog location"></nav>
+          <h2 id="catalog-title" tabindex="-1">Choose an item</h2>
+          <label for="catalog-search">Find within this category</label>
+          <input id="catalog-search" type="search" autocomplete="off" placeholder="Name or type" />
+          <div id="catalog-results"></div>
+          <div id="catalog-confirm">
+            <p id="catalog-choice" tabindex="-1" aria-live="polite">Choose a group or an item.</p>
+            <button id="catalog-apply" data-glyph="emergence" class="primary wide" disabled>
+              Apply to selection
+            </button>
+          </div>
+          <p class="muted">Choosing here does not change your world. Apply changes only the selected cells.</p>
+        </section>
+        <section data-catalog-root>
+          <div class="section-title">THE LAND <span>01</span></div>
+          <div class="intent-grid">
+            <button data-intent="forest" data-glyph="forest">
+              <span>Forest<small>Canopies & undergrowth</small></span>
+            </button>
+            <button data-intent="flowers" data-glyph="flowers">
+              <span>Wildflowers<small>A carpet of colour</small></span>
+            </button>
+            <button data-intent="field" data-glyph="field">
+              <span>Fields<small>Wheat & meadow flowers</small></span>
+            </button>
+            <button data-intent="water" data-glyph="water">
+              <span>Water<small>Carve out a quiet shore</small></span>
+            </button>
+          </div>
+        </section>
+        <section data-catalog-root>
+          <div class="section-title">PLACES TO BE <span>02</span></div>
+          <div class="intent-grid">
+            <button data-intent="cabin" data-glyph="cabin">
+              <span>Cabins<small>Timber & warm roofs</small></span>
+            </button>
+            <button data-intent="castle" data-glyph="castle">
+              <span>Castles<small>Towers & stone walls</small></span>
+            </button>
+            <button data-intent="modern" data-glyph="modern">
+              <span>Modern<small>A neighbourhood emerges</small></span>
+            </button>
+            <button data-intent="scifi" data-glyph="outpost">
+              <span>Outposts<small>Somewhere beyond</small></span>
+            </button>
+            <button data-intent="rocket" data-glyph="rocket">
+              <span>Sci-fi<small>Reach for tomorrow</small></span>
+            </button>
+          </div>
+        </section>
+        <section class="selection-panel">
+          <div class="section-title">
+            YOUR SELECTION
+            <button id="select-all" data-glyph="select" disabled>Select world</button>
+          </div>
+          <strong id="selection-size">Create a world to begin</strong>
+          <p id="selection-description">Drag across the land to select a region.</p>
+          <button id="open-groundworks" data-glyph="arrange" class="wide" disabled>
+            Foundations & launch pads
+          </button>
+          <button id="open-interior" data-glyph="open" class="wide" disabled>
+            Inside this cabin
+          </button>
+          <p id="interior-entry-hint" class="muted">Select one cabin to furnish its interior.</p>
+          <button id="design-rooms" data-glyph="arrange" class="wide" disabled>Design rooms</button>
+          <button id="reimagine" data-glyph="reimagine" class="primary wide" disabled>
+            Reimagine <kbd>G</kbd>
+          </button>
+          <div class="minor-actions">
+            <button id="clear-region" data-glyph="clear" disabled>Clear region</button
+            ><button id="undo" data-glyph="undo" disabled>Undo</button
+            ><button id="redo" data-glyph="redo" disabled>Redo</button>
+          </div>
+        </section>
+        <section class="render-options">
+          <label for="render-quality">Rendering</label>
+          <select id="render-quality">
+            <option value="balanced">Balanced · adapts to your device</option>
+            <option value="smooth">Smooth · lighter rendering</option>
+            <option value="detail">Detail · full screen resolution</option>
+          </select>
+          <p>Keep controls sharp while balancing world detail and movement.</p>
+        </section>
+        <section id="groundwork-tools" hidden aria-label="Groundwork creation tools">
+          <button id="leave-groundworks" data-glyph="undo" class="wide">Return to world</button>
+          <span class="eyebrow">GROUNDWORKS · 32 × 32 M PLOT</span>
+          <h2 id="groundwork-title" tabindex="-1">A place to build.</h2>
+          <p id="groundwork-description" aria-live="polite"></p>
+          <button id="groundwork-select" data-glyph="select" class="wide">
+            Select a plot on the land
+          </button>
+          <div id="groundwork-new">
+            <p>
+              Tap the land to move the outlined plot. Placement clears its plants and buildings.
+            </p>
+            <span class="eyebrow" id="groundwork-access-label">APPROACH FROM</span>
+            <div id="groundwork-directions" role="group" aria-labelledby="groundwork-access-label">
+              <button data-groundwork-turn="-1" aria-pressed="true">Auto</button>
+              <button data-groundwork-turn="2" aria-pressed="false">North</button>
+              <button data-groundwork-turn="1" aria-pressed="false">East</button>
+              <button data-groundwork-turn="0" aria-pressed="false">South</button>
+              <button data-groundwork-turn="3" aria-pressed="false">West</button>
+            </div>
+            <div class="groundwork-actions">
+              <button id="groundwork-foundation" data-glyph="cabin" class="primary">
+                Lay foundation
+              </button>
+              <button id="groundwork-launch-pad" data-glyph="rocket" class="primary">
+                Lay launch pad
+              </button>
+            </div>
+          </div>
+          <div id="groundwork-existing" hidden>
+            <span class="eyebrow">BUILD ON THIS DECK</span>
+            <div id="groundwork-buildings" role="group" aria-label="Supported buildings"></div>
+            <p id="groundwork-building-hint" aria-live="polite"></p>
+            <button id="groundwork-inside" data-glyph="open" class="wide" hidden>
+              Furnish this cabin
+            </button>
+            <button id="groundwork-remove-building" data-glyph="clear" class="wide" hidden>
+              Remove building
+            </button>
+            <div class="groundwork-actions">
+              <button id="groundwork-frame" data-glyph="orbit">Look closer</button>
+              <button id="groundwork-walk" data-glyph="person">Walk the approach</button>
+            </div>
+            <div class="groundwork-actions">
+              <button id="groundwork-deck" data-glyph="select">Whole deck</button>
+              <button id="groundwork-ramp" data-glyph="open">Access</button>
+            </div>
+            <div class="groundwork-actions">
+              <button id="groundwork-body" data-glyph="arrange">Supports</button>
+              <button id="groundwork-building" data-glyph="cabin">Building</button>
+              <button id="groundwork-landing" data-glyph="select">Landing</button>
+            </div>
+            <p class="muted">Deck plan · north at the top. Choose one panel below.</p>
+            <div id="groundwork-panels" aria-label="Deck panels"></div>
+            <h3 id="groundwork-selected" tabindex="-1" aria-live="polite">Deck</h3>
+            <p id="groundwork-scope-hint"></p>
+            <button id="groundwork-reimagine" data-glyph="reimagine" class="primary wide">
+              Reimagine selection
+            </button>
+          </div>
+          <span class="eyebrow" id="groundwork-body-label">SUPPORT STRUCTURE</span>
+          <div class="groundwork-actions" role="group" aria-labelledby="groundwork-body-label">
+            <button id="groundwork-plinth" aria-pressed="true">Solid plinth</button>
+            <button id="groundwork-piers" aria-pressed="false">Piers & infill</button>
+          </div>
+          <p class="muted">Support changes keep the deck and approach in place.</p>
+          <button id="groundwork-undo" data-glyph="undo" class="wide">Undo last change</button>
+        </section>
+        <section id="interior-tools" hidden aria-label="Interior creation tools">
+          <button id="leave-interior" data-glyph="undo" class="wide">Return to world</button>
+          <nav id="interior-path" aria-label="Selected object's location"></nav>
+          <span class="eyebrow">WITHIN YOUR WORLD</span>
+          <h2 id="interior-title" tabindex="-1" aria-live="polite">Studio</h2>
+          <p id="interior-description"></p>
+          <div id="interior-space-programs" hidden>
+            <span class="eyebrow">ROOM PURPOSE</span>
+            <div class="space-program-buttons" role="group" aria-label="Room purpose">
+              <button
+                id="space-program-lab"
+                data-room-program="phanes.space.laboratory.v1"
+                data-glyph="outpost"
+              >
+                Laboratory
+              </button>
+              <button
+                id="space-program-bath"
+                data-room-program="phanes.space.bathroom.v1"
+                data-glyph="water"
+              >
+                Bathroom
+              </button>
+              <button
+                id="space-program-empty"
+                data-room-program="phanes.space.sitting-room.v1"
+              >
+                Sitting room
+              </button>
+              <button type="button" data-room-program="phanes.space.bedroom.v1">
+                Bedroom
+              </button>
+              <button type="button"
+                data-room-program="phanes.space.empty.v1"
+                data-glyph="clear"
+              >
+                Empty room
+              </button>
+            </div>
+            <p class="muted">
+              Changing purpose replaces this room's contents. Other rooms stay as they are.
+            </p>
+          </div>
+          <div class="interior-actions">
+            <button id="interior-parent" data-glyph="open">Up one level</button>
+            <button id="interior-frame" data-glyph="select">Look closer</button>
+          </div>
+          <div id="interior-children" class="interior-children" aria-label="Contents"></div>
+          <details id="interior-space-name-tools" class="space-name-tools" hidden>
+            <summary>Rename this space</summary>
+            <label for="interior-space-name">Name this space</label>
+            <div>
+              <input id="interior-space-name" maxlength="80" autocomplete="off" />
+              <button id="interior-space-rename" data-glyph="arrange">Name</button>
+            </div>
+          </details>
+          <button id="interior-layout" data-glyph="arrange" class="wide">Room layout</button>
+          <div id="interior-count-tools" hidden>
+            <span id="interior-role-label">Arrange these contents</span>
+            <input id="interior-role" type="hidden" />
+            <div id="interior-roles" role="group" aria-labelledby="interior-role-label"></div>
+            <div class="interior-count">
+              <button id="content-less" aria-label="One fewer item">
+                <span class="control-mark minus" aria-hidden="true"></span>
+              </button>
+              <input
+                id="interior-count"
+                aria-label="Required item count"
+                type="number"
+                min="0"
+                max="4"
+                value="0"
+              />
+              <button id="content-more" aria-label="One more item">
+                <span class="control-mark plus" aria-hidden="true"></span>
+              </button>
+              <button id="apply-content-count" data-glyph="arrange">Arrange</button>
+            </div>
+            <p class="muted" id="interior-capacity">Other surfaces stay as they are.</p>
+          </div>
+          <div id="interior-catalog" hidden>
+            <label for="interior-category">Category</label>
+            <select id="interior-category"><option value="">All compatible categories</option></select>
+            <label for="interior-group">Within this category</label>
+            <select id="interior-group"><option value="">All groups</option></select>
+            <label for="interior-search">Find an object</label>
+            <input id="interior-search" type="search" placeholder="Name or group" autocomplete="off" />
+            <p id="interior-choice-count" class="muted" role="status" aria-live="polite"></p>
+          </div>
+          <div id="interior-looks" class="interior-looks" aria-label="Compatible object choices"></div>
+          <button id="interior-reimagine" data-glyph="reimagine" class="primary wide">
+            Reimagine selection
+          </button>
+          <div class="interior-history">
+            <button id="interior-undo" data-glyph="undo">Undo</button>
+            <button id="interior-redo" data-glyph="redo">Redo</button>
+          </div>
+          <button id="interior-export" class="wide" data-glyph="export">Export world</button>
+        </section>
+        <details class="kit-list">
+          <summary>Kit library <span>6 collections</span></summary>
+          <p>Medieval · Fantasy · Modern · Sci-fi · Nature · Interior</p>
+          <p id="kit-count">Loading collection inventory…</p>
+          <p class="muted">
+            Regional brushes use the first curated set. Modular interiors and individual piece
+            placement are being built.
+          </p>
+          <a href="data/kits.lock.json" target="_blank" rel="noreferrer"
+            >Sources & CC0 licenses ↗</a
+          >
+        </details>
+      </aside>
+      <div id="viewport-shell">
+        <canvas
+          id="castle-canvas"
+          tabindex="0"
+          width="1280"
+          height="800"
+          aria-label="Phanes world. Drag to select a region. Use the camera controls to explore."
+        ></canvas>
+        <svg id="selection-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none"
+          aria-hidden="true"><polyline id="selection-stroke" points="" /></svg>
+        <div id="authoring-tools" aria-label="World selection tools" hidden>
+          <button data-authoring-tool="point" data-glyph="select" aria-pressed="true">Tap</button>
+          <button data-authoring-tool="box" data-glyph="overhead" aria-pressed="false">Box</button>
+          <button data-authoring-tool="brush" data-glyph="forest" aria-pressed="false">Brush</button>
+          <button data-authoring-tool="lasso" data-glyph="arrange" aria-pressed="false">Lasso</button>
+          <button data-authoring-tool="navigate" data-glyph="orbit" aria-pressed="false">Look</button>
+          <span id="selection-count" role="status" aria-live="polite">0 selected</span>
+        </div>
+        <div class="view-toolbar" aria-label="Camera perspective">
+          <button data-camera="top" data-glyph="overhead" class="active" aria-pressed="true">
+            Overhead <kbd>1</kbd>
+          </button>
+          <button data-camera="orbit" data-glyph="orbit" aria-pressed="false">
+            Orbit <kbd>2</kbd>
+          </button>
+          <button data-camera="fly" data-glyph="fly" aria-pressed="false">Fly <kbd>3</kbd></button>
+          <button data-camera="walk" data-glyph="person" aria-pressed="false">
+            First person <kbd>4</kbd>
+          </button>
+          <button
+            id="reset-camera"
+            data-glyph="select"
+            title="Frame the world"
+            aria-label="Frame the world"
+          ></button>
+        </div>
+        <div id="welcome" class="welcome">
+          <span class="welcome-mark" data-glyph="emergence" aria-hidden="true"></span>
+          <span class="eyebrow">BEGIN WITH POSSIBILITY</span>
+          <h2>A world,<br />at your fingertips.</h2>
+          <p>
+            Raise a forest. Give a village a place to grow.<br />Reimagine a corner, or everything.
+          </p>
+          <form id="create-form">
+            <div class="world-inputs">
+              <label
+                >Region width
+                <input id="region-size" type="number" min="4" max="48" value="12" required /></label
+              ><label
+                >Seed
+                <input id="world-seed" type="number" min="0" max="4294967295" value="731" required
+              /></label>
+            </div>
+            <p class="size-hint" id="size-hint">192 × 192 metres · 16 metres per region cell</p>
+            <button
+              class="primary wide"
+              id="create-world"
+              data-glyph="emergence"
+              type="submit"
+              disabled
+            >
+              Create this world
+            </button>
+          </form>
+          <small id="startup-info" role="status">Loading the workspace…</small>
+          <progress id="startup-progress" max="1" aria-label="Current startup step"></progress>
+          <p id="startup-help" hidden></p>
+          <button id="startup-retry" type="button" hidden>Retry loading</button>
+          <details id="startup-details">
+            <summary>Startup details</summary>
+            <textarea id="startup-details-text" readonly aria-label="Startup details" rows="5"></textarea>
+            <button id="startup-select-details" type="button">Select details to copy</button>
+          </details>
+        </div>
+        <div id="busy" class="busy" hidden>
+          <span class="spinner"></span><span>Finding a new possibility…</span
+          ><button id="cancel">Cancel</button>
+        </div>
+        <button id="enter-nearby" data-glyph="explore" hidden>Enter cabin</button>
+        <button id="module-nearby" data-module-action="nearby" data-glyph="open" hidden>Open door</button>
+        <div id="toast" role="status" hidden></div>
+        <div class="viewport-bottom">
+          <span id="interaction-hint">Start with a size. Everything else can change.</span>
+          <div class="zoom-controls">
+            <button id="zoom-out" aria-label="Zoom out">
+              <span class="control-mark minus" aria-hidden="true"></span></button
+            ><button id="zoom-in" aria-label="Zoom in">
+              <span class="control-mark plus" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+        <div id="crosshair" aria-hidden="true" hidden></div>
+        <button id="tools-toggle" data-glyph="emergence" aria-controls="tools-panel"
+          aria-expanded="true" hidden>Hide tools</button>
+        <div id="fly-controls" aria-label="Flight height" hidden>
+          <button data-move="e" aria-label="Rise">Rise
+            <span class="control-mark direction north" aria-hidden="true"></span></button>
+          <button data-move="q" aria-label="Descend">Descend
+            <span class="control-mark direction south" aria-hidden="true"></span></button>
+        </div>
+        <div id="walk-controls" aria-label="Movement controls" hidden>
+          <button data-move="w" aria-label="Move forward">
+            <span class="control-mark direction north" aria-hidden="true"></span>
+          </button>
+          <div>
+            <button data-move="a" aria-label="Step left">
+              <span class="control-mark direction west" aria-hidden="true"></span>
+            </button>
+            <button data-move="s" aria-label="Move backward">
+              <span class="control-mark direction south" aria-hidden="true"></span>
+            </button>
+            <button data-move="d" aria-label="Step right">
+              <span class="control-mark direction east" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <span><i class="status-dot"></i> <span id="status">Preparing your workspace</span></span
+      ><span id="world-stats">Castle Game Engine · WFC</span
+      ><span class="footer-right"
+        >Made for possibility <span data-glyph="emergence" aria-hidden="true"></span
+      ></span>
+    </footer>
+    <dialog id="renderer-recovery" class="renderer-recovery" aria-labelledby="recovery-title" aria-live="assertive" hidden>
+      <div>
+        <h2 id="recovery-title">Returning to your world</h2>
+        <p id="recovery-message">Restoring your workspace…</p>
+        <button id="recover-renderer" hidden>Retry recovery</button>
+        <button id="recovery-export" hidden>Export world</button>
+      </div>
+    </dialog>
+    <noscript>Enable JavaScript to use Phanes.</noscript>
+    <dialog id="space-layout-dialog" aria-labelledby="space-layout-title">
+      <span class="eyebrow">MAKE ROOM FOR POSSIBILITY</span>
+      <h2 id="space-layout-title">Give each space a purpose.</h2>
+      <p id="space-layout-description">Choose a layout, then shape each bay independently.</p>
+      <div class="space-layout-choices">
+        <button id="space-layout-two" data-plan-profile="phanes.plan.cabin.two-bays.v1">
+          <span class="space-plan-mark two" aria-hidden="true"></span>
+          <strong>2 broad bays</strong><small>Space for larger arrangements</small>
+        </button>
+        <button id="space-layout-four" data-plan-profile="phanes.plan.cabin.four-bays.v1">
+          <span class="space-plan-mark four" aria-hidden="true"></span>
+          <strong>4 flexible bays</strong><small>Different purposes, side by side</small>
+        </button>
+        <button id="space-layout-six" data-plan-profile="phanes.plan.cabin.six-bays.v1">
+          <span class="space-plan-mark six" aria-hidden="true"></span>
+          <strong>6 focused bays</strong><small>Shape the world room by room</small>
+        </button>
+      </div>
+      <button id="space-layout-cancel" data-glyph="undo">Keep my current interior</button>
+    </dialog>
+    <section
+      id="audio-panel"
+      class="audio-panel"
+      aria-label="Music dimension"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="dimension-title">
+        <div>
+          <span class="eyebrow">PHANES / ANOTHER DIMENSION</span>
+          <h1>Sound, given space.</h1>
+          <p>Connect a style. Shape its pull. Find a sound that only exists here.</p>
+        </div>
+        <button id="close-audio" data-glyph="explore" aria-label="Return to world">
+          Return to world
+        </button>
+      </div>
+      <div class="dimension-layout">
+        <div class="dimension-stage">
+          <div class="music-layout-tools">
+            <button id="music-arrange" data-glyph="arrange" aria-pressed="false">
+              Arrange nodes
+            </button>
+            <button id="music-reset" data-glyph="undo">Reset layout</button>
+          </div>
+          <div
+            id="music-space"
+            aria-label="Floating music styles. Activate to connect. Choose Arrange nodes to reposition."
+          >
+            <div class="dimension-nebula"></div>
+            <svg
+              id="music-links"
+              viewBox="0 0 1000 720"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            ></svg>
+            <div id="music-heart">
+              <span class="eyebrow">THE BLEND</span><strong id="music-bpm">80</strong
+              ><span>BPM</span>
+              <div class="beat-lights" aria-hidden="true">
+                <i id="beat-0"></i><i id="beat-1"></i><i id="beat-2"></i><i id="beat-3"></i>
+              </div>
+            </div>
+          </div>
+          <p class="space-hint" id="music-space-hint">
+            Tap to connect · swipe to scroll · adjust blend strength to change the sound
+          </p>
+          <div class="track-heading">
+            <span id="track-phase">A new possibility</span
+            ><span id="track-clock">5+ minutes / composed for this moment</span>
+          </div>
+          <div class="track-timeline">
+            <div id="track-form"></div>
+            <div id="track-position"></div>
+          </div>
+        </div>
+        <aside class="music-console" aria-label="Track controls">
+          <span class="eyebrow">YOUR CONSTELLATION</span>
+          <h2>A world in resonance.</h2>
+          <p id="music-connected">1 connected / new track with every play</p>
+          <p class="muted">Dreamy atmosphere. Synth colour. Techno motion.</p>
+          <div class="audio-actions">
+            <button id="music-toggle" data-glyph="music" data-transport="play" class="primary">
+              Play music</button
+            ><button id="music-evolve" data-glyph="reimagine">New track</button
+            ><button
+              id="music-export"
+              data-glyph="export"
+              title="Download the current phrase as a WAV file"
+            >
+              Export phrase
+            </button>
+          </div>
+          <label class="tempo-label" for="music-tempo"
+            >The pace <strong><span id="tempo-value">80</span> BPM</strong></label
+          ><input
+            id="music-tempo"
+            type="range"
+            min="60"
+            max="160"
+            value="80"
+            aria-label="Track tempo in beats per minute"
+          />
+          <div class="tempo-scale"><span>60 · floating</span><span>160 · driving</span></div>
+          <button id="tempo-auto" data-glyph="arrange" aria-pressed="true">Follow the blend</button>
+          <details class="pair-blend">
+            <summary>Quick two-style blend</summary>
+            <label
+              >Start with
+              <select id="music-style"></select
+            ></label>
+            <label
+              >Blend with
+              <select id="music-blend-style"></select
+            ></label>
+            <label
+              >Blend amount <input id="music-blend" type="range" min="0" max="100" value="0"
+            /></label>
+          </details>
+          <fieldset>
+            <legend>Keep these layers as the music evolves</legend>
+            <div class="music-locks">
+              <label><input id="music-lock-0" type="checkbox" />Harmony</label>
+              <label><input id="music-lock-1" type="checkbox" />Motif</label>
+              <label><input id="music-lock-2" type="checkbox" />Groove</label>
+              <label><input id="music-lock-3" type="checkbox" />Density</label>
+            </div>
+          </fieldset>
+          <div class="audio-volumes">
+            <label>Music<input id="music-volume" type="range" min="0" max="100" value="30" /></label
+            ><label
+              >Effects<input id="effects-volume" type="range" min="0" max="100" value="40"
+            /></label>
+          </div>
+          <p id="music-status" role="status">Press play to create your soundtrack.</p>
+          <details>
+            <summary>Inside this phrase</summary>
+            <p id="music-sources">Sources appear when the music starts.</p>
+            <p class="muted">
+              Four musical layers borrow from different scores. Locked layers stay in place while
+              the others find new possibilities.
+            </p>
+          </details>
+          <details>
+            <summary id="music-count">Reference library</summary>
+            <ol id="music-credits-list"></ol>
+            <a href="data/music/references.json" target="_blank" rel="noreferrer"
+              >Source manifest ↗</a
+            >
+          </details>
+        </aside>
+      </div>
+      <div class="dimension-mobile-transport">
+        <button id="music-mobile-toggle" data-glyph="music" data-transport="play" class="primary">
+          Play music</button
+        ><button id="music-mobile-new" data-glyph="reimagine">New track</button>
+      </div>
+    </section>
+    <script src="phanes.startup.browser.js"></script>
+    <script src="phanes.host.js"></script>
+    <script src="phanes.editor.js"></script>
+    <script src="phanes.interiors.browser.js"></script>
+    <script src="phanes.audio.browser.js"></script>
+    <script src="phanes.js"></script>
+  </body>
+</html>

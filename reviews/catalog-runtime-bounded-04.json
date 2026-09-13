@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "feature": "catalog-runtime-bounded",
+  "scope": "Bounded optional catalog fetch transaction, content-hash cache ownership, cancellation and verified bundle staging, with decoded scene lease and pre-publication resource preparation. This review does not approve catalog-expansion placement, WFC admission, save/recovery integration, full catalog coverage, live-world adoption or global decoded/GPU budgeting.",
+  "criticAgent": "Luna",
+  "builderAgent": "Astra/Sol",
+  "reviewedAt": "2026-09-12",
+  "decision": "pass",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The bounded API has explicit progress, cancellation, lease release and cache clearing operations. The scene lease makes source lifetime and pre-publication PrepareResources sequencing explicit, while the focused fixtures expose the small cache budget and failure transitions."
+    },
+    "accuracy": {
+      "grade": "A-",
+      "evidence": "The fetcher deduplicates transaction hashes, recomputes unique required and missing bytes after awaits, protects incoming hashes during eviction, and now caps each streamed response chunk before copying. Cleanup consumes rejected reader cancellation and releases the reader lock. The scene lease consumes sealed bundles only after validation, destroys source protocol state on decode failure, rejects empty/nonfinite geometry, and prepares resources in an open context before replacement. Evidence covers 67 fetch checks, 49 native filesystem/scene checks and 18 combined Castle checks with no browser errors or warnings."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "The milestone joins integrity-bound optional publication loading, shared content bytes, adversarial stream cleanup, isolated Castle source files and a decoded lease that retains its inputs through actual rendering. The final Castle evidence includes food, rug, phone-layout and retry captures with triangle parity and successful failed-decode recovery."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "A-",
+      "evidence": "The implementation handles the interaction between duplicate content rows, asynchronous ClearUnused, LRU eviction, reader cancellation, protocol teardown, decoded-scene failure and context preparation as one ownership problem. Tiny deterministic fixtures exercise cache and stream boundaries without allocating the production-scale budget, while real models verify geometry parity."
+    }
+  },
+  "blockingFindings": [],
+  "nonBlockingFindings": [
+    "The bounded lease deliberately excludes decoded mesh, texture and GPU budgets, world placement/WFC admission, save/recovery integration and full catalog coverage. Browser-internal Fetch/SRI buffers and the browser-supplied stream chunk are also outside the application-owned copy bound; the documentation states these limits. The full catalog-expansion feature therefore remains review:null."
+  ],
+  "verification": "Reviewed current source and tests for streamed fetch cleanup, cache accounting, lease ownership and pre-publication resource preparation. The retained root fetch cleanup run in build/logs/catalog-fetch-cleanup-test.log passes 67 checks, including oversized chunked index/manifest/model rejection before another read, active cancellation, errored-stream cleanup, no unhandled rejection and preservation of existing pinned bytes; the log SHA-256 is 4c0402f1785f34557716520bc13490bc8352942be494a60974edf06ab17f6786. The combined Castle run in build/catalog-runtime-lease-final/evidence.json passes 18 checks with food 60 triangles, rug 44 triangles, retry 60 triangles, four captures, no browser errors and no warnings; its provenance binds current source/runtime hashes and pinned engine commit 050f07edde6652d6657b4fe0d299822b9f502afa. The native run in build/logs/catalog-files-native-test.log passes 49 checks, including constructor-failure protocol cleanup and real-model geometry parity. Representative food, rug-phone and retry captures were inspected. No new browser or native run was performed by this critic; retained evidence was reused proportionately. This bounded report does not pass catalog-expansion, which remains review:null.",
+  "reviewedFiles": {
+    "cge/code/phanes.catalog.files.pas": "631927fc667e0c2cdfb275a777f3ab70fc7a630327b5d0c875d6d4e19cfc2396",
+    "cge/code/phanes.catalog.scene.pas": "136bd724f9cee0a99a99442c4e7e364b8ec7909d5b94eb90aa6447a7d12e0c51",
+    "src/phanes.catalog.fetch.pas": "338da44b0776d23460cec8a24080b75e77883875e6d604d76a9bc429366bed55",
+    "tests/phanes.tests.catalog.fetch.probe.lpr": "9a89352b150052bd9cff7429cb33d1da007ca0814b2702cbd3b2e185d9b6dd98",
+    "tests/phanes.tests.catalog.fetch.browser.lpr": "0a64921308b9cfcb41535b5334002f616a9e9e0d88eec41237c81f4eeae9e83d",
+    "tests/phanes.tests.catalog.fetch.fixture.lpr": "abbf824a7acd368012bee626df468c2828193391e041ccc17dd1bf5dca4d3049",
+    "tests/phanes.tests.catalog.files.lpr": "c7a2faec9e6298bdae52499fde51e287b792009236e34dec29b03e353094749e",
+    "tests/catalog-runtime/CastleEngineManifest.xml": "5e5e8a3aefb258a2e1b495980de919f5c4236283a434b461c1890c4ebe38bf7d",
+    "tests/catalog-runtime/code/phanes.tests.catalog.runtime.pas": "acffd37281be244b65065efffca5a777b269889a62c2335d5e6fecf357076549",
+    "tests/phanes.tests.catalog.runtime.browser.lpr": "d026a5a755de7f8ca95d133f2f4643c56ab38cbaebf7dd1a3cbb1d2ab3701a92",
+    "tests/catalog-runtime/probe.html": "2bf86a04ae6228ac05668ce1567cfd41276a9c2af62a8b19730b812a941205ed",
+    "tools/test-catalog-fetch.ps1": "e7446ece05cd82f50955851415b968d46a6b2697487157641fc90e5f5e3fb43c",
+    "tools/test-catalog-runtime.ps1": "a911dcf0c4f59978eb3599a7ee6548bc5c4d1d48bde1d6b46c5046a027c984b5",
+    "docs/CATALOG_RUNTIME.md": "e954dad21cda1e737927e114e30b61af8cfd711cdb6b0c00be50d8e38b373bbf",
+    "build/catalog-fetch-cleanup-final/server-error.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build/logs/catalog-fetch-cleanup-test.log": "4c0402f1785f34557716520bc13490bc8352942be494a60974edf06ab17f6786",
+    "build/catalog-runtime-lease-final/evidence.json": "7f6b9c472b5cb26f50048bdbe427f94434920d06b02eaa12a3b39edef901ce4d",
+    "build/catalog-runtime-lease-final/provenance.json": "ca153c2fa32599e83db99ab3af8a64722d77a50ab05f63305a767c4871ce0b99",
+    "build/catalog-runtime-lease-final/checks.log": "9e80d32f6709ae15ddf2df98a158a5f10d30658c41fb8647d25998b6d18251df",
+    "build/catalog-runtime-lease-final/server-error.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build/logs/catalog-files-native-test.log": "d2c3698919b82445e9fca3089f2281fd0e425b5abdf460b26a8767e75699ebfa"
+  }
+}

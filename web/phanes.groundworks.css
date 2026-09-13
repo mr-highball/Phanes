@@ -1,0 +1,141 @@
+/*
+MIT License
+
+Copyright (c) 2026 mr-highball
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+body[data-groundworks='true']:not([data-interior='true']) #tools-panel > :not(#groundwork-tools):not(#mobile-save-world) {
+  display: none;
+}
+body[data-groundworks='true'] #tools-panel {
+  display: block;
+  height: auto;
+}
+#groundwork-tools > .eyebrow {
+  display: block;
+  margin-top: 20px;
+}
+#groundwork-tools h2 {
+  font-size: 1.4rem;
+  margin: 12px 0;
+}
+#groundwork-tools p {
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+#open-groundworks {
+  margin-bottom: 10px;
+}
+.groundwork-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+.groundwork-actions button {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px;
+  font-size: 0.75rem;
+}
+#groundwork-buildings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+#groundwork-buildings button {
+  min-height: 52px;
+  padding: 8px;
+  font-size: 0.75rem;
+}
+#groundwork-directions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+#groundwork-directions button {
+  min-height: 44px;
+  flex: 1;
+  padding: 8px;
+}
+#groundwork-tools button[aria-pressed='true'] {
+  border-color: #e4d5a8;
+  box-shadow: inset 0 0 0 2px #e4d5a8;
+}
+#groundwork-panels {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(44px, 1fr));
+  grid-template-rows: repeat(4, 48px);
+  gap: 4px;
+  margin: 12px 0;
+}
+#groundwork-panels button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 2px;
+  font-size: 0.65rem;
+  border-radius: 5px;
+  color: #f4f0df;
+  text-shadow: 0 1px 2px #07100e;
+}
+#groundwork-panels button[data-material='stone'] {
+  background: #404e42;
+}
+#groundwork-panels button[data-material='concrete'] {
+  background: #687269;
+}
+#groundwork-panels button[data-material='ceramic'] {
+  background: #3b7773;
+}
+#groundwork-panels button[data-material='steel'] {
+  background: #354d5e;
+}
+#groundwork-panels button.locked {
+  border-style: dashed;
+}
+#groundwork-panels .groundwork-core {
+  grid-area: 2 / 2 / 4 / 4;
+}
+@media (max-width: 700px) {
+  .selection-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .selection-panel .section-title {
+    margin: 0;
+  }
+  .selection-panel .section-title button,
+  .selection-panel .wide {
+    width: 100%;
+    min-height: 52px;
+    margin: 0;
+  }
+  body[data-groundworks='true'] #tools-panel {
+    max-height: 320px;
+    overflow-y: auto;
+  }
+  #groundwork-tools > .eyebrow {
+    margin-top: 12px;
+  }
+}

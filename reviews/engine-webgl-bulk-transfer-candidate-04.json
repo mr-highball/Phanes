@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "criticAgent": "Luna",
+  "builderAgent": "/root",
+  "feature": "engine-webgl-bulk-transfer-candidate",
+  "reviewedAt": "2026-09-12T23:35:00Z",
+  "scope": "Castle Game Engine WebGL matrix and numeric-list bulk conversion, including contiguous-layout checks, signed-byte bounds, owned copies, reproducible baseline/candidate tests, and Phanes adoption of the exact reviewed commit through its fetchable owned-fork submodule with integrated rendering, editing, style and recovery verification. Existing buffer-upload helpers, complete application acceptance and physical-phone performance remain outside this dependency-change scope.",
+  "decision": "changes_requested",
+  "grades": {
+    "intuitiveness": {
+      "grade": "B+",
+      "evidence": "The adoption is exercised through user-visible object and style journeys: 188 object checks cover category/group/search, actual choice publication, Undo/Redo and graphics-loss recovery, while 73 style checks cover 22 effects plus None, repeated switching, four phone layouts, fallback and recovery. The dependency-specific transfer controls remain developer-facing, so the evidence supports the integrated subset rather than complete application usability."
+    },
+    "accuracy": {
+      "grade": "B+",
+      "evidence": "The exact owned-fork commit 25f2d98122997f8f039f759f9ffb76207b4f3cfe is fetchable by a fresh sparse clone, with adopted source blob fa431aa5304c34a3fd5dbe20cd4c93530d5ffd79 and normalized source SHA 4bf06fc9dc2d80f9bf0acee277afbb75227132083db8cc4e4f10d5ad3f9e4845. The release build log explicitly compiles vendor/castle-engine/src/base_rendering/web/castleinternalwebgl.pas; provenance binds source, submodule, WASM, worker, startup/host artifacts, and the two integrated browser journeys. The remaining clean Phanes Actions run is a material provenance/build verification gap, so this grade does not exceed B+."
+    },
+    "wowFactor": {
+      "grade": "B+",
+      "evidence": "The inspected retained captures show the adopted runtime rendering the populated exterior and interior world, close object views, phone layouts, repeated style effects, exact None restoration, and a readable shader-failure recovery state. This demonstrates visible application value for the tested slice, while broad release aesthetics and physical-phone performance remain outside scope."
+    },
+    "thinkingOutOfTheBox": {
+      "grade": "A-",
+      "evidence": "The change combines safe contiguous-layout and signed-byte guards with owned bulk copies, an exact fetchable submodule commit, a clean-clone reachability check, independent baseline/candidate transfer evidence, staged artifact provenance, and application-level object/style/recovery checks. Reusing a byte-identical AutoForge toolchain script with cache-save ordering is documented and independently bound without confusing that reference run with Phanes acceptance."
+    }
+  },
+  "blockingFindings": [
+    "Run the current Phanes Pages workflow from a clean runner/clone and retain its successful build and critic-gate evidence. The adoption guide explicitly says the current local release build and AutoForge reference do not establish the Phanes Actions run; until that run verifies recursive submodule checkout, the exact gitlink, Castle tool, web/WASM outputs and workflow gate together, dependency adoption remains conditional.",
+    "Keep the final publication decision separate from the retained local stage and LAN HTTP checks: they verify immutable staged bytes and five host responses, but do not replace clean-runner CI provenance or the excluded physical-phone/performance qualification.",
+    "The integrated browser evidence covers the 14-object and visual-style slices only. Complete application acceptance, the full catalog, existing buffer-upload helpers and physical-phone performance remain outside this candidate scope and must not be inferred from the adoption run."
+  ],
+  "findings": [],
+  "reviewedFiles": {
+    "docs/dependencies/CGE_WEBGL_TRANSFER.md": "598463134514815a2b7ebfbfe1ab4f5754ea866d2852d431452c7d69c198012b",
+    "docs/dependencies/cge-webgl-bulk-transfer.patch": "0ee6ed8ab70aa84430bdc73b7748746c3bf273d41afe4913b3cabbb0fe371c27",
+    "tests/webgl-transfer/README.md": "b8bf4d52cea74f0c355a8bab1cef91620c2755af4d8563e79303613f99a02402",
+    "tests/webgl-transfer/CastleEngineManifest.xml": "06a1c6f4ad682fd630adfe2c87adb8bf2e05744fab07eea1088454bff1f7c3fa",
+    "tests/webgl-transfer/probe.html": "0cd1612863f881f1d040dd9f5d331b028b82ddc5625288f78f3684e606f85061",
+    "tests/webgl-transfer/code/phanes.tests.webgl.transfer.pas": "fd1606050d76c158af4de82b5050227f1626d9969cf766940cfe2503e29542c4",
+    "tests/phanes.tests.webgl.transfer.browser.lpr": "c0c5f671a7a95ecd23cbd7297c4a5671a64a57ff92f9adec1804940d7a6be287",
+    "tools/test-webgl-transfer.ps1": "0eb35e9e54a975ba404f1ca24dee35d52f73626a66b1186a323d991eeb721372",
+    "tools/build-host.ps1": "e2772a1c59659fe9392ed47902eb0764ec46fb26c6c5fa671ca09fd357ae2d0b",
+    "tools/phanes.tools.webparts.lpr": "43810844606206507b625a319df09cb1611add3c02bb1a1e0e238107eef102f9",
+    "tools/phanes.tools.browser.pas": "c075b492dd08b0f8407cc2c8ea8d87fc7e4f210947b7236c3f4d371dd58d433c",
+    "tools/phanes.tools.files.pas": "12e07c9fb9d48c04596c9ad019924e9db2477ff30f0c08c2d946a2c62dde89c7",
+    "src/phanes.startup.parts.pas": "29e086fc9da867a9936ef09d43848ee22814df2abd59f1fa26de8637bf59749a",
+    "src/phanes.startup.browser.lpr": "f238164474e8ed335b9a0e5eb4dca3eaf6a88bda12a6e48aab3d82f6c4d2ded9",
+    "src/phanes.host.engine.lpr": "55c6c5c64229d996dfe5da83777b5952f6f4a2e695fd50013b416c45b250fdb9",
+    "tools/serve.ps1": "2e4608425172b10ca2a764814f7ac0ca6bb79e3e8688a76a50abf1a3e6f0f16b",
+    ".gitmodules": "53ba4c6e43105230684770ae34706ac57b0b1f9b16d513f16cd12d6126a13c97",
+    "docs/dependencies/CGE_WEBGL_ADOPTION.md": "a20cedca3cf32b349c2144677286ac23414c8ae4ad37a62e682554405c137ec7",
+    "docs/PUBLISHING.md": "9b74642e40ac5a3ac7a8465360f34acf46e2f39d8202b0231966cbd6524719bf",
+    "tools/ci-toolchain.sh": "1b884dcf316f798fde968966f777402796ac98ae6fb03a5244c7523432761c31",
+    ".github/workflows/pages.yml": "f1d83cd40dd3b431aaf51c662347c4529a5b2395e75758f2ddac10d45bae38fb",
+    "build-web.ps1": "723b28c235240ca584d01400fb75cd0b71f6405485aad7ef1efe72bf8c77f7a0",
+    "vendor/castle-engine/src/base_rendering/web/castleinternalwebgl.pas": "4bf06fc9dc2d80f9bf0acee277afbb75227132083db8cc4e4f10d5ad3f9e4845",
+    "tests/phanes.tests.catalog.objects.browser.lpr": "9843a7aa8a86ce9026cfac933d8af2841bd932c8035ab434b04afff8a9a992d2",
+    "tools/test-catalog-objects.ps1": "f6e3d817b105960368ab6fb729cc95fc3ed7485ddb88a798738f40f2ae689061",
+    "tests/phanes.tests.styles.browser.lpr": "c8f181e008dbc28fec479b14228b2ab64ac5dbe94725d4ad60567355d708e36d",
+    "tests/phanes.tests.styles.probe.lpr": "19b32532a60816213bbabea3d2a7e917f0434f910eb5aaf6e28cdab755c002a1",
+    "tools/test-styles.ps1": "14289736b45196b56ac5a53eaecfedf91126e17ebef3f4f09d38f7c0de49a98d",
+    "cge/code/phanes.app.view.pas": "befc8a375d9f43f3d207ba23cafecc1f728257449e6e246faff8cf4eddf7e69a",
+    "src/phanes.interiors.ui.pas": "8f9206ee25f3e3c67897e3b0be7b1b3cc0c2682a2eb453781b28651c6326052b",
+    "src/phanes.interiors.catalog.pas": "b1a05c8e9eb75ddbc450294b095968cc7c224ff49154ab5b24e41065cd30bbfc",
+    "src/phanes.catalog.objects.pas": "3b23fbbbffbb57a6d43a9b39a521d1c81ad87419535e83f778c0cd21e27b19f0",
+    "src/phanes.catalog.admission.pas": "099ef8870fcd55f636d9e8dbda82e0651775bd82249738d38886750064b775fc",
+    "src/phanes.session.ui.pas": "d1a336add536232ae4254165fc5447a073b2ef15f4ccc5de0d9c7b5eb8aae0a3",
+    "src/phanes.world.wire.pas": "0abbff3d0c2d6f4ec3a23edfb544e5ade917a1a1d4dfb32cfc86be1cb45f7f64",
+    "src/phanes.styles.ui.pas": "254ab109854717bc4c19c6c8e337d40e9b620957e81bbb2addd0aa8169550b80",
+    "src/phanes.styles.catalog.pas": "c5491aca03e0ea1c0b26bc36d81ada505c99031e5572e3f440ae512d8e6754d3",
+    "web/index.html": "bd64e03128df9742aa6aa5dbff650fff10acf2c2a540303c97cef9905fc1a233",
+    "web/phanes.interior.css": "d6a8fb173ba7db1afe17e8eb10e52c048adbc4d5202853cb83bc92a8e78a4811"
+  },
+  "evidenceFingerprints": {
+    "build/engine-adoption-provenance-01.json": "2d446ab980e9d230ac7fc4e18559feabcc04e0e4056834c71091f550e5be1e37",
+    "build/engine-adoption-remote-check-01/src/base_rendering/web/castleinternalwebgl.pas": "4bf06fc9dc2d80f9bf0acee277afbb75227132083db8cc4e4f10d5ad3f9e4845",
+    "build/logs/engine-adoption-main-build-01.log": "ea4676db93f677554e0dc562b8cae16a0ecdf2b31c14858b97fe68376c41c634",
+    "build/engine-adoption-objects-01/result.txt": "de3de7af12514b800f97ad6bf25365c5b851fef1d2a269568bab1b1831ef55f2",
+    "build/engine-adoption-objects-01/provenance.json": "114d5c4d33557d55461761f712b5d1662c5f5ea60f96e50d9918d096f750e949",
+    "build/engine-adoption-objects-01/object-0.png": "b9ebff92119364569980d670e8064f6804c25886ca3b00e3edbf5dac93b7de5e",
+    "build/engine-adoption-objects-01/recovered.png": "1fe416c109d1b07b06228918156660f01b11a5f4f1bf0dfdb5d47b4384ad21ca",
+    "build/engine-adoption-styles-01/evidence.json": "623139e98bf031ae75aac333e448aac324e133109d0cb6198825ba958d1212fe",
+    "build/engine-adoption-styles-01/provenance.json": "4cb46672a53f3ac9b6d08fc77cd26536afdd533d68d0caba5487e3d3f0e2ffc1",
+    "build/engine-adoption-styles-01/exterior-toon.png": "f66d846445cb04583643971c6e0ce7bc4cba9cb5bcaacc899102c019200982d5",
+    "build/engine-adoption-styles-01/interior-toon.png": "4158d4f6f8d3cb9566086f4b669f2957f4b10d43bc43740df77cdb5af7d59668",
+    "build/engine-adoption-styles-01/shader-failure.png": "6997d52626f19cf83974a63d5414e373d19f85f9b64637887e4aea70d72f39bd",
+    "build/engine-adoption-styles-01/context-restored.png": "d6cdd5032df93b7ecf91a7b8bbc3bd7bc181c16ae2deca25aa5de96def580cfe",
+    "build/engine-adoption-pages-evidence-01.json": "0e8240aa20f31376625d11025aa5203b3d8e3fb0f9f0ca2838d2a837950c41ea",
+    "build/engine-adoption-http-01/result.json": "27bf0b3a722429d357d086b5c682c9b6ae52ed80318ac20adbbdd1b1c01066c5"
+  },
+  "verification": "Independent Luna review inspected the exact 39 declared inputs and representative source, adoption, build, object, style and staging evidence; no browser/GPU suite was rerun. The fresh sparse clone at build/engine-adoption-remote-check-01 retrieves commit 25f2d98122997f8f039f759f9ffb76207b4f3cfe and the reviewed WebGL source (Git blob fa431aa5304c34a3fd5dbe20cd4c93530d5ffd79; normalized SHA 4bf06fc9dc2d80f9bf0acee277afbb75227132083db8cc4e4f10d5ad3f9e4845). build/logs/engine-adoption-main-build-01.log records the changed vendor unit in the ordinary release build. Retained integrated evidence records 188 object checks and 73 style checks/64 captures, with empty final browser and shader-failure arrays; the expected shader-failure capture shows user-facing fallback and subsequent recovery. build/engine-adoption-pages-evidence-01.json binds immutable stage b511e42b62c64170f5840135b6397031300b36fd8f8ba1953c2b1966977cf3e7 (9,253 files, 770,798,310 bytes under 900,000,000), and build/engine-adoption-http-01/result.json records five matching host checks. The full clean Phanes Actions run remains unproven, so this report deliberately requests completion rather than passing adoption."
+}

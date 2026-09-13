@@ -1,0 +1,129 @@
+PASS Actual catalog exposes 19 core and 18 optional regional choices
+PASS New Create intentionally publishes a core-only world
+PASS Core-only creation has no optional residency
+PASS Crop showcase cell is prepared as validated dry field terrain
+PASS Catalog category and group expose phanes.catalog.tree.forest-canopy.v1
+PASS Applied vegetation contains phanes.catalog.tree.forest-canopy.v1
+PASS Applied ecology records role tree
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.tree.autumn.v1
+PASS Applied vegetation contains phanes.catalog.tree.autumn.v1
+PASS Applied ecology records role tree
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.tree.birch.v1
+PASS Applied vegetation contains phanes.catalog.tree.birch.v1
+PASS Applied ecology records role tree
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.tree.island-palm.v1
+PASS Applied vegetation contains phanes.catalog.tree.island-palm.v1
+PASS Applied ecology records role tree
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.shrub.leafy-bush.v1
+PASS Applied vegetation contains phanes.catalog.shrub.leafy-bush.v1
+PASS Applied ecology records role shrub
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.shrub.broadleaf.v1
+PASS Applied vegetation contains phanes.catalog.shrub.broadleaf.v1
+PASS Applied ecology records role shrub
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.shrub.berry-bush.v1
+PASS Applied vegetation contains phanes.catalog.shrub.berry-bush.v1
+PASS Applied ecology records role shrub
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.shrub.forest-plant.v1
+PASS Applied vegetation contains phanes.catalog.shrub.forest-plant.v1
+PASS Applied ecology records role shrub
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.flowers.cactus-bloom.v1
+PASS Applied vegetation contains phanes.catalog.flowers.cactus-bloom.v1
+PASS Applied ecology records role flowers
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.flowers.cactus-cluster.v1
+PASS Applied vegetation contains phanes.catalog.flowers.cactus-cluster.v1
+PASS Applied ecology records role flowers
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.flowers.wildflowers.v1
+PASS Applied vegetation contains phanes.catalog.flowers.wildflowers.v1
+PASS Applied ecology records role flowers
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.flowers.flower-patch.v1
+PASS Applied vegetation contains phanes.catalog.flowers.flower-patch.v1
+PASS Applied ecology records role flowers
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.wheat.corn.v1
+PASS Applied vegetation contains phanes.catalog.wheat.corn.v1
+PASS Applied ecology records role wheat
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.wheat.rice.v1
+PASS Applied vegetation contains phanes.catalog.wheat.rice.v1
+PASS Applied ecology records role wheat
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.wheat.grain.v1
+PASS Applied vegetation contains phanes.catalog.wheat.grain.v1
+PASS Applied ecology records role wheat
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.rock.granite.v1
+PASS Applied vegetation contains phanes.catalog.rock.granite.v1
+PASS Applied ecology records role rock
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.rock.mossy.v1
+PASS Applied vegetation contains phanes.catalog.rock.mossy.v1
+PASS Applied ecology records role rock
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS Catalog category and group expose phanes.catalog.rock.forest-stones.v1
+PASS Applied vegetation contains phanes.catalog.rock.forest-stones.v1
+PASS Applied ecology records role rock
+PASS Apply preserves every unaffected layer cell
+PASS Apply preserves the complete composition exactly
+PASS All 18 models publish exact distinct-profile residency totals
+PASS Ready set contains every admitted regional model
+PASS Every regional model builds finite positive rendered geometry bounds
+PASS Desktop Undo restores the exact prior regional world
+PASS Desktop Redo restores the exact all-model world
+PASS Catalog category and group expose phanes.catalog.rock.forest-stones.v1
+PASS Phone category, group, item and Apply publish the chosen model
+PASS Phone Undo restores the exact prior regional world
+PASS Phone Redo restores the exact all-model world
+PASS All-model publication has no browser errors before reload
+PASS All-model publication has no console errors before reload
+PASS All-model publication has no model resource warnings before reload
+PASS Saved-session reload restores the exact all-model world
+PASS Saved-session reload restores exact all-model history
+PASS All 18 models publish exact distinct-profile residency totals
+PASS Ready set contains every admitted regional model
+PASS Every regional model builds finite positive rendered geometry bounds
+PASS Real foliage Clear retires every optional regional model
+PASS Undo reacquires and restores the exact all-model world
+PASS All 18 models publish exact distinct-profile residency totals
+PASS Ready set contains every admitted regional model
+PASS Every regional model builds finite positive rendered geometry bounds
+PASS Validated creation API starts the bounded distant-streaming world
+PASS Large core-only world retires the prior regional batch
+PASS Retirement removes stale regional template diagnostics
+PASS Catalog category and group expose phanes.catalog.tree.forest-canopy.v1
+PASS Distant optional model remains resident before its chunk streams
+PASS Distant publication prepares resources without building a detailed template
+PASS Streaming the distant chunk builds finite optional geometry bounds
+PASS Streaming away preserves the exact distant optional world
+PASS Streaming away keeps the distant optional model pinned
+PASS Removing the distant object retires its pinned model
+PASS Regional publication and streaming journey has no browser errors
+PASS Regional recovery and streaming journey has no console errors
+PASS Regional recovery and streaming journey has no model resource warnings

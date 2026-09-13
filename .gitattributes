@@ -1,0 +1,12 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.wasm binary
+*.zip binary
+*.glb binary
+# Preserve imported model, texture and license bytes from the pinned archives.
+cge/data/kits/** -text -whitespace
+assets/library/kits/** -text -whitespace
+assets/provenance/** -text -whitespace
+data/music/sources/** -text -whitespace
+*.mid binary
